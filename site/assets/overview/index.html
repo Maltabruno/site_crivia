@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRIVIA Engenharia Consultiva — Engenharia para Decisão</title>
+  <meta name="description" content="CRIVIA Engenharia Consultiva. Engenharia independente para decisões críticas: vamos à realidade, encontramos a causa por trás do sintoma e entregamos a quem decide uma solução que cabe na realidade.">
+  <meta name="theme-color" content="#F4FAFD">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script>
+  /* design-system catalog bridge. Active only inside the catalog iframe: the catalog
+     reuses the page's header, so the page's own copy is hidden; the Components view
+     parks this live scene behind it (ds-bg) at one of the page's own scroll stations,
+     driven through the page's Lenis instance; wheel over the catalog bar is forwarded. */
+  (function () {
+    var root = document.documentElement, embedded;
+    try { embedded = window.top !== window; } catch (e) { embedded = true; }
+    if (!embedded) return;
+    root.classList.add('ds-embed');
+    var saved = 0, target = null, told = false;
+    function maxY() { return root.scrollHeight - innerHeight; }
+    function go(y, immediate) {
+      var l = window.lenis;
+      if (l && l.scrollTo) l.scrollTo(y, { immediate: !!immediate, force: true });
+      else scrollTo(0, y);
+    }
+    addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || typeof d.ds !== 'string') return;
+      if (d.ds === 'bg') {
+        if (!root.classList.contains('ds-bg')) { saved = scrollY; root.classList.add('ds-bg'); }
+        target = +d.p || 0;
+        go(maxY() * target, !d.smooth);
+      } else if (d.ds === 'page') {
+        if (!root.classList.contains('ds-bg')) return;
+        root.classList.remove('ds-bg'); target = null;
+        go(saved, true);
+      } else if (d.ds === 'wheel' && !root.classList.contains('ds-bg')) {
+        var l = window.lenis;
+        if (l && l.scrollTo) l.scrollTo((l.targetScroll || scrollY) + d.dy);
+        else scrollBy(0, d.dy);
+      }
+    });
+    addEventListener('resize', function () { if (target !== null) go(maxY() * target, true); });
+    /* ready = hydrated (Lenis exists) and the preloader veil has left the DOM */
+    (function poll() {
+      if (window.lenis && !document.querySelector('main [role="status"]')) {
+        if (target !== null) go(maxY() * target, true);
+        if (!told) { told = true; parent.postMessage({ ds: 'ready' }, '*'); }
+        return;
+      }
+      setTimeout(poll, 150);
+    })();
+  })();
+  </script>
+  <style>
+  .ds-bg main > div.fixed > div.z-10,
+  .ds-bg main [role="status"],
+  .ds-bg section[aria-label="Cookie consent"] { visibility: hidden !important; }
+  /* responsive fix: at phone width the longer hero title wraps; keep its lines centred
+     like the column they sit in (the source's single word never wrapped) */
+  @media (max-width: 47.99rem) { main > div.fixed > div.z-10 .top-\[22\%\] p { justify-content: center; text-shadow: 0 0 14px #F4FAFD, 0 0 5px #F4FAFD, 0 0 2px #F4FAFD; } }
+  </style>
+<script>(function(){var f=function(){var w=innerWidth,h=innerHeight;if(!(w>0&&h>0))return 0;return (w<=768?1:w<=1180?2:3)*100+Math.round(w/h*2)},c=f(),t,k="criviaReload";addEventListener("resize",function(){clearTimeout(t);t=setTimeout(function(){var n=f();if(!n||n===c)return;try{var l=+sessionStorage.getItem(k)||0;if(Date.now()-l<3000)return;sessionStorage.setItem(k,String(Date.now()))}catch(e){}location.reload()},500)})})();</script></head>
+<body class="onest_variable googleSans_variable">
+  <div id="root" style="display: contents"></div>
+  <script src="assets/js/embedded-assets.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRIVIA Design System</title>
+<meta name="description" content="Catálogo do design system da CRIVIA Engenharia Consultiva.">
+<link rel="icon" href="assets/overview/assets/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/overview/assets/css/fonts.css">
+<link rel="stylesheet" href="assets/overview/assets/css/main.css">
+<style>
+/* Casca do catálogo: só roteamento e layout. Cores, tipos e a cena vêm do Overview (main.css). */
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; background: var(--background); color: var(--overlay-ink); font-family: var(--font-google-sans), system-ui, sans-serif; min-height: 0; }
+:root { --ds-bar-h: 2.5rem; }
+#ds-bar { position: fixed; top: 0; left: 0; right: 0; height: var(--ds-bar-h); z-index: 60; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 1.25rem; background: linear-gradient(180deg, rgba(255,255,255,.40) 0%, rgba(240,248,252,.14) 100%); -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3); border-bottom: 1px solid rgba(255,255,255,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.75); }
+@media (min-width: 48rem) { #ds-bar { padding: 0 1.875rem; } }
+#ds-bar .marca { display: flex; align-items: center; gap: .6rem; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; font-size: .8125rem; }
+#ds-bar .marca img { width: 1.25rem; height: 1.25rem; display: block; }
+#ds-bar nav { display: flex; gap: 1.75rem; font-family: "Geist", system-ui, sans-serif; font-size: .75rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
+.ds-tab { position: relative; padding: .25rem 0; color: var(--overlay-strong); text-decoration: none; transition: opacity .2s; }
+.ds-tab[aria-current="page"] { color: var(--overlay-ink); }
+.ds-tab[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: #F59E0B; }
+.ds-tab[aria-disabled="true"] { opacity: .4; cursor: not-allowed; }
+#overview-frame { position: fixed; top: var(--ds-bar-h); left: 0; right: 0; bottom: 0; width: 100%; height: calc(100% - var(--ds-bar-h)); border: 0; background: var(--background); }
+#components-view { position: fixed; top: var(--ds-bar-h); left: 0; right: 0; bottom: 0; overflow: auto; display: none; }
+body.view-components #overview-frame { display: none; }
+body.view-components #components-view { display: block; }
+</style>
+</head>
+<body class="onest_variable googleSans_variable">
+  <header id="ds-bar">
+    <a href="#overview" class="marca" style="color:inherit;text-decoration:none"><img src="assets/overview/assets/images/favicon.svg" alt="" width="20" height="20"><span>CRIVIA</span></a>
+    <nav aria-label="Catálogo">
+      <a href="#overview" id="tab-overview" class="ds-tab">Overview</a>
+      <a href="#components" id="tab-components" class="ds-tab" aria-disabled="true" tabindex="-1" title="Disponível após a aprovação do Overview">Components</a>
+    </nav>
+  </header>
+  <iframe id="overview-frame" src="assets/overview/index.html" title="CRIVIA — Overview"></iframe>
+  <main id="components-view"></main>
+<script>
+  var tabs = { overview: document.getElementById('tab-overview'), components: document.getElementById('tab-components') };
+  var COMPONENTS_ENABLED = false; // liberado somente após a aprovação do Overview
+  function route() {
+    var h = (location.hash || '#overview').slice(1);
+    if (h === 'components' && !COMPONENTS_ENABLED) { h = 'overview'; history.replaceState(null, '', '#overview'); }
+    document.body.classList.toggle('view-components', h === 'components');
+    tabs.overview.setAttribute('aria-current', h === 'overview' ? 'page' : 'false');
+    tabs.components.setAttribute('aria-current', h === 'components' ? 'page' : 'false');
+  }
+  tabs.components.addEventListener('click', function (e) { if (!COMPONENTS_ENABLED) e.preventDefault(); });
+  window.addEventListener('hashchange', route);
+  route();
+</script>
+</body>
+</html>

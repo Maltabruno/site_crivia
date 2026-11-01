@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CRIVIA">
+  <!-- Monograma da CRIVIA: o "C" do glifo 3D (arco de 270°, abertura à direita) achatado.
+       Campo azul-marinho, marca clara, ponto âmbar (o decisor). Sem gradiente: legível em 16 px. -->
+  <rect width="512" height="512" fill="#001D3D" />
+  <path d="M362 150 A150 150 0 1 0 362 362" fill="none" stroke="#EAF6FB" stroke-width="66" stroke-linecap="round" />
+  <circle cx="276" cy="256" r="26" fill="#F59E0B" />
+</svg>
