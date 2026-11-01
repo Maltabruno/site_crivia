@@ -329,7 +329,8 @@ MAILTO_JS = r"""var CRIVIA_EMAIL = "contato@crivia.eng.br";
     if (comDados) {
       const nome = document.querySelector('input[aria-label="Nome"]')?.value ?? "";
       const email = document.querySelector('input[aria-label="E-mail"]')?.value ?? "";
-      corpo = `Nome: ${nome}\nE-mail: ${email}\n\n`;
+      const prod = window.__criviaProduto ? `Produto de interesse: ${window.__criviaProduto}\n` : "";
+      corpo = `Nome: ${nome}\nE-mail: ${email}\n${prod}\n`;
     }
     return `mailto:${CRIVIA_EMAIL}?subject=${encodeURIComponent("Solicitação de Diagnóstico")}&body=${encodeURIComponent(corpo)}`;
   };
@@ -535,6 +536,296 @@ CSS_IND = r"""
 }
 """
 
+# Dobra "Quatro frentes de trabalho" (cena da onda) = catálogo: quatro grupos iguais na tela; cada grupo é um baralho de cartas alinhadas
+# (faixa + pedaço da foto); a carta sob o mouse abre pela lateral. Cartas em azul com degradê (escuro em cima, mais claro embaixo).
+# Botão primário da hero em versão mini. Conteúdo: Catálogo R03 (pedido do cliente e entregas).
+CAT_INI = "  var WaveOverlay = () => {"
+CAT_FIM = "\n\n  // orig/src/components/common/hero-overlay/live-dot.tsx"
+CAT_NOVO = r"""  var CRIVIA_ICONES = {
+    clipboard: ["M9 3.5h6v3H9z", "M7 5H6.2A1.2 1.2 0 0 0 5 6.2v13.6A1.2 1.2 0 0 0 6.2 21h11.6a1.2 1.2 0 0 0 1.2-1.2V6.2A1.2 1.2 0 0 0 17.8 5H17", "M8.5 11.5h7", "M8.5 15.5h4.5"],
+    layers: ["M12 3 3 8l9 5 9-5-9-5z", "M3 12.5l9 5 9-5", "M3 17l9 5 9-5"],
+    pin: ["M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z", "M12 12.2a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z"],
+    calc: ["M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z", "M8 7h8", "M8.5 12h.01", "M12 12h.01", "M15.5 12h.01", "M8.5 16h.01", "M12 16h.01", "M15.5 16h.01"],
+    scale: ["M12 3v18", "M5 7h14", "M5 7l-3 7a3 3 0 0 0 6 0L5 7z", "M19 7l-3 7a3 3 0 0 0 6 0l-3-7z", "M8 21h8"],
+    calendar: ["M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z", "M4 10h16", "M8 3v4", "M16 3v4"],
+    rotate: ["M20 12a8 8 0 1 1-2.4-5.7", "M20 4v5h-5"],
+    pulse: ["M3 12h4l3-8 4 16 3-8h4"],
+    ruler: ["M3 17 17 3l4 4L7 21l-4-4z", "M7.5 12.5l2 2", "M10.5 9.5l2 2", "M13.5 6.5l2 2"],
+    eye: ["M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z", "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"],
+    check: ["M3.5 4h17a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-.5.5h-17a.5.5 0 0 1-.5-.5v-15a.5.5 0 0 1 .5-.5z", "M8 12.5l3 3 5-6"],
+    folder: ["M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-12z"],
+    video: ["M3 6.5h12a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 16V8A1.5 1.5 0 0 1 3 6.5z", "M16.5 10l5-2.5v9l-5-2.5"],
+    chip: ["M12 3v3", "M12 18v3", "M3 12h3", "M18 12h3", "M7 7h10v10H7z", "M10 10h4v4h-4z"]
+  };
+  var CRIVIA_PRODUTOS = [
+    { cod: "P01", ico: "clipboard", nome: "Diagnóstico de obra ou contrato", txt: "Compreender por que o projeto, a obra ou o contrato não entrega o resultado esperado, ou esclarecer uma situação técnica ainda indefinida.", ent: "Relatório de diagnóstico · Registro de evidências · Matriz de impedimentos, riscos e pendências · Síntese de decisões e reunião de devolutiva" },
+    { cod: "P02", ico: "layers", nome: "Análise crítica de projetos", txt: "Os projetos recebidos estão completos e coerentes para a decisão que preciso tomar?", ent: "Relatório de análise · Matriz de interfaces · Pranchas comentadas · Registro de respostas e pendências" },
+    { cod: "P03", ico: "pin", nome: "Avaliação preliminar de terreno", txt: "Quais condições deste terreno preciso conhecer antes de contratar projetos ou construir?", ent: "Parecer preliminar · Registro de visita · Matriz de informações e estudos · Roteiro de contratação dos estudos" },
+    { cod: "P04", ico: "calc", nome: "Orçamento e análise de custos", txt: "Quanto preciso prever e quais itens explicam o custo apresentado?", ent: "Planilha orçamentária · Memória de quantitativos · Relatório de premissas · Análise dos itens relevantes" },
+    { cod: "P05", ico: "scale", nome: "Comparação técnica de propostas", txt: "Qual proposta atende ao que preciso e o que está faltando em cada preço?", ent: "Quadro comparativo · Lista de esclarecimentos · Relatório de recomendação · Anexo de escopo técnico" },
+    { cod: "P06", ico: "calendar", nome: "Planejamento de obra e recursos", txt: "Qual sequência, prazo e recurso preciso pactuar com quem vai executar?", ent: "Estrutura de atividades e cronograma físico · Cronograma físico-financeiro · Histogramas · Plano de suprimentos e controle" },
+    { cod: "P07", ico: "rotate", nome: "Plano de recuperação de obra", txt: "Decidir o que precisa mudar e qual caminho cabe nos recursos, nas restrições e nos compromissos existentes.", ent: "Proposta técnica de solução · Plano de ação · Cronograma ou programação de recursos · Análise de custos, quando contratada" },
+    { cod: "P08", ico: "pulse", nome: "Análise de processo e produtividade", txt: "Onde o processo perde tempo e recursos e qual mudança merece ser testada?", ent: "Mapa do processo · Base de observações · Estudo comparativo · Plano de teste" },
+    { cod: "P09", ico: "ruler", nome: "Medições e alterações contratuais", txt: "Como demonstrar o que foi executado e organizar as diferenças de escopo e pagamento?", ent: "Boletim de medição · Memória e evidências · Registro de alterações · Dossiê técnico" },
+    { cod: "P10", ico: "eye", nome: "Acompanhamento técnico das decisões", txt: "Verificar se as providências estão ocorrendo, se produzem o efeito esperado e o que precisa ser revisto.", ent: "Relatório periódico · Painel de acompanhamento · Registro de visitas e evidências · Registro de decisões e mudanças" },
+    { cod: "P11", ico: "check", nome: "Vistoria para recebimento", txt: "Quais pendências preciso registrar antes de receber a obra ou uma etapa?", ent: "Relatório de vistoria · Registro fotográfico · Lista de pendências" },
+    { cod: "P12", ico: "folder", nome: "Organização e conferência do data book", txt: "Quais documentos da obra devem ser reunidos e o que ainda falta entregar?", ent: "Índice mestre · Pasta digital organizada · Matriz de lacunas · Relatório de conferência" },
+    { cod: "IA-1", ico: "chip", nome: "Preparação da transição para IA", txt: "A empresa vai ampliar o uso de IA e precisa definir como funções, competências, verificações e interfaces mudarão.", ent: "Plano de Transição e Integração do Trabalho com IA" },
+    { cod: "IA-2", ico: "pulse", nome: "Diagnóstico e ajustes após a adoção", txt: "Ferramentas já em uso, mas persistem erros, retrabalho, decisões inadequadas, sobrecarga ou desencontro entre áreas.", ent: "Relatório de Diagnóstico e Ajustes do Trabalho com IA · Plano de ação editável" },
+    { cod: "CV01", ico: "video", nome: "Visualização e comunicação técnica com IA e 3D", txt: "Tornar compreensíveis uma situação, um projeto, uma solução ou uma proposta técnico-comercial, por meio de imagens, representações 3D, apresentações e vídeos.", ent: "Vídeos explicativos de engenharia · Apresentações visuais de projetos e soluções · Propostas técnico-comerciais visuais" }
+  ];
+  var CRIVIA_GRUPOS = [
+    { id: "g1", nome: "Diagnóstico e recuperação", curto: "Diagnóstico", cods: ["P01", "P07", "P08", "P10"] },
+    { id: "g2", nome: "Projetos, terreno e propostas", curto: "Projetos", cods: ["P02", "P03", "P05"] },
+    { id: "g3", nome: "Custos, planejamento e medições", curto: "Custos", cods: ["P04", "P06", "P09", "P11", "P12"] },
+    { id: "g4", nome: "Portfólio de IA", curto: "IA", cods: ["IA-1", "IA-2", "CV01"] }
+  ];
+  var CriviaCarta = ({ p, ordem, total, aberto, pedir, fixar, grupo }) => {
+    const abre = aberto === p.cod;
+    const corpoRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const el = corpoRef.current;
+      if (!el || !el.parentElement) return;
+      const q = el.parentElement;
+      const medir = () => q.style.setProperty("--hn", (el.scrollHeight + 8) + "px");
+      medir();
+      if (typeof ResizeObserver === "undefined") return;
+      const ro = new ResizeObserver(medir);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealItem, { tag: "li", act: "wave", index: ordem, count: total, delay: 200, className: "crivia-carta" + (abre ? " is-aberta" : ""), children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", {
+      className: "crivia-carta__quadro",
+      style: { "--z": ordem + 1 },
+      tabIndex: 0,
+      "aria-expanded": abre,
+      onPointerEnter: (e) => { if (e.pointerType === "mouse") pedir(p.cod); },
+      onFocus: () => fixar(p.cod),
+      onClick: (e) => { if (e.target.closest && e.target.closest("button")) return; fixar(abre ? null : p.cod); },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { ref: corpoRef, className: "crivia-carta__corpo", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-carta__topo", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__icone", children: criviaIcon(CRIVIA_ICONES[p.ico]) }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-carta__cod", children: p.cod }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__nome-curto", children: p.nome }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-carta__chip", children: grupo })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-carta__img", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__ph", "aria-hidden": true, children: criviaIcon(CRIVIA_ICONES[p.ico]) }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("img", { src: "assets/images/produtos/" + p.cod + ".jpg", alt: "", loading: "lazy", decoding: "async", onError: (e) => { e.currentTarget.style.display = "none"; } })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { className: "crivia-carta__titulo", children: p.nome }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-carta__txt", children: p.txt }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { className: "font-geist crivia-carta__ent", children: [/* @__PURE__ */ (0, import_jsx_runtime20.jsx)("b", { children: "Você recebe" }), p.ent] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-carta__acao", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCtaPrimary, { compacto: true, onClick: () => { window.__criviaProduto = p.cod + " — " + p.nome; CRIVIA_IR_CENARIO(); }, children: "Apresentar meu cenário" }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__vert", "aria-hidden": true, children: p.nome })
+      ]
+    }) });
+  };
+  var CriviaGrupo = ({ g, gi, base, total, aberto, pedir, fixar }) => {
+    const itens = g.cods.map((c) => CRIVIA_PRODUTOS.find((p) => p.cod === c));
+    const abre = itens.some((p) => p.cod === aberto);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("li", { className: "crivia-g" + (abre ? " is-aberto" : ""), style: { "--n": itens.length }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-g__rotulo", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-g__num", children: ["0", gi + 1] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-g__nome", children: g.nome }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-g__linha", "aria-hidden": true }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-g__qtd", children: [itens.length, " produtos"] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { className: "crivia-g__deck", children: itens.map((p, k) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCarta, { p, ordem: base + k, total, aberto, pedir, fixar, grupo: g.curto }, p.cod)) })
+    ] });
+  };
+  var CriviaCatalogo = () => {
+    const [aberto, setAberto] = (0, import_react35.useState)(null);
+    const timer = (0, import_react35.useRef)(0);
+    const pedir = (cod) => { clearTimeout(timer.current); timer.current = setTimeout(() => setAberto(cod), cod === null ? 140 : 70); };
+    const fixar = (cod) => { clearTimeout(timer.current); setAberto(cod); };
+    let base = 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-cat", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__in", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("header", { className: "crivia-cat__cab", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__cab-esq", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-cat__selo", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-cat__selo-ponto", "aria-hidden": true }),
+            "Catálogo de produtos"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "h2", variant: "heading", act: "wave", className: "crivia-cat__titulo", children: "Produtos para cada decisão." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 160, className: "font-geist crivia-cat__intro", children: "Os 12 produtos de engenharia estão disponíveis conforme a necessidade, o objeto e a capacidade técnica. Podem ser contratados individualmente, combinados ou em ciclos definidos; a proposta discrimina as entregas incluídas." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { "data-lenis-prevent": true, className: "crivia-grupos", onPointerLeave: (e) => { if (e.pointerType === "mouse") pedir(null); }, children: CRIVIA_GRUPOS.map((g, gi) => {
+        const b = base;
+        base += g.cods.length;
+        return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaGrupo, { g, gi, base: b, total: CRIVIA_PRODUTOS.length, aberto, pedir, fixar }, g.id);
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__rodape", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__metodo-bloco", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-cat__metodo-sel", children: "Método Sentinela" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 320, className: "font-geist crivia-cat__metodo", children: "Observar, confrontar, integrar, propor e apoiar. Primeiro a referência, depois o campo, depois o confronto entre os dois." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-cat__dica", children: "Passe o cursor ou toque em uma carta para abri-la." })
+      ] })
+    ] }) });
+  };
+  var WaveOverlay = () => {
+    const rootRef = (0, import_react35.useRef)(null);
+    const contentRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const root = rootRef.current;
+      const content = contentRef.current;
+      if (!root || !content) return;
+      let raf3 = 0;
+      let last = Number.NaN;
+      const tick2 = () => {
+        raf3 = requestAnimationFrame(tick2);
+        const progress = getScrollProgress();
+        if (progress === last) return;
+        last = progress;
+        const { left: l, right: r } = wipeLineAt(progress);
+        root.style.clipPath = l >= 100 && r >= 100 ? "none" : `polygon(0% 0%, 100% 0%, 100% ${r}%, 0% ${l}%)`;
+        content.style.transform = `translateY(${waveDriftAt(progress)}vh)`;
+        content.style.opacity = `${waveUiOpacityAt(progress)}`;
+      };
+      raf3 = requestAnimationFrame(tick2);
+      return () => cancelAnimationFrame(raf3);
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { ref: rootRef, className: "pointer-events-none absolute inset-0 select-none font-display text-overlay-ink", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { ref: contentRef, className: "absolute inset-0", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCatalogo, {}) }) });
+  };"""
+
+CSS_CAT = r"""
+/* ════ CRIVIA ════ catálogo: quatro grupos iguais; cada um é um baralho de cartas alinhadas que abre pela lateral ════ */
+.crivia-cat { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(247,251,254,.6) 0%, rgba(240,248,252,.78) 100%); }
+.crivia-cat__in { box-sizing: border-box; height: 100%; max-width: 82rem; margin: 0 auto; padding: 4.5rem 1.25rem 1rem;
+  display: flex; flex-direction: column; gap: .85rem; pointer-events: auto; }
+.crivia-cat__cab { display: flex; flex-direction: column; gap: .6rem; }
+.crivia-cat__cab-esq { display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
+.crivia-cat__selo { display: inline-flex; align-items: center; gap: .5rem; padding: .3rem .8rem; border-radius: 999px; font-size: .66rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: #2B4A6B; background: rgba(255,255,255,.75); border: 1px solid rgba(10,54,157,.16); }
+.crivia-cat__selo-ponto { width: 6px; height: 6px; border-radius: 50%; background: #F5B82E; box-shadow: 0 0 0 3px rgba(245,184,46,.28); }
+.crivia-cat__titulo { font-size: clamp(1.65rem, 3vw, 2.75rem); font-weight: 650; line-height: 1.05; letter-spacing: -.035em; color: #001D3D; }
+.crivia-cat__intro, .crivia-cat__metodo, .crivia-cat__metodo-bloco { display: none !important; }
+.crivia-cat__dica { margin: 0; font-size: .7rem; font-weight: 500; letter-spacing: .03em; color: #2B4A6B; opacity: .8; text-align: center; }
+
+/* grupos (celular: um embaixo do outro) */
+.crivia-grupos { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: .3rem .15rem 1rem; list-style: none; display: flex; flex-direction: column; gap: 1.1rem; scrollbar-width: none; }
+.crivia-grupos::-webkit-scrollbar { display: none; }
+.crivia-g { --cw: 17rem; --min: 3rem; position: relative; }
+.crivia-g__rotulo { display: flex; align-items: center; gap: .6rem; min-height: 2rem; margin-bottom: .55rem; }
+.crivia-g__num { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 1.9rem; height: 1.9rem; padding: 0 .45rem; border-radius: 999px;
+  font-size: .74rem; font-weight: 700; letter-spacing: .06em; color: #fff; background: linear-gradient(135deg, #0A369D, #2F6BFF);
+  box-shadow: 0 6px 16px rgba(47,107,255,.34), inset 0 1px 0 rgba(255,255,255,.35); }
+.crivia-g__nome { min-width: 0; font-size: 1.2rem; font-weight: 700; line-height: 1.1; letter-spacing: -.03em; padding-bottom: .08em;
+  background: linear-gradient(90deg, #0A369D 0%, #1F5BFF 55%, #2F8CFF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.crivia-g__linha, .crivia-g__qtd { display: none; }
+.crivia-g__deck { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+
+/* carta: azul em degradê, escuro em cima e mais claro embaixo */
+.crivia-carta { position: relative; z-index: 1; flex: 0 0 auto; margin-top: -.55rem; }
+.crivia-carta:first-child { margin-top: 0; }
+.crivia-carta__quadro { position: relative; z-index: var(--z); box-sizing: border-box; width: 100%; max-height: 3.6rem; overflow: hidden; border-radius: 20px; border: 1.5px solid transparent; outline: none; cursor: pointer;
+  background: linear-gradient(180deg, #021033 0%, #07236B 42%, #1B4CC0 100%) padding-box, linear-gradient(140deg, #2F6BFF, #0A369D 36%, #12286E 64%, #1FCBDD) border-box;
+  box-shadow: 0 -6px 18px rgba(0,29,61,.2), 0 16px 34px rgba(0,29,61,.28), inset 0 1px 0 rgba(255,255,255,.1);
+  transition: max-height .55s cubic-bezier(.2,.8,.2,1), transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; }
+.crivia-carta.is-aberta { z-index: 80; }
+.crivia-carta.is-aberta .crivia-carta__quadro { max-height: 44rem; box-shadow: 0 30px 70px rgba(0,29,61,.4), inset 0 1px 0 rgba(255,255,255,.12); }
+.crivia-carta__corpo { box-sizing: border-box; padding: .8rem .9rem 1rem; display: flex; flex-direction: column; gap: .6rem; color: #fff; }
+.crivia-carta__topo { display: flex; align-items: center; gap: .6rem; min-height: 2rem; }
+.crivia-carta__icone { width: 2rem; height: 2rem; padding: .45rem; border-radius: 50%; flex: none; color: #BDE8FF; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.14); }
+.crivia-carta__icone svg, .crivia-carta__ph svg { width: 100%; height: 100%; display: block; }
+.crivia-carta__cod { font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #BDE8FF; flex: none; }
+.crivia-carta__nome-curto { font-size: .84rem; font-weight: 600; letter-spacing: -.01em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.crivia-carta__chip { margin-left: auto; flex: none; max-width: 9.5rem; padding: .22rem .6rem; border-radius: 6px; font-size: .58rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #EAF2FF;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,.12); border: 1px solid rgba(190,215,255,.35); }
+/* local da imagem: grade fina sobre azul-escuro (aparece enquanto não há foto); a foto fica em assets/produtos/<código>.jpg */
+.crivia-carta__img { position: relative; aspect-ratio: 2 / 1; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); flex: none;
+  background: radial-gradient(120% 100% at 80% 0%, rgba(47,107,255,.35), transparent 60%), linear-gradient(160deg, #0B1F5C, #001D3D); }
+.crivia-carta__img::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(125,170,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,255,.12) 1px, transparent 1px); background-size: 22px 22px; }
+.crivia-carta__ph { position: absolute; left: 50%; top: 50%; width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; color: rgba(125,211,252,.55); }
+.crivia-carta__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.crivia-carta__img::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,54,157,.04), rgba(0,29,61,.32)), repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.14) 2px 4px); }
+.crivia-carta__titulo { font-size: 1.1rem; font-weight: 650; line-height: 1.2; letter-spacing: -.02em; color: #fff; }
+.crivia-carta__txt { font-size: .86rem; font-weight: 450; line-height: 1.5; color: #F2F7FF; }
+.crivia-carta__ent { font-size: .78rem; font-weight: 450; line-height: 1.5; color: #DCE8FF; }
+.crivia-carta__ent b { display: block; margin-bottom: .1rem; font-size: .6rem; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: #BDE8FF; }
+.crivia-carta__acao { display: flex; padding-top: .15rem; }
+.crivia-carta__vert { display: none; }
+.crivia-carta:not(.is-aberta) .crivia-carta__chip { display: none; }
+/* botão primário da hero, em versão mini para sobrar espaço ao texto */
+.crivia-cta--compacto { font-size: .72rem; }
+.crivia-cta--compacto.crivia-cta--primary .crivia-cta__inner { padding: .36rem .6rem .36rem .45rem; font-size: .7rem; gap: .4rem; }
+.crivia-cta--compacto .crivia-cta__icon { width: 1.2rem; height: 1.2rem; padding: .28rem; }
+.crivia-cta--compacto .crivia-cta__chip { width: 1.1rem; height: 1.1rem; padding: .26rem; margin-left: .05rem; }
+.crivia-carta__titulo, .crivia-carta__txt, .crivia-carta__ent, .crivia-carta__acao, .crivia-carta__img { transition: opacity .3s ease; }
+
+@media (min-width: 48rem) {
+  .crivia-cat__in { padding: 5.75rem 3rem 1.2rem; gap: .9rem; }
+  .crivia-cat__cab { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 3rem; }
+  .crivia-cat__intro { display: flex !important; max-width: 29rem; font-size: .84rem; font-weight: 450; line-height: 1.5; color: #2B4A6B; }
+  .crivia-cat__rodape { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: auto; }
+  .crivia-cat__metodo-bloco { display: flex !important; align-items: center; gap: 1rem; min-width: 0; }
+  .crivia-cat__metodo-sel { flex: none; padding: .5rem 1rem; border-radius: 999px; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; color: #fff;
+    background: linear-gradient(135deg, #0A369D, #2F6BFF); box-shadow: 0 8px 20px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.35); }
+  .crivia-cat__metodo { display: flex !important; max-width: 36rem; font-size: 1rem; font-weight: 550; line-height: 1.45; letter-spacing: -.01em; color: #001D3D; }
+  .crivia-cat__dica { font-size: .72rem; font-weight: 500; letter-spacing: .04em; color: #2B4A6B; opacity: .8; text-align: right; }
+  /* dois grupos em cima e dois embaixo (um em cada canto); a carta aberta cresce sobre a outra linha */
+  .crivia-grupos { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.7rem 2rem; overflow: visible; padding: 0; margin-top: 1.5rem; }
+  .crivia-g { --cw: 17rem; --min: 2.6rem; --chc: clamp(11rem, calc((100vh - 28rem) / 2), 17rem); --cho: clamp(26rem, calc(100vh - 17rem), 31rem); min-width: 0; }
+  .crivia-g.is-aberto { z-index: 20; }
+  .crivia-g__rotulo { min-height: 2.3rem; margin-bottom: .7rem; gap: .75rem; }
+  .crivia-g__num { min-width: 2.15rem; height: 2.15rem; font-size: .82rem; }
+  .crivia-g__nome { flex: 0 1 auto; font-size: clamp(1.15rem, 1.95vw, 1.6rem); display: block; white-space: nowrap; text-overflow: ellipsis; -webkit-line-clamp: unset; }
+  .crivia-g__linha { display: block; flex: 1 1 1.5rem; min-width: 1rem; height: 2px; border-radius: 2px; background: linear-gradient(90deg, rgba(47,107,255,.55), rgba(47,107,255,0)); }
+  .crivia-g__qtd { display: inline-block; flex: none; font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #2B4A6B; }
+  .crivia-g__deck { flex-direction: row; height: var(--chc); align-items: flex-start; }
+  .crivia-g:nth-child(n+3) .crivia-g__deck { align-items: flex-end; }
+  .crivia-carta { flex: 1 1 0px; min-width: 0; margin: 0 0 0 -.55rem; transition: flex .6s cubic-bezier(.2,.8,.2,1); }
+  .crivia-carta:first-child { margin-left: 0; }
+  .crivia-g__deck .crivia-carta.is-aberta { flex: 0 0 var(--cw); }
+  .crivia-carta__quadro { height: var(--chc); max-height: none; border-radius: 20px; transition: height .55s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease;
+    box-shadow: -10px 0 22px rgba(0,29,61,.2), 0 14px 32px rgba(0,29,61,.24), inset 0 1px 0 rgba(255,255,255,.1); }
+  .crivia-carta__quadro:hover, .crivia-carta__quadro:focus-visible { box-shadow: -10px 0 22px rgba(0,29,61,.2), 0 18px 40px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.1); }
+  .crivia-carta.is-aberta .crivia-carta__quadro { height: max(var(--cho), var(--hn, 0px)); max-height: none; box-shadow: 0 30px 70px rgba(0,29,61,.4), inset 0 1px 0 rgba(255,255,255,.12); }
+  .crivia-carta__corpo { position: absolute; left: 0; top: 0; width: var(--cw); padding: 1rem; }
+  .crivia-carta__nome-curto { display: none; }
+  .crivia-carta:not(.is-aberta) .crivia-carta__titulo, .crivia-carta:not(.is-aberta) .crivia-carta__txt, .crivia-carta:not(.is-aberta) .crivia-carta__ent,
+  .crivia-carta:not(.is-aberta) .crivia-carta__acao { opacity: 0; }
+  .crivia-carta.is-aberta .crivia-carta__titulo, .crivia-carta.is-aberta .crivia-carta__txt, .crivia-carta.is-aberta .crivia-carta__ent, .crivia-carta.is-aberta .crivia-carta__acao { transition-delay: .22s; }
+  /* faixa fechada: ícone e código no topo, pedaço da foto e o nome embaixo */
+  .crivia-carta__vert { display: -webkit-box; position: absolute; z-index: 2; left: .75rem; right: .4rem; bottom: .55rem; white-space: normal; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    font-size: .64rem; font-weight: 600; line-height: 1.25; letter-spacing: 0; color: rgba(240,246,255,.96); transition: opacity .3s ease; }
+  .crivia-carta.is-aberta .crivia-carta__vert { opacity: 0; }
+  .crivia-carta__corpo { gap: .5rem; }
+  .crivia-carta__topo { min-height: 1.8rem; }
+}
+@media (min-width: 48rem) and (max-width: 69.99rem) {
+  .crivia-g { --cw: 15.5rem; --min: 2.2rem; }
+  .crivia-g__qtd { display: none; }
+  .crivia-g__rotulo { min-height: 2.7rem; }
+  .crivia-g__nome { font-size: 1.12rem; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow: clip; }
+  .crivia-grupos { gap: .9rem 1.2rem; }
+  .crivia-cat__in { padding-left: 2rem; padding-right: 2rem; }
+}
+@media (min-width: 70rem) and (min-height: 900px) {
+  .crivia-g { --cw: 19rem; --min: 3rem; }
+  .crivia-carta__titulo { font-size: 1.15rem; }
+  .crivia-carta__txt { font-size: .88rem; }
+  .crivia-carta__ent { font-size: .8rem; }
+  .crivia-carta__vert { font-size: .72rem; }
+}
+@media (min-width: 48rem) and (max-height: 760px) {
+  .crivia-cat__in { padding-top: 5rem; padding-bottom: .8rem; gap: .6rem; }
+  .crivia-cat__titulo { font-size: clamp(1.5rem, 2.4vw, 2.1rem); }
+  .crivia-g { --chc: clamp(9.5rem, calc((100vh - 23.5rem) / 2), 17rem); }
+  .crivia-cat__selo { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crivia-g, .crivia-carta, .crivia-carta__quadro, .crivia-carta__titulo, .crivia-carta__txt, .crivia-carta__ent, .crivia-carta__acao, .crivia-carta__vert { transition: none; }
+}
+"""
+
 PATCHES_TEXTO = [
     ("txt:cabecalho-esq", 'var LEFT_NAV = ["Projects", "Studio", "Process"];',
      'var LEFT_NAV = ["Início", "Produtos", "Método"];', 1),
@@ -640,7 +931,7 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
   };
   var CRIVIA_IR_METODO = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const y = max * 0.7;
+    const y = (max - (window.__criviaHoldPx || 0)) * 0.72;
     const l = window.lenis;
     if (l && l.scrollTo) l.scrollTo(y, { duration: 2.4 });
     else window.scrollTo({ top: y, behavior: "smooth" });
@@ -649,8 +940,8 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
     "aria-hidden": true, children: paths.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("path", { d }, i))
   });
-  var CriviaCtaPrimary = ({ onClick, children }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
-    type: "button", onClick, className: "crivia-cta crivia-cta--primary", children: [
+  var CriviaCtaPrimary = ({ onClick, children, compacto }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
+    type: "button", onClick, className: "crivia-cta crivia-cta--primary" + (compacto ? " crivia-cta--compacto" : ""), children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__spin", "aria-hidden": true }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__face", "aria-hidden": true }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "crivia-cta__inner", children: [
@@ -1536,13 +1827,20 @@ def aplicar_patches(raiz_modelo):
     js = aplicar(js, PATCHES_TEXTO, "app.js")
     js = aplicar(js, PATCHES_TIPO_IND, "app.js")
     js = trocar_trecho(js, HAND_INI, HAND_FIM, HAND_NOVO, "ind:overlay")
+    js = trocar_trecho(js, CAT_INI, CAT_FIM, CAT_NOVO, "cat:overlay")
     js = aplicar(js, PATCHES_HERO_FUNDO, "app.js")
     app.write_text(js, encoding="utf-8", newline="\n")
 
     css = ov / "assets" / "css" / "main.css"
-    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND,
+    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND + CSS_CAT,
                    encoding="utf-8", newline="\n")
     copiar_fontes_nexus(ov / "assets" / "fonts")
+    fotos = REPO / "assets" / "produtos"
+    if fotos.is_dir():
+        destino_fotos = ov / "assets" / "images" / "produtos"
+        destino_fotos.mkdir(parents=True, exist_ok=True)
+        for f in sorted(fotos.glob("*.jpg")):
+            shutil.copyfile(f, destino_fotos / f.name)
 
     idx = ov / "index.html"
     html = aplicar(idx.read_text(encoding="utf-8"), PATCHES_HTML, "index.html")

@@ -2480,3 +2480,135 @@ footer .h-px.bg-overlay-line { background: linear-gradient(90deg, rgba(0,29,61,.
 @media (prefers-reduced-motion: reduce) {
   .crivia-ind-faixa, .crivia-ind-passo { transition: none; }
 }
+
+/* ════ CRIVIA ════ catálogo: quatro grupos iguais; cada um é um baralho de cartas alinhadas que abre pela lateral ════ */
+.crivia-cat { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(247,251,254,.6) 0%, rgba(240,248,252,.78) 100%); }
+.crivia-cat__in { box-sizing: border-box; height: 100%; max-width: 82rem; margin: 0 auto; padding: 4.5rem 1.25rem 1rem;
+  display: flex; flex-direction: column; gap: .85rem; pointer-events: auto; }
+.crivia-cat__cab { display: flex; flex-direction: column; gap: .6rem; }
+.crivia-cat__cab-esq { display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
+.crivia-cat__selo { display: inline-flex; align-items: center; gap: .5rem; padding: .3rem .8rem; border-radius: 999px; font-size: .66rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: #2B4A6B; background: rgba(255,255,255,.75); border: 1px solid rgba(10,54,157,.16); }
+.crivia-cat__selo-ponto { width: 6px; height: 6px; border-radius: 50%; background: #F5B82E; box-shadow: 0 0 0 3px rgba(245,184,46,.28); }
+.crivia-cat__titulo { font-size: clamp(1.65rem, 3vw, 2.75rem); font-weight: 650; line-height: 1.05; letter-spacing: -.035em; color: #001D3D; }
+.crivia-cat__intro, .crivia-cat__metodo, .crivia-cat__metodo-bloco { display: none !important; }
+.crivia-cat__dica { margin: 0; font-size: .7rem; font-weight: 500; letter-spacing: .03em; color: #2B4A6B; opacity: .8; text-align: center; }
+
+/* grupos (celular: um embaixo do outro) */
+.crivia-grupos { flex: 1; min-height: 0; overflow-y: auto; margin: 0; padding: .3rem .15rem 1rem; list-style: none; display: flex; flex-direction: column; gap: 1.1rem; scrollbar-width: none; }
+.crivia-grupos::-webkit-scrollbar { display: none; }
+.crivia-g { --cw: 17rem; --min: 3rem; position: relative; }
+.crivia-g__rotulo { display: flex; align-items: center; gap: .6rem; min-height: 2rem; margin-bottom: .55rem; }
+.crivia-g__num { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 1.9rem; height: 1.9rem; padding: 0 .45rem; border-radius: 999px;
+  font-size: .74rem; font-weight: 700; letter-spacing: .06em; color: #fff; background: linear-gradient(135deg, #0A369D, #2F6BFF);
+  box-shadow: 0 6px 16px rgba(47,107,255,.34), inset 0 1px 0 rgba(255,255,255,.35); }
+.crivia-g__nome { min-width: 0; font-size: 1.2rem; font-weight: 700; line-height: 1.1; letter-spacing: -.03em; padding-bottom: .08em;
+  background: linear-gradient(90deg, #0A369D 0%, #1F5BFF 55%, #2F8CFF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.crivia-g__linha, .crivia-g__qtd { display: none; }
+.crivia-g__deck { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+
+/* carta: azul em degradê, escuro em cima e mais claro embaixo */
+.crivia-carta { position: relative; z-index: 1; flex: 0 0 auto; margin-top: -.55rem; }
+.crivia-carta:first-child { margin-top: 0; }
+.crivia-carta__quadro { position: relative; z-index: var(--z); box-sizing: border-box; width: 100%; max-height: 3.6rem; overflow: hidden; border-radius: 20px; border: 1.5px solid transparent; outline: none; cursor: pointer;
+  background: linear-gradient(180deg, #021033 0%, #07236B 42%, #1B4CC0 100%) padding-box, linear-gradient(140deg, #2F6BFF, #0A369D 36%, #12286E 64%, #1FCBDD) border-box;
+  box-shadow: 0 -6px 18px rgba(0,29,61,.2), 0 16px 34px rgba(0,29,61,.28), inset 0 1px 0 rgba(255,255,255,.1);
+  transition: max-height .55s cubic-bezier(.2,.8,.2,1), transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; }
+.crivia-carta.is-aberta { z-index: 80; }
+.crivia-carta.is-aberta .crivia-carta__quadro { max-height: 44rem; box-shadow: 0 30px 70px rgba(0,29,61,.4), inset 0 1px 0 rgba(255,255,255,.12); }
+.crivia-carta__corpo { box-sizing: border-box; padding: .8rem .9rem 1rem; display: flex; flex-direction: column; gap: .6rem; color: #fff; }
+.crivia-carta__topo { display: flex; align-items: center; gap: .6rem; min-height: 2rem; }
+.crivia-carta__icone { width: 2rem; height: 2rem; padding: .45rem; border-radius: 50%; flex: none; color: #BDE8FF; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.14); }
+.crivia-carta__icone svg, .crivia-carta__ph svg { width: 100%; height: 100%; display: block; }
+.crivia-carta__cod { font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #BDE8FF; flex: none; }
+.crivia-carta__nome-curto { font-size: .84rem; font-weight: 600; letter-spacing: -.01em; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.crivia-carta__chip { margin-left: auto; flex: none; max-width: 9.5rem; padding: .22rem .6rem; border-radius: 6px; font-size: .58rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #EAF2FF;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,.12); border: 1px solid rgba(190,215,255,.35); }
+/* local da imagem: grade fina sobre azul-escuro (aparece enquanto não há foto); a foto fica em assets/produtos/<código>.jpg */
+.crivia-carta__img { position: relative; aspect-ratio: 2 / 1; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); flex: none;
+  background: radial-gradient(120% 100% at 80% 0%, rgba(47,107,255,.35), transparent 60%), linear-gradient(160deg, #0B1F5C, #001D3D); }
+.crivia-carta__img::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(125,170,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(125,170,255,.12) 1px, transparent 1px); background-size: 22px 22px; }
+.crivia-carta__ph { position: absolute; left: 50%; top: 50%; width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; color: rgba(125,211,252,.55); }
+.crivia-carta__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.crivia-carta__img::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,54,157,.04), rgba(0,29,61,.32)), repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.14) 2px 4px); }
+.crivia-carta__titulo { font-size: 1.1rem; font-weight: 650; line-height: 1.2; letter-spacing: -.02em; color: #fff; }
+.crivia-carta__txt { font-size: .86rem; font-weight: 450; line-height: 1.5; color: #F2F7FF; }
+.crivia-carta__ent { font-size: .78rem; font-weight: 450; line-height: 1.5; color: #DCE8FF; }
+.crivia-carta__ent b { display: block; margin-bottom: .1rem; font-size: .6rem; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: #BDE8FF; }
+.crivia-carta__acao { display: flex; padding-top: .15rem; }
+.crivia-carta__vert { display: none; }
+.crivia-carta:not(.is-aberta) .crivia-carta__chip { display: none; }
+/* botão primário da hero, em versão mini para sobrar espaço ao texto */
+.crivia-cta--compacto { font-size: .72rem; }
+.crivia-cta--compacto.crivia-cta--primary .crivia-cta__inner { padding: .36rem .6rem .36rem .45rem; font-size: .7rem; gap: .4rem; }
+.crivia-cta--compacto .crivia-cta__icon { width: 1.2rem; height: 1.2rem; padding: .28rem; }
+.crivia-cta--compacto .crivia-cta__chip { width: 1.1rem; height: 1.1rem; padding: .26rem; margin-left: .05rem; }
+.crivia-carta__titulo, .crivia-carta__txt, .crivia-carta__ent, .crivia-carta__acao, .crivia-carta__img { transition: opacity .3s ease; }
+
+@media (min-width: 48rem) {
+  .crivia-cat__in { padding: 5.75rem 3rem 1.2rem; gap: .9rem; }
+  .crivia-cat__cab { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 3rem; }
+  .crivia-cat__intro { display: flex !important; max-width: 29rem; font-size: .84rem; font-weight: 450; line-height: 1.5; color: #2B4A6B; }
+  .crivia-cat__rodape { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: auto; }
+  .crivia-cat__metodo-bloco { display: flex !important; align-items: center; gap: 1rem; min-width: 0; }
+  .crivia-cat__metodo-sel { flex: none; padding: .5rem 1rem; border-radius: 999px; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; color: #fff;
+    background: linear-gradient(135deg, #0A369D, #2F6BFF); box-shadow: 0 8px 20px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.35); }
+  .crivia-cat__metodo { display: flex !important; max-width: 36rem; font-size: 1rem; font-weight: 550; line-height: 1.45; letter-spacing: -.01em; color: #001D3D; }
+  .crivia-cat__dica { font-size: .72rem; font-weight: 500; letter-spacing: .04em; color: #2B4A6B; opacity: .8; text-align: right; }
+  /* dois grupos em cima e dois embaixo (um em cada canto); a carta aberta cresce sobre a outra linha */
+  .crivia-grupos { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.7rem 2rem; overflow: visible; padding: 0; margin-top: 1.5rem; }
+  .crivia-g { --cw: 17rem; --min: 2.6rem; --chc: clamp(11rem, calc((100vh - 28rem) / 2), 17rem); --cho: clamp(26rem, calc(100vh - 17rem), 31rem); min-width: 0; }
+  .crivia-g.is-aberto { z-index: 20; }
+  .crivia-g__rotulo { min-height: 2.3rem; margin-bottom: .7rem; gap: .75rem; }
+  .crivia-g__num { min-width: 2.15rem; height: 2.15rem; font-size: .82rem; }
+  .crivia-g__nome { flex: 0 1 auto; font-size: clamp(1.15rem, 1.95vw, 1.6rem); display: block; white-space: nowrap; text-overflow: ellipsis; -webkit-line-clamp: unset; }
+  .crivia-g__linha { display: block; flex: 1 1 1.5rem; min-width: 1rem; height: 2px; border-radius: 2px; background: linear-gradient(90deg, rgba(47,107,255,.55), rgba(47,107,255,0)); }
+  .crivia-g__qtd { display: inline-block; flex: none; font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #2B4A6B; }
+  .crivia-g__deck { flex-direction: row; height: var(--chc); align-items: flex-start; }
+  .crivia-g:nth-child(n+3) .crivia-g__deck { align-items: flex-end; }
+  .crivia-carta { flex: 1 1 0px; min-width: 0; margin: 0 0 0 -.55rem; transition: flex .6s cubic-bezier(.2,.8,.2,1); }
+  .crivia-carta:first-child { margin-left: 0; }
+  .crivia-g__deck .crivia-carta.is-aberta { flex: 0 0 var(--cw); }
+  .crivia-carta__quadro { height: var(--chc); max-height: none; border-radius: 20px; transition: height .55s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease;
+    box-shadow: -10px 0 22px rgba(0,29,61,.2), 0 14px 32px rgba(0,29,61,.24), inset 0 1px 0 rgba(255,255,255,.1); }
+  .crivia-carta__quadro:hover, .crivia-carta__quadro:focus-visible { box-shadow: -10px 0 22px rgba(0,29,61,.2), 0 18px 40px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.1); }
+  .crivia-carta.is-aberta .crivia-carta__quadro { height: max(var(--cho), var(--hn, 0px)); max-height: none; box-shadow: 0 30px 70px rgba(0,29,61,.4), inset 0 1px 0 rgba(255,255,255,.12); }
+  .crivia-carta__corpo { position: absolute; left: 0; top: 0; width: var(--cw); padding: 1rem; }
+  .crivia-carta__nome-curto { display: none; }
+  .crivia-carta:not(.is-aberta) .crivia-carta__titulo, .crivia-carta:not(.is-aberta) .crivia-carta__txt, .crivia-carta:not(.is-aberta) .crivia-carta__ent,
+  .crivia-carta:not(.is-aberta) .crivia-carta__acao { opacity: 0; }
+  .crivia-carta.is-aberta .crivia-carta__titulo, .crivia-carta.is-aberta .crivia-carta__txt, .crivia-carta.is-aberta .crivia-carta__ent, .crivia-carta.is-aberta .crivia-carta__acao { transition-delay: .22s; }
+  /* faixa fechada: ícone e código no topo, pedaço da foto e o nome embaixo */
+  .crivia-carta__vert { display: -webkit-box; position: absolute; z-index: 2; left: .75rem; right: .4rem; bottom: .55rem; white-space: normal; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    font-size: .64rem; font-weight: 600; line-height: 1.25; letter-spacing: 0; color: rgba(240,246,255,.96); transition: opacity .3s ease; }
+  .crivia-carta.is-aberta .crivia-carta__vert { opacity: 0; }
+  .crivia-carta__corpo { gap: .5rem; }
+  .crivia-carta__topo { min-height: 1.8rem; }
+}
+@media (min-width: 48rem) and (max-width: 69.99rem) {
+  .crivia-g { --cw: 15.5rem; --min: 2.2rem; }
+  .crivia-g__qtd { display: none; }
+  .crivia-g__rotulo { min-height: 2.7rem; }
+  .crivia-g__nome { font-size: 1.12rem; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow: clip; }
+  .crivia-grupos { gap: .9rem 1.2rem; }
+  .crivia-cat__in { padding-left: 2rem; padding-right: 2rem; }
+}
+@media (min-width: 70rem) and (min-height: 900px) {
+  .crivia-g { --cw: 19rem; --min: 3rem; }
+  .crivia-carta__titulo { font-size: 1.15rem; }
+  .crivia-carta__txt { font-size: .88rem; }
+  .crivia-carta__ent { font-size: .8rem; }
+  .crivia-carta__vert { font-size: .72rem; }
+}
+@media (min-width: 48rem) and (max-height: 760px) {
+  .crivia-cat__in { padding-top: 5rem; padding-bottom: .8rem; gap: .6rem; }
+  .crivia-cat__titulo { font-size: clamp(1.5rem, 2.4vw, 2.1rem); }
+  .crivia-g { --chc: clamp(9.5rem, calc((100vh - 23.5rem) / 2), 17rem); }
+  .crivia-cat__selo { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crivia-g, .crivia-carta, .crivia-carta__quadro, .crivia-carta__titulo, .crivia-carta__txt, .crivia-carta__ent, .crivia-carta__acao, .crivia-carta__vert { transition: none; }
+}

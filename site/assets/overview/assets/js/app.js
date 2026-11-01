@@ -48522,7 +48522,8 @@ void main() {
     if (comDados) {
       const nome = document.querySelector('input[aria-label="Nome"]')?.value ?? "";
       const email = document.querySelector('input[aria-label="E-mail"]')?.value ?? "";
-      corpo = `Nome: ${nome}\nE-mail: ${email}\n\n`;
+      const prod = window.__criviaProduto ? `Produto de interesse: ${window.__criviaProduto}\n` : "";
+      corpo = `Nome: ${nome}\nE-mail: ${email}\n${prod}\n`;
     }
     return `mailto:${CRIVIA_EMAIL}?subject=${encodeURIComponent("Solicitação de Diagnóstico")}&body=${encodeURIComponent(corpo)}`;
   };
@@ -50952,6 +50953,132 @@ void main() {
     { num: "03", desc: "Custos, Planejamento e Medições — orçamento, planejamento e medições, com premissas que permitem conferir." },
     { num: "04", desc: "Engenharia de Decisão com IA — preparamos a transição para a IA ou corrigimos o que falha depois dela." }
   ];
+  var CRIVIA_ICONES = {
+    clipboard: ["M9 3.5h6v3H9z", "M7 5H6.2A1.2 1.2 0 0 0 5 6.2v13.6A1.2 1.2 0 0 0 6.2 21h11.6a1.2 1.2 0 0 0 1.2-1.2V6.2A1.2 1.2 0 0 0 17.8 5H17", "M8.5 11.5h7", "M8.5 15.5h4.5"],
+    layers: ["M12 3 3 8l9 5 9-5-9-5z", "M3 12.5l9 5 9-5", "M3 17l9 5 9-5"],
+    pin: ["M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z", "M12 12.2a2.7 2.7 0 1 0 0-5.4 2.7 2.7 0 0 0 0 5.4z"],
+    calc: ["M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z", "M8 7h8", "M8.5 12h.01", "M12 12h.01", "M15.5 12h.01", "M8.5 16h.01", "M12 16h.01", "M15.5 16h.01"],
+    scale: ["M12 3v18", "M5 7h14", "M5 7l-3 7a3 3 0 0 0 6 0L5 7z", "M19 7l-3 7a3 3 0 0 0 6 0l-3-7z", "M8 21h8"],
+    calendar: ["M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z", "M4 10h16", "M8 3v4", "M16 3v4"],
+    rotate: ["M20 12a8 8 0 1 1-2.4-5.7", "M20 4v5h-5"],
+    pulse: ["M3 12h4l3-8 4 16 3-8h4"],
+    ruler: ["M3 17 17 3l4 4L7 21l-4-4z", "M7.5 12.5l2 2", "M10.5 9.5l2 2", "M13.5 6.5l2 2"],
+    eye: ["M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z", "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"],
+    check: ["M3.5 4h17a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-.5.5h-17a.5.5 0 0 1-.5-.5v-15a.5.5 0 0 1 .5-.5z", "M8 12.5l3 3 5-6"],
+    folder: ["M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-12z"],
+    video: ["M3 6.5h12a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 16V8A1.5 1.5 0 0 1 3 6.5z", "M16.5 10l5-2.5v9l-5-2.5"],
+    chip: ["M12 3v3", "M12 18v3", "M3 12h3", "M18 12h3", "M7 7h10v10H7z", "M10 10h4v4h-4z"]
+  };
+  var CRIVIA_PRODUTOS = [
+    { cod: "P01", ico: "clipboard", nome: "Diagnóstico de obra ou contrato", txt: "Compreender por que o projeto, a obra ou o contrato não entrega o resultado esperado, ou esclarecer uma situação técnica ainda indefinida.", ent: "Relatório de diagnóstico · Registro de evidências · Matriz de impedimentos, riscos e pendências · Síntese de decisões e reunião de devolutiva" },
+    { cod: "P02", ico: "layers", nome: "Análise crítica de projetos", txt: "Os projetos recebidos estão completos e coerentes para a decisão que preciso tomar?", ent: "Relatório de análise · Matriz de interfaces · Pranchas comentadas · Registro de respostas e pendências" },
+    { cod: "P03", ico: "pin", nome: "Avaliação preliminar de terreno", txt: "Quais condições deste terreno preciso conhecer antes de contratar projetos ou construir?", ent: "Parecer preliminar · Registro de visita · Matriz de informações e estudos · Roteiro de contratação dos estudos" },
+    { cod: "P04", ico: "calc", nome: "Orçamento e análise de custos", txt: "Quanto preciso prever e quais itens explicam o custo apresentado?", ent: "Planilha orçamentária · Memória de quantitativos · Relatório de premissas · Análise dos itens relevantes" },
+    { cod: "P05", ico: "scale", nome: "Comparação técnica de propostas", txt: "Qual proposta atende ao que preciso e o que está faltando em cada preço?", ent: "Quadro comparativo · Lista de esclarecimentos · Relatório de recomendação · Anexo de escopo técnico" },
+    { cod: "P06", ico: "calendar", nome: "Planejamento de obra e recursos", txt: "Qual sequência, prazo e recurso preciso pactuar com quem vai executar?", ent: "Estrutura de atividades e cronograma físico · Cronograma físico-financeiro · Histogramas · Plano de suprimentos e controle" },
+    { cod: "P07", ico: "rotate", nome: "Plano de recuperação de obra", txt: "Decidir o que precisa mudar e qual caminho cabe nos recursos, nas restrições e nos compromissos existentes.", ent: "Proposta técnica de solução · Plano de ação · Cronograma ou programação de recursos · Análise de custos, quando contratada" },
+    { cod: "P08", ico: "pulse", nome: "Análise de processo e produtividade", txt: "Onde o processo perde tempo e recursos e qual mudança merece ser testada?", ent: "Mapa do processo · Base de observações · Estudo comparativo · Plano de teste" },
+    { cod: "P09", ico: "ruler", nome: "Medições e alterações contratuais", txt: "Como demonstrar o que foi executado e organizar as diferenças de escopo e pagamento?", ent: "Boletim de medição · Memória e evidências · Registro de alterações · Dossiê técnico" },
+    { cod: "P10", ico: "eye", nome: "Acompanhamento técnico das decisões", txt: "Verificar se as providências estão ocorrendo, se produzem o efeito esperado e o que precisa ser revisto.", ent: "Relatório periódico · Painel de acompanhamento · Registro de visitas e evidências · Registro de decisões e mudanças" },
+    { cod: "P11", ico: "check", nome: "Vistoria para recebimento", txt: "Quais pendências preciso registrar antes de receber a obra ou uma etapa?", ent: "Relatório de vistoria · Registro fotográfico · Lista de pendências" },
+    { cod: "P12", ico: "folder", nome: "Organização e conferência do data book", txt: "Quais documentos da obra devem ser reunidos e o que ainda falta entregar?", ent: "Índice mestre · Pasta digital organizada · Matriz de lacunas · Relatório de conferência" },
+    { cod: "IA-1", ico: "chip", nome: "Preparação da transição para IA", txt: "A empresa vai ampliar o uso de IA e precisa definir como funções, competências, verificações e interfaces mudarão.", ent: "Plano de Transição e Integração do Trabalho com IA" },
+    { cod: "IA-2", ico: "pulse", nome: "Diagnóstico e ajustes após a adoção", txt: "Ferramentas já em uso, mas persistem erros, retrabalho, decisões inadequadas, sobrecarga ou desencontro entre áreas.", ent: "Relatório de Diagnóstico e Ajustes do Trabalho com IA · Plano de ação editável" },
+    { cod: "CV01", ico: "video", nome: "Visualização e comunicação técnica com IA e 3D", txt: "Tornar compreensíveis uma situação, um projeto, uma solução ou uma proposta técnico-comercial, por meio de imagens, representações 3D, apresentações e vídeos.", ent: "Vídeos explicativos de engenharia · Apresentações visuais de projetos e soluções · Propostas técnico-comerciais visuais" }
+  ];
+  var CRIVIA_GRUPOS = [
+    { id: "g1", nome: "Diagnóstico e recuperação", curto: "Diagnóstico", cods: ["P01", "P07", "P08", "P10"] },
+    { id: "g2", nome: "Projetos, terreno e propostas", curto: "Projetos", cods: ["P02", "P03", "P05"] },
+    { id: "g3", nome: "Custos, planejamento e medições", curto: "Custos", cods: ["P04", "P06", "P09", "P11", "P12"] },
+    { id: "g4", nome: "Portfólio de IA", curto: "IA", cods: ["IA-1", "IA-2", "CV01"] }
+  ];
+  var CriviaCarta = ({ p, ordem, total, aberto, pedir, fixar, grupo }) => {
+    const abre = aberto === p.cod;
+    const corpoRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const el = corpoRef.current;
+      if (!el || !el.parentElement) return;
+      const q = el.parentElement;
+      const medir = () => q.style.setProperty("--hn", (el.scrollHeight + 8) + "px");
+      medir();
+      if (typeof ResizeObserver === "undefined") return;
+      const ro = new ResizeObserver(medir);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealItem, { tag: "li", act: "wave", index: ordem, count: total, delay: 200, className: "crivia-carta" + (abre ? " is-aberta" : ""), children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", {
+      className: "crivia-carta__quadro",
+      style: { "--z": ordem + 1 },
+      tabIndex: 0,
+      "aria-expanded": abre,
+      onPointerEnter: (e) => { if (e.pointerType === "mouse") pedir(p.cod); },
+      onFocus: () => fixar(p.cod),
+      onClick: (e) => { if (e.target.closest && e.target.closest("button")) return; fixar(abre ? null : p.cod); },
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { ref: corpoRef, className: "crivia-carta__corpo", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-carta__topo", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__icone", children: criviaIcon(CRIVIA_ICONES[p.ico]) }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-carta__cod", children: p.cod }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__nome-curto", children: p.nome }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-carta__chip", children: grupo })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-carta__img", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__ph", "aria-hidden": true, children: criviaIcon(CRIVIA_ICONES[p.ico]) }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("img", { src: "assets/images/produtos/" + p.cod + ".jpg", alt: "", loading: "lazy", decoding: "async", onError: (e) => { e.currentTarget.style.display = "none"; } })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { className: "crivia-carta__titulo", children: p.nome }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-carta__txt", children: p.txt }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { className: "font-geist crivia-carta__ent", children: [/* @__PURE__ */ (0, import_jsx_runtime20.jsx)("b", { children: "Você recebe" }), p.ent] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-carta__acao", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCtaPrimary, { compacto: true, onClick: () => { window.__criviaProduto = p.cod + " — " + p.nome; CRIVIA_IR_CENARIO(); }, children: "Apresentar meu cenário" }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__vert", "aria-hidden": true, children: p.nome })
+      ]
+    }) });
+  };
+  var CriviaGrupo = ({ g, gi, base, total, aberto, pedir, fixar }) => {
+    const itens = g.cods.map((c) => CRIVIA_PRODUTOS.find((p) => p.cod === c));
+    const abre = itens.some((p) => p.cod === aberto);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("li", { className: "crivia-g" + (abre ? " is-aberto" : ""), style: { "--n": itens.length }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-g__rotulo", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-g__num", children: ["0", gi + 1] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-g__nome", children: g.nome }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-g__linha", "aria-hidden": true }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-g__qtd", children: [itens.length, " produtos"] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { className: "crivia-g__deck", children: itens.map((p, k) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCarta, { p, ordem: base + k, total, aberto, pedir, fixar, grupo: g.curto }, p.cod)) })
+    ] });
+  };
+  var CriviaCatalogo = () => {
+    const [aberto, setAberto] = (0, import_react35.useState)(null);
+    const timer = (0, import_react35.useRef)(0);
+    const pedir = (cod) => { clearTimeout(timer.current); timer.current = setTimeout(() => setAberto(cod), cod === null ? 140 : 70); };
+    const fixar = (cod) => { clearTimeout(timer.current); setAberto(cod); };
+    let base = 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-cat", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__in", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("header", { className: "crivia-cat__cab", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__cab-esq", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-geist crivia-cat__selo", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-cat__selo-ponto", "aria-hidden": true }),
+            "Catálogo de produtos"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "h2", variant: "heading", act: "wave", className: "crivia-cat__titulo", children: "Produtos para cada decisão." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 160, className: "font-geist crivia-cat__intro", children: "Os 12 produtos de engenharia estão disponíveis conforme a necessidade, o objeto e a capacidade técnica. Podem ser contratados individualmente, combinados ou em ciclos definidos; a proposta discrimina as entregas incluídas." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { "data-lenis-prevent": true, className: "crivia-grupos", onPointerLeave: (e) => { if (e.pointerType === "mouse") pedir(null); }, children: CRIVIA_GRUPOS.map((g, gi) => {
+        const b = base;
+        base += g.cods.length;
+        return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaGrupo, { g, gi, base: b, total: CRIVIA_PRODUTOS.length, aberto, pedir, fixar }, g.id);
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__rodape", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__metodo-bloco", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-cat__metodo-sel", children: "Método Sentinela" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 320, className: "font-geist crivia-cat__metodo", children: "Observar, confrontar, integrar, propor e apoiar. Primeiro a referência, depois o campo, depois o confronto entre os dois." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-cat__dica", children: "Passe o cursor ou toque em uma carta para abri-la." })
+      ] })
+    ] }) });
+  };
   var WaveOverlay = () => {
     const rootRef = (0, import_react35.useRef)(null);
     const contentRef = (0, import_react35.useRef)(null);
@@ -50974,41 +51101,7 @@ void main() {
       raf3 = requestAnimationFrame(tick2);
       return () => cancelAnimationFrame(raf3);
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { ref: rootRef, className: "pointer-events-none absolute inset-0 select-none font-display text-overlay-ink", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { ref: contentRef, className: "absolute inset-0", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("h2", { className: "absolute left-[1.25rem] right-[1.25rem] top-[4.5rem] flex flex-col items-end text-right text-[1.75rem] font-extralight uppercase leading-[1.1] md:left-auto md:right-[1.875rem] md:top-[4.75rem] md:whitespace-nowrap md:text-[4rem]", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "span", variant: "heading", act: "wave", children: "Quatro frentes" }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "span", variant: "heading", act: "wave", delayIn: 90, children: "de trabalho" })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "absolute bottom-[1.25rem] left-[1.25rem] right-[1.25rem] top-[10.5rem] flex flex-col md:bottom-[1.875rem] md:left-auto md:right-[1.875rem] md:top-[14.9375rem] md:w-[41.625rem] md:max-w-[calc(100vw-3.75rem)]", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "md:w-[20rem] md:max-w-full", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-          RevealText,
-          {
-            tag: "p",
-            variant: "copy",
-            act: "wave",
-            delayIn: 140,
-            className: "text-[0.8125rem] font-light leading-[1.15] md:text-[1rem] md:leading-[1.1]",
-            children: "Método Sentinela: observar, confrontar, integrar, propor e apoiar. Primeiro a referência, depois o campo, depois o confronto entre os dois."
-          }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("ul", { className: "mt-[1.25rem] grid flex-1 grid-cols-2 grid-rows-2 gap-[0.5rem] md:mt-[2.125rem] md:gap-[1rem]", children: WORK.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
-          RevealItem,
-          {
-            tag: "li",
-            act: "wave",
-            index: i,
-            count: WORK.length,
-            delay: 260,
-            className: "flex flex-col justify-between bg-overlay-ink p-[0.625rem] leading-[1.2] text-overlay-solid md:p-[1rem]",
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "text-[0.75rem] font-normal md:text-[1rem]", children: item.num }),
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-[0.75rem] font-normal uppercase md:text-[1rem]", children: item.desc })
-            ]
-          },
-          item.num
-        )) })
-      ] })
-    ] }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { ref: rootRef, className: "pointer-events-none absolute inset-0 select-none font-display text-overlay-ink", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { ref: contentRef, className: "absolute inset-0", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCatalogo, {}) }) });
   };
 
   // orig/src/components/common/hero-overlay/live-dot.tsx
@@ -51326,7 +51419,7 @@ var CRIVIA_IR_CENARIO = () => {
   };
   var CRIVIA_IR_METODO = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const y = max * 0.7;
+    const y = (max - (window.__criviaHoldPx || 0)) * 0.72;
     const l = window.lenis;
     if (l && l.scrollTo) l.scrollTo(y, { duration: 2.4 });
     else window.scrollTo({ top: y, behavior: "smooth" });
@@ -51335,8 +51428,8 @@ var CRIVIA_IR_CENARIO = () => {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
     "aria-hidden": true, children: paths.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("path", { d }, i))
   });
-  var CriviaCtaPrimary = ({ onClick, children }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
-    type: "button", onClick, className: "crivia-cta crivia-cta--primary", children: [
+  var CriviaCtaPrimary = ({ onClick, children, compacto }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
+    type: "button", onClick, className: "crivia-cta crivia-cta--primary" + (compacto ? " crivia-cta--compacto" : ""), children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__spin", "aria-hidden": true }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__face", "aria-hidden": true }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "crivia-cta__inner", children: [
