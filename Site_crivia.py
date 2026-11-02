@@ -447,7 +447,7 @@ HAND_NOVO = r"""  var HandOverlay = () => {
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("ol", { className: "crivia-ind-seq", "aria-label": "Sintomas, causas, decisão", children: passos.map((nome, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { tag: "li", act: "hand", index: i, count: passos.length, delay: 320, className: "crivia-ind-passo" + (i === passos.length - 1 ? " crivia-ind-passo--ouro" : ""), children: nome }, nome)) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind__acao", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealText, { tag: "p", variant: "copy", act: "hand", delayIn: 640, className: "font-geist crivia-ind-nota", children: "O formulário reúne as informações iniciais para compreender o contexto." })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind-faixa", children: [
@@ -934,6 +934,7 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
     if (l && l.scrollTo) l.scrollTo(max, { duration: 3.4, onComplete: foco });
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
+  var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
   var CRIVIA_IR_METODO = () => CRIVIA_NAV["Método"]();
   var criviaIcon = (paths) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("svg", {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
@@ -1167,7 +1168,7 @@ SOBRE_JS = r"""  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + paine
     "Decisão com IA": () => CRIVIA_NAV["Produtos"](),
     "Diagnóstico Sentinela": () => CRIVIA_NAV["Produtos"](),
     "Sobre": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.78, 3); },
-    "Fale conosco": () => CRIVIA_IR_CENARIO(),
+    "Fale conosco": () => CRIVIA_IR_CENARIO_GERAL(),
     "Método": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.22, 3); }
   };
   document.addEventListener("click", (e) => {
@@ -1342,7 +1343,7 @@ SOBRE_JS = r"""  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + paine
           criviaH("p", rev(3, "crivia-metodo__frase"), "Compreender antes de decidir."),
           criviaH("p", rev(4, "crivia-metodo__corpo"), "Em projetos e operações complexas, atrasos, custos acima do previsto e conflitos podem ser sintomas de uma situação ainda não compreendida. O Método Sentinela orienta a leitura da realidade, o confronto entre referências e evidências e a integração das interfaces para identificar causas sustentadas e apoiar caminhos compatíveis com as condições reais."),
           criviaH("div", rev(5, "crivia-metodo__acoes"),
-            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }),
+            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }),
             criviaH("button", { type: "button", className: "crivia-metodo__link", onClick: CRIVIA_IR_MOVIMENTOS },
               "Conhecer os movimentos do método",
               criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true }, criviaH("path", { d: "M12 5v14" }), criviaH("path", { d: "M6 13l6 6 6-6" })))),
@@ -1656,147 +1657,6 @@ PATCHES_SOBRE = [
     ("sobre:ato-final", "    tree: [0.94, 1]", "    tree: [0.9, 1]", 1),
 ]
 
-FITAS_JS = r"""  // ── CRIVIA ── fitas de partículas: cada dobra chega por uma fita que se acalma e se dissolve ──
-  var CRIVIA_FITAS_EVENTOS = [
-    { dom: "p", a: 0.27, b: 0.36, c: 0.53, dir: 1, y: 0.7, seed: 11, amp: 1 },
-    { dom: "p", a: 0.5, b: 0.575, c: 0.625, dir: -1, y: 0.3, seed: 23, amp: 0.85 },
-    { dom: "t", a: 0.2, b: 0.44, c: 0.72, dir: 1, y: 0.78, seed: 37, amp: 0.9 },
-    { dom: "p", a: 0.8, b: 0.89, c: 0.985, dir: -1, y: 0.5, seed: 41, amp: 1 }
-  ];
-  var CRIVIA_FITAS_COR = ["56,209,255", "47,107,255", "10,54,157", "120,226,255"];
-  var criviaPrng = (s) => () => {
-    s |= 0; s = s + 0x6D2B79F5 | 0;
-    let t = Math.imul(s ^ s >>> 15, 1 | s);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-  var criviaSm = (x) => { x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); };
-  var criviaTornado = (ctx, W, H, T, e, q, mob) => {
-    const NF = mob ? 4 : 6, N = mob ? 170 : 340;
-    const cx = W * 0.5;
-    const Rmax = Math.min(W * 0.4, H * 0.62);
-    const abre = criviaSm((q - 0.5) / 0.5);
-    const alt = 0.2 + 0.78 * criviaSm(q / 0.4);
-    for (let f = 0; f < NF; f++) {
-      const ph = f / NF * 6.2832;
-      ctx.fillStyle = "rgb(" + CRIVIA_FITAS_COR[f % 4] + ")";
-      for (let k = 0; k < N; k++) {
-        const h = Math.sin((f * 131 + k * 17.13) * 12.9898) * 43758.5453;
-        const rnd = h - Math.floor(h);
-        const h2 = Math.sin((f * 71 + k * 5.7) * 78.233) * 12345.678;
-        const rnd2 = h2 - Math.floor(h2);
-        const s = (k / N + T * 0.03) % 1;
-        const funil = 0.1 + 0.9 * Math.pow(s, 1.5);
-        const r = Rmax * funil * (1 + abre * 0.8) * (1 + (rnd2 - 0.5) * 0.035);
-        const th = ph + s * 13 - T * 0.9 + (rnd - 0.5) * 0.16;
-        const bal = Math.sin(T * 0.5 + s * 3 + ph) * W * 0.025 * (1 - s);
-        const x = cx + bal + r * Math.cos(th);
-        const y = H * (0.99 - alt * s) + (rnd2 - 0.5) * 7;
-        const prof = (Math.sin(th) + 1) / 2;
-        const borda = criviaSm(s / 0.08) * (1 - criviaSm((s - 0.86) / 0.14));
-        const al = e * borda * (0.25 + 0.75 * prof);
-        if (al < 0.02) continue;
-        ctx.globalAlpha = Math.min(0.85, al);
-        ctx.beginPath();
-        ctx.arc(x, y, (0.6 + 1.5 * prof) * (0.6 + rnd * 0.7), 0, 6.2832);
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-  };
-  var CriviaFitas = () => {
-    const ref = (0, import_react35.useRef)(null);
-    (0, import_react35.useEffect)(() => {
-      const cv = ref.current;
-      const ctx = cv && cv.getContext("2d");
-      if (!cv || !ctx) return;
-      const reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const fios = CRIVIA_FITAS_EVENTOS.map((ev) => {
-        const r = criviaPrng(ev.seed);
-        return [0, 1, 2, 3].map((j) => ({
-          ph: r() + j * 0.19,
-          p: Array.from({ length: 300 }, () => ({ u: r(), l: r() * 2 - 1, z: r(), j: r() - 0.5, f: r() }))
-        }));
-      });
-      let W = 0, H = 0, dpr = 1, raf = 0, limpo = false, chave = "";
-      const medir = () => {
-        dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2);
-        W = window.innerWidth; H = window.innerHeight;
-        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-        chave = "";
-      };
-      medir();
-      window.addEventListener("resize", medir);
-      const tick = (ms) => {
-        raf = requestAnimationFrame(tick);
-        const y = window.scrollY;
-        const max = document.documentElement.scrollHeight - H;
-        const hold = window.__criviaHoldPx || 0;
-        if (max <= 0 || !hold) return;
-        const p = criviaLogico(y, max);
-        const t = (y - criviaS0(max)) / hold;
-        const ativos = [];
-        CRIVIA_FITAS_EVENTOS.forEach((ev, i) => {
-          const v = ev.dom === "t" ? t : p;
-          if (v <= ev.a || v >= ev.c) return;
-          const e = v < ev.b ? criviaSm((v - ev.a) / (ev.b - ev.a)) : 1 - criviaSm((v - ev.b) / (ev.c - ev.b));
-          ativos.push([i, e, (v - ev.a) / (ev.c - ev.a)]);
-        });
-        if (!ativos.length) {
-          if (!limpo) { ctx.clearRect(0, 0, cv.width, cv.height); limpo = true; }
-          return;
-        }
-        limpo = false;
-        const T = reduz ? 3 : ms / 1000;
-        const mob = W < 768;
-        const n = mob ? 150 : 300;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, W, H);
-        for (const [i, e, q] of ativos) {
-          const ev = CRIVIA_FITAS_EVENTOS[i];
-          if (ev.tornado) { criviaTornado(ctx, W, H, T, e, q, mob); continue; }
-          const cabeca = -0.18 + q * 1.5;
-          const amp = 0.2 * ev.amp * (1 - 0.55 * q);
-          const N = mob ? 70 : 120;
-          ctx.lineCap = "round";
-          fios[i].forEach((fio, j) => {
-            const yc = ev.y + (j - 1.5) * 0.045;
-            for (const lado of [1, -1]) {
-              let ant = null;
-              for (let k = 0; k <= N; k++) {
-                const s = k / N;
-                const dist = cabeca - s;
-                const vis = dist <= 0 ? 0 : criviaSm(dist / 0.1) * (1 - criviaSm((dist - 0.22) / 0.5));
-                const onda = Math.sin(6.2832 * (1.3 * s + fio.ph + T * 0.12)) * 0.5 + Math.sin(6.2832 * (2.9 * s - fio.ph * 1.7 - T * 0.17)) * 0.22;
-                const larg = 0.05 * H * Math.cos(6.2832 * (1.6 * s + fio.ph * 0.7 + T * 0.1)) * (0.6 + 0.4 * e);
-                const px = ((ev.dir > 0 ? s : 1 - s) * 1.1 - 0.05) * W;
-                const py = (yc + onda * amp) * H + lado * larg;
-                if (ant && vis > 0.01) {
-                  ctx.strokeStyle = "rgba(" + CRIVIA_FITAS_COR[j] + "," + Math.min(0.6, e * vis * 0.7).toFixed(3) + ")";
-                  ctx.lineWidth = j % 2 ? 1.1 : 1.6;
-                  ctx.beginPath(); ctx.moveTo(ant[0], ant[1]); ctx.lineTo(px, py); ctx.stroke();
-                }
-                ant = [px, py];
-              }
-            }
-          });
-        }
-        ctx.globalAlpha = 1;
-      };
-      raf = requestAnimationFrame(tick);
-      return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", medir); };
-    }, []);
-    return criviaH("canvas", { ref, "aria-hidden": true, style: { position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 4 } });
-  };
-"""
-
-PATCHES_FITAS = [
-    ("fitas:componente", "  var HomeView = () => {", FITAS_JS + "  var HomeView = () => {", 1),
-    ("fitas:no-palco", "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Grain, {}),\n",
-     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Grain, {}),\n"
-     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CriviaFitas, {}),\n", 1),
-]
-
 PATCHES_NAV = [
     ("nav:fale-conosco", """            children: CTA
           }
@@ -1846,7 +1706,7 @@ BOTOES_INI = ('            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealI
 BOTOES_FIM = "\n          ] })\n        ] })\n      ] })\n    ] });\n  };\n\n  // orig/src/components/common/hero-overlay/hand-overlay.tsx"
 BOTOES_NOVOS = (
     '            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 0, count: 2, delay: 2300, className: "flex-none", '
-    'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }) }),\n'
+    'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),\n'
     '            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 1, count: 2, delay: 2300, className: "flex-none", '
     'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaSecondary, { onClick: CRIVIA_IR_METODO, children: "Conhecer o método" }) })')
 

@@ -50924,7 +50924,7 @@ void main() {
             }
           ) }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "pointer-events-auto flex shrink-0 flex-wrap items-center gap-[0.75rem] md:flex-nowrap md:gap-[1rem]", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 0, count: 2, delay: 2300, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 0, count: 2, delay: 2300, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),
             /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 1, count: 2, delay: 2300, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaSecondary, { onClick: CRIVIA_IR_METODO, children: "Conhecer o método" }) })
           ] })
         ] })
@@ -50953,7 +50953,7 @@ void main() {
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("ol", { className: "crivia-ind-seq", "aria-label": "Sintomas, causas, decisão", children: passos.map((nome, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { tag: "li", act: "hand", index: i, count: passos.length, delay: 320, className: "crivia-ind-passo" + (i === passos.length - 1 ? " crivia-ind-passo--ouro" : ""), children: nome }, nome)) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind__acao", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealText, { tag: "p", variant: "copy", act: "hand", delayIn: 640, className: "font-geist crivia-ind-nota", children: "O formulário reúne as informações iniciais para compreender o contexto." })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind-faixa", children: [
@@ -51449,6 +51449,7 @@ var CRIVIA_IR_CENARIO = () => {
     if (l && l.scrollTo) l.scrollTo(max, { duration: 3.4, onComplete: foco });
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
+  var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
   var CRIVIA_IR_METODO = () => CRIVIA_NAV["Método"]();
   var criviaIcon = (paths) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("svg", {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
@@ -51507,7 +51508,7 @@ var CRIVIA_IR_CENARIO = () => {
     "Decisão com IA": () => CRIVIA_NAV["Produtos"](),
     "Diagnóstico Sentinela": () => CRIVIA_NAV["Produtos"](),
     "Sobre": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.78, 3); },
-    "Fale conosco": () => CRIVIA_IR_CENARIO(),
+    "Fale conosco": () => CRIVIA_IR_CENARIO_GERAL(),
     "Método": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.22, 3); }
   };
   document.addEventListener("click", (e) => {
@@ -51682,7 +51683,7 @@ var CRIVIA_IR_CENARIO = () => {
           criviaH("p", rev(3, "crivia-metodo__frase"), "Compreender antes de decidir."),
           criviaH("p", rev(4, "crivia-metodo__corpo"), "Em projetos e operações complexas, atrasos, custos acima do previsto e conflitos podem ser sintomas de uma situação ainda não compreendida. O Método Sentinela orienta a leitura da realidade, o confronto entre referências e evidências e a integração das interfaces para identificar causas sustentadas e apoiar caminhos compatíveis com as condições reais."),
           criviaH("div", rev(5, "crivia-metodo__acoes"),
-            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }),
+            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }),
             criviaH("button", { type: "button", className: "crivia-metodo__link", onClick: CRIVIA_IR_MOVIMENTOS },
               "Conhecer os movimentos do método",
               criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true }, criviaH("path", { d: "M12 5v14" }), criviaH("path", { d: "M6 13l6 6 6-6" })))),
