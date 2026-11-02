@@ -45263,6 +45263,33 @@ void main() {
     });
     observer.observe(document.documentElement);
   };
+  var CRIVIA_SOBRE_EM = 0.63;
+  var CRIVIA_SOBRE_VH = 5.6;
+  var CRIVIA_METODO_VH = 3.4;
+  var criviaS0 = (max) => CRIVIA_SOBRE_EM * Math.max(1, max - (window.__criviaHoldPx || 0) - (window.__criviaMetodoPx || 0));
+  var criviaLogico = (y, max) => {
+    const hold = Math.round(window.innerHeight * CRIVIA_SOBRE_VH);
+    const hold2 = Math.round(window.innerHeight * CRIVIA_METODO_VH);
+    window.__criviaHoldPx = hold;
+    window.__criviaMetodoPx = hold2;
+    const base = Math.max(1, max - hold - hold2);
+    const s0 = CRIVIA_SOBRE_EM * base;
+    if (y <= s0) return clamp01(y / base);
+    if (y <= s0 + hold) {
+      const t = (y - s0) / hold;
+      const b = t < 0.12 ? 0 : t < 0.3 ? (t - 0.12) / 0.18 : t < 0.62 ? 1 - (t - 0.3) / 0.32 : 0;
+      return CRIVIA_SOBRE_EM - 0.075 * b * b * (3 - 2 * b);
+    }
+    if (y <= s0 + hold + hold2) return CRIVIA_SOBRE_EM;
+    return clamp01((y - hold - hold2) / base);
+  };
+  var criviaCatalogoFator = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const hold = window.__criviaHoldPx || 0;
+    if (max <= 0 || !hold) return 1;
+    const t = (window.scrollY - criviaS0(max)) / hold;
+    return t <= 0.05 ? 1 : t >= 0.15 ? 0 : +(1 - (t - 0.05) / 0.1).toFixed(3);
+  };
   var cachedProgress = 0;
   var cachedAt = null;
   var getScrollProgress = () => {
@@ -45271,7 +45298,7 @@ void main() {
     const stamp = typeof now === "number" ? now : null;
     if (stamp !== null && stamp === cachedAt) return cachedProgress;
     const max = scrollMax < 0 ? measure() : scrollMax;
-    cachedProgress = max > 0 ? clamp01(window.scrollY / max) : 0;
+    cachedProgress = max > 0 ? criviaLogico(window.scrollY, max) : 0;
     cachedAt = stamp;
     return cachedProgress;
   };
@@ -48513,8 +48540,8 @@ void main() {
 
   // orig/src/components/common/hero-overlay/site-header.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var LEFT_NAV = ["Início", "Produtos", "Método"];
-  var RIGHT_NAV = ["Decisão com IA", "Sobre"];
+  var LEFT_NAV = ["Início", "Produtos", "Método", "Sobre"];
+  var RIGHT_NAV = ["Decisão com IA"];
   var BRAND = "CRIVIA";
   var CRIVIA_EMAIL = "contato@crivia.eng.br";
   var CRIVIA_MAILTO = (comDados) => {
@@ -48564,9 +48591,10 @@ void main() {
             className: "whitespace-nowrap underline decoration-from-font underline-offset-2 transition-opacity hover:opacity-70",
             children: CTA
           }
-        )
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: "#", className: "crivia-nav-fale", children: "Fale conosco" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(MobileMenu, { items: [...LEFT_NAV, ...RIGHT_NAV], cta: CTA })
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(MobileMenu, { items: [...LEFT_NAV, ...RIGHT_NAV, "Fale conosco"], cta: CTA })
     ] });
   };
 
@@ -50511,8 +50539,8 @@ void main() {
   var ACT_WINDOW = {
     hero: [0, 0.04],
     hand: [0.35, 0.46],
-    wave: [0.61, 0.955],
-    tree: [0.94, 1]
+    wave: [0.58, 0.955],
+    tree: [0.9, 1]
   };
   var ACTS = Object.keys(ACT_WINDOW);
   var state = { hero: false, hand: false, wave: false, tree: false };
@@ -51072,7 +51100,7 @@ void main() {
       }) }),
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__rodape", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__metodo-bloco", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-cat__metodo-sel", children: "Método Sentinela" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { type: "button", className: "font-geist crivia-cat__metodo-sel", onClick: () => CRIVIA_NAV["Método"](), children: "Método Sentinela" }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 320, className: "font-geist crivia-cat__metodo", children: "Observar, confrontar, integrar, propor e apoiar. Primeiro a referência, depois o campo, depois o confronto entre os dois." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-cat__dica", children: "Passe o cursor ou toque em uma carta para abri-la." })
@@ -51091,12 +51119,16 @@ void main() {
       const tick2 = () => {
         raf3 = requestAnimationFrame(tick2);
         const progress = getScrollProgress();
-        if (progress === last) return;
-        last = progress;
+        const fator = criviaCatalogoFator();
+        const chave = progress + ":" + fator;
+        if (chave === last) return;
+        last = chave;
         const { left: l, right: r } = wipeLineAt(progress);
         root.style.clipPath = l >= 100 && r >= 100 ? "none" : `polygon(0% 0%, 100% 0%, 100% ${r}%, 0% ${l}%)`;
         content.style.transform = `translateY(${waveDriftAt(progress)}vh)`;
-        content.style.opacity = `${waveUiOpacityAt(progress)}`;
+        const opac = waveUiOpacityAt(progress) * fator;
+        content.style.opacity = `${opac}`;
+        content.style.visibility = opac <= 0.01 || progress < 0.57 ? "hidden" : "visible";
       };
       raf3 = requestAnimationFrame(tick2);
       return () => cancelAnimationFrame(raf3);
@@ -51417,13 +51449,7 @@ var CRIVIA_IR_CENARIO = () => {
     if (l && l.scrollTo) l.scrollTo(max, { duration: 3.4, onComplete: foco });
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
-  var CRIVIA_IR_METODO = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const y = (max - (window.__criviaHoldPx || 0)) * 0.72;
-    const l = window.lenis;
-    if (l && l.scrollTo) l.scrollTo(y, { duration: 2.4 });
-    else window.scrollTo({ top: y, behavior: "smooth" });
-  };
+  var CRIVIA_IR_METODO = () => CRIVIA_NAV["Método"]();
   var criviaIcon = (paths) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("svg", {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
     "aria-hidden": true, children: paths.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("path", { d }, i))
@@ -51458,6 +51484,235 @@ var CRIVIA_IR_CENARIO = () => {
       }, i)) })
     ]
   });
+  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + painel de apresentação ──
+  var CRIVIA_PCE_VIDEO = "";
+  var criviaH = (tag, props, ...kids) => kids.length ? (0, import_jsx_runtime26.jsxs)(tag, { ...props, children: kids }) : (0, import_jsx_runtime26.jsx)(tag, props);
+  var CRIVIA_FORMULAS = [
+    ["Visão", "Tornar possível o que parecia impossível."],
+    ["Missão", "Encontrar rápido a causa por trás do sintoma em projetos críticos e entregar a quem decide uma solução que cabe na realidade."],
+    ["Filosofia", "Controle mostra o sintoma. Compreensão revela a causa. Boa decisão precisa dos dois."],
+    ["Marca de liderança", "Vemos a realidade antes de opinar e tornamos compreensível o que precisa ser decidido."],
+    ["Lógica de atuação", "Observar → Confrontar → Integrar → Propor → Apoiar."],
+    ["Método Sentinela", "A inteligência da CRIVIA aplicada a cada problema: perguntas estruturantes, critérios de risco, diagnóstico e padrões de entrega."]
+  ];
+  var criviaIrY = (y, dur) => {
+    const l = window.lenis;
+    if (l && l.scrollTo) l.scrollTo(y, { duration: dur });
+    else window.scrollTo({ top: y, behavior: "smooth" });
+  };
+  var CRIVIA_NAV = {
+    "Início": () => criviaIrY(0, 2.6),
+    "CRIVIA": () => criviaIrY(0, 2.6),
+    "Produtos": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.02, 2.6); },
+    "Decisão com IA": () => CRIVIA_NAV["Produtos"](),
+    "Diagnóstico Sentinela": () => CRIVIA_NAV["Produtos"](),
+    "Sobre": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.78, 3); },
+    "Fale conosco": () => CRIVIA_IR_CENARIO(),
+    "Método": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.22, 3); }
+  };
+  document.addEventListener("click", (e) => {
+    const a = e.target && e.target.closest ? e.target.closest("a") : null;
+    if (!a) return;
+    const nome = a.textContent.trim();
+    const ir = CRIVIA_NAV[nome];
+    if (!ir || !(a.getAttribute("href") === "#" || a.closest("header"))) return;
+    e.preventDefault();
+    if (a.closest('nav[aria-label="Mobile"]')) setTimeout(ir, 450);
+    else ir();
+  }, true);
+  var CriviaVideoPce = () => {
+    const [tocando, setTocando] = (0, import_react35.useState)(false);
+    const tem = !!CRIVIA_PCE_VIDEO;
+    return criviaH("div", { className: "crivia-sobre__pilha" },
+      criviaH("div", { className: "crivia-sobre__video" },
+        tocando
+          ? criviaH("video", { className: "crivia-sobre__video-el", src: CRIVIA_PCE_VIDEO, controls: true, autoPlay: true, playsInline: true })
+          : criviaH("button", { type: "button", className: "crivia-sobre__play", "aria-label": "Assistir ao vídeo", onClick: () => { if (tem) setTocando(true); } },
+              criviaH("span", { className: "crivia-sobre__play-anel", "aria-hidden": true }),
+              criviaH("svg", { viewBox: "0 0 24 24", "aria-hidden": true }, criviaH("path", { d: "M8 5.2v13.6a.6.6 0 0 0 .92.5l10.6-6.8a.6.6 0 0 0 0-1L8.92 4.7A.6.6 0 0 0 8 5.2z", fill: "currentColor" }))),
+        tocando || tem ? null : criviaH("div", { className: "crivia-sobre__legenda" }, criviaH("span", { className: "crivia-sobre__legenda-breve" }, "Vídeo em breve"))));
+  };
+  var SobreOverlay = () => {
+    const rootRef = (0, import_react35.useRef)(null);
+    const rolaRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const root = rootRef.current;
+      const rola = rolaRef.current;
+      if (!root || !rola) return;
+      let raf = 0;
+      let chave = "";
+      let ligado = false;
+      const marcar = () => {
+        if (rola.scrollHeight > rola.clientHeight + 2) rola.setAttribute("data-lenis-prevent", "");
+        else rola.removeAttribute("data-lenis-prevent");
+      };
+      const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(marcar) : null;
+      if (ro) { ro.observe(rola); if (rola.firstElementChild) ro.observe(rola.firstElementChild); }
+      marcar();
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        const y = window.scrollY;
+        const k = y + ":" + window.innerHeight + ":" + (window.__criviaHoldPx || 0);
+        if (k === chave) return;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const hold = window.__criviaHoldPx || 0;
+        if (max <= 0 || !hold) return;
+        chave = k;
+        const s0 = criviaS0(max);
+        const t = (y - s0) / hold;
+        const o = clamp01(Math.min((t - 0.5) / 0.16, (1 - t) / 0.08));
+        root.style.opacity = o.toFixed(3);
+        root.style.visibility = o <= 0.001 ? "hidden" : "visible";
+        root.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        root.style.transform = "translateY(" + ((1 - o) * 1.2).toFixed(2) + "rem)";
+        const on = t > 0.58 && t < 0.95;
+        if (on !== ligado) { ligado = on; root.classList.toggle("is-on", on); }
+      };
+      raf = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(raf); if (ro) ro.disconnect(); };
+    }, []);
+    const rev = (i, cls) => ({ className: "crivia-rev" + (cls ? " " + cls : ""), style: { "--i": i } });
+    return criviaH("section", { ref: rootRef, id: "sobre", className: "crivia-sobre", "aria-label": "Sobre a CRIVIA" },
+      criviaH("div", { className: "crivia-sobre__eixo", "aria-hidden": true }, criviaH("i", {})),
+      criviaH("div", { ref: rolaRef, className: "crivia-sobre__rola" },
+        criviaH("div", { className: "crivia-sobre__in" },
+          criviaH("div", { className: "crivia-sobre__cab" },
+            criviaH("div", { className: "crivia-sobre__cab-tit" },
+              criviaH("span", { className: "crivia-sobre__eyebrow crivia-rev", style: { "--i": 0 } }, criviaH("i", {}), "Sobre a CRIVIA"),
+              criviaH("h2", { className: "crivia-sobre__titulo" },
+                criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": 1 } }, "Engenharia")),
+                criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": 2 } }, "para decisão.")))),
+            criviaH("p", rev(4, "crivia-sobre__lead"), "A CRIVIA é engenharia independente para decisões críticas: encontra a causa por trás do sintoma e entrega a quem decide uma solução que cabe na realidade.")),
+          criviaH("div", rev(3, "crivia-sobre__videobox"), criviaH(CriviaVideoPce, {})),
+          criviaH("div", rev(5, "crivia-sobre__bruno"),
+            criviaH("div", { className: "crivia-sobre__bruno-topo" },
+              criviaH("span", { className: "crivia-sobre__mono", "aria-hidden": true }, "BM"),
+              criviaH("div", {}, criviaH("strong", {}, "Bruno Malta"), criviaH("span", {}, "Engenheiro e fundador da CRIVIA"))),
+            criviaH("p", { className: "crivia-sobre__bruno-txt" }, "Sou engenheiro e, há mais de 20 anos, lidero grandes projetos e equipes multidisciplinares. Fui chamado para o que ninguém queria assumir, e aprendi que, quase sempre, a causa não está onde o sintoma aparece."),
+            criviaH("p", { className: "crivia-sobre__bruno-cham" }, "Por isso criei a CRIVIA. Conto essa história no vídeo.")),
+          criviaH("div", { className: "crivia-sobre__formulas" },
+            criviaH("p", rev(4, "crivia-sobre__rotulo"), "Fórmulas centrais"),
+            criviaH("ol", {}, CRIVIA_FORMULAS.map((f, i) =>
+              criviaH("li", { key: f[0], className: "crivia-sobre__f", style: { "--i": 5 + i } },
+                criviaH("span", { className: "crivia-sobre__num" }, String(i + 1).padStart(2, "0")),
+                criviaH("div", { className: "crivia-sobre__f-corpo" }, criviaH("strong", {}, f[0]), criviaH("p", {}, ...(f[1].indexOf("→") < 0 ? [f[1]] : f[1].split(" → ").flatMap((x, k) => k ? [criviaH("span", { key: "s" + k, className: "crivia-sobre__seta" }, "→"), x] : [x])))))))))));
+  };
+
+  var CRIVIA_MOV = [
+    ["Observar", "Consultar as referências disponíveis e verificar a realidade dentro do escopo.", "olho"],
+    ["Confrontar", "Comparar projeto, contrato, cronograma ou premissas com o que foi observado.", "comparar"],
+    ["Integrar", "Relacionar equipe, materiais, equipamentos, projeto, contrato e fornecedores.", "integrar"],
+    ["Propor", "Apresentar causas sustentadas e caminhos compatíveis com as condições reais.", "caminhos"],
+    ["Apoiar", "Apoiar quem decide e verificar os efeitos quando isso fizer parte do escopo contratado.", "apoio"]
+  ];
+  var CRIVIA_MOV_ICONES = {
+    olho: ["M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z", "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"],
+    comparar: ["M4 5h6v14H4z", "M14 5h6v14h-6z", "M10.5 9h3", "M10.5 15h3"],
+    integrar: ["M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M20 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M14 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M8 6h8", "M5.6 7.8l5.2 8.6", "M18.4 7.8l-5.2 8.6"],
+    caminhos: ["M12 21v-8", "M12 13c0-3-6-3-6-8", "M12 13c0-3 6-3 6-8", "M3.5 7.5 6 5l2.5 2.5", "M15.5 7.5 18 5l2.5 2.5"],
+    apoio: ["M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z", "M9 12l2 2 4-4"]
+  };
+  var CRIVIA_ORDEM = ["Realidade", "causa", "risco", "responsabilidade", "decisão", "dinheiro", "execução", "verificação"];
+  var CRIVIA_PARTES = [[-1, 0.34], [0.34, 0.67], [0.67, 2]];
+  var CriviaIcone = ({ nome }) => criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true },
+    ...CRIVIA_MOV_ICONES[nome].map((d, i) => criviaH("path", { key: i, d })));
+  var CRIVIA_IR_MOVIMENTOS = () => {
+    const m = document.documentElement.scrollHeight - window.innerHeight;
+    criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.51, 2.4);
+  };
+  var MetodoOverlay = () => {
+    const rootRef = (0, import_react35.useRef)(null);
+    const partesRef = (0, import_react35.useRef)([]);
+    const figRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const root = rootRef.current;
+      if (!root) return;
+      const partes = partesRef.current;
+      const ligadas = [false, false, false];
+      let raf = 0, chave = "";
+      const marcar = () => partes.forEach((p) => {
+        const rola = p && p.firstElementChild;
+        if (!rola) return;
+        if (rola.scrollHeight > rola.clientHeight + 2) rola.setAttribute("data-lenis-prevent", "");
+        else rola.removeAttribute("data-lenis-prevent");
+      });
+      const escala = () => { const f = figRef.current; if (f && f.clientWidth) f.style.setProperty("--k", (f.clientWidth / 1200).toFixed(4)); };
+      const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => { marcar(); escala(); }) : null;
+      if (ro) { partes.forEach((p) => { if (p && p.firstElementChild) { ro.observe(p.firstElementChild); if (p.firstElementChild.firstElementChild) ro.observe(p.firstElementChild.firstElementChild); } }); if (figRef.current) ro.observe(figRef.current); }
+      marcar(); escala();
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        const y = window.scrollY;
+        const k = y + ":" + window.innerHeight;
+        if (k === chave) return;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const hold = window.__criviaHoldPx || 0;
+        const hold2 = window.__criviaMetodoPx || 0;
+        if (max <= 0 || !hold2) return;
+        chave = k;
+        const u = (y - criviaS0(max) - hold) / hold2;
+        const o = clamp01(Math.min((u - 0.04) / 0.2, (1 - u) / 0.12));
+        root.style.opacity = o.toFixed(3);
+        root.style.visibility = o <= 0.001 ? "hidden" : "visible";
+        root.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        CRIVIA_PARTES.forEach(([a, b], i) => {
+          const p = partes[i];
+          if (!p) return;
+          const po = clamp01(Math.min((u - a) / 0.07, (b - u) / 0.07));
+          p.style.opacity = po.toFixed(3);
+          p.style.visibility = po <= 0.001 ? "hidden" : "visible";
+          p.style.pointerEvents = po > 0.5 ? "auto" : "none";
+          const on = i === 0 ? u > 0.14 && u < b - 0.03 : u > a + 0.05 && u < (i === 2 ? 0.96 : b - 0.03);
+          if (on !== ligadas[i]) { ligadas[i] = on; p.classList.toggle("is-on", on); }
+        });
+      };
+      raf = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(raf); if (ro) ro.disconnect(); };
+    }, []);
+    const rev = (i, cls) => ({ className: "crivia-rev" + (cls ? " " + cls : ""), style: { "--i": i } });
+    const ln = (i, txt) => criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": i } }, txt));
+    const eyebrow = (txt) => criviaH("span", { className: "crivia-sobre__eyebrow crivia-rev", style: { "--i": 0 } }, criviaH("i", {}), txt);
+    const parte = (i, ...kids) => criviaH("div", { ref: (el) => { partesRef.current[i] = el; }, className: "crivia-metodo__parte" },
+      criviaH("div", { className: "crivia-sobre__rola" }, criviaH("div", { className: "crivia-metodo__in crivia-metodo__in--" + (i + 1) }, ...kids)));
+    return criviaH("section", { ref: rootRef, id: "metodo", className: "crivia-sobre crivia-metodo", "aria-label": "Método Sentinela" },
+      parte(0,
+        criviaH("div", { className: "crivia-metodo__txt" },
+          eyebrow("Método"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Método"), ln(2, "Sentinela")),
+          criviaH("p", rev(3, "crivia-metodo__frase"), "Compreender antes de decidir."),
+          criviaH("p", rev(4, "crivia-metodo__corpo"), "Em projetos e operações complexas, atrasos, custos acima do previsto e conflitos podem ser sintomas de uma situação ainda não compreendida. O Método Sentinela orienta a leitura da realidade, o confronto entre referências e evidências e a integração das interfaces para identificar causas sustentadas e apoiar caminhos compatíveis com as condições reais."),
+          criviaH("div", rev(5, "crivia-metodo__acoes"),
+            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }),
+            criviaH("button", { type: "button", className: "crivia-metodo__link", onClick: CRIVIA_IR_MOVIMENTOS },
+              "Conhecer os movimentos do método",
+              criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true }, criviaH("path", { d: "M12 5v14" }), criviaH("path", { d: "M6 13l6 6 6-6" })))),
+          criviaH("p", rev(6, "crivia-metodo__nota"), "Metodologia própria da CRIVIA, em desenvolvimento. A aplicação é ajustada ao problema, às evidências, aos riscos e ao escopo de cada trabalho.")),
+        criviaH("figure", { ref: figRef, className: "crivia-rev crivia-metodo__fig", style: { "--i": 4 } },
+          criviaH("div", { className: "crivia-metodo__quadro" },
+            criviaH("img", { src: "assets/images/metodo/tablet-industrial.png", width: 1200, height: 896, loading: "lazy", decoding: "async",
+              alt: "Tablet em primeiro plano sobre uma bancada, com uma instalação industrial de tubulações e tanques de aço inox ao fundo; a tela mostra os cinco movimentos do método: observar, confrontar, integrar, propor e apoiar." }),
+            criviaH("div", { className: "crivia-metodo__tela", "aria-hidden": true },
+              criviaH("div", { className: "crivia-metodo__tela-top" }, criviaH("i", {}), "Método Sentinela"),
+              criviaH("div", { className: "crivia-metodo__tela-trilha" }, ...CRIVIA_MOV.map((m) =>
+                criviaH("div", { key: m[0], className: "crivia-metodo__tela-mov" }, criviaH("span", {}, criviaH(CriviaIcone, { nome: m[2] })), criviaH("b", {}, m[0])))))))),
+      parte(1,
+        criviaH("div", { className: "crivia-metodo__cab" },
+          eyebrow("Método Sentinela"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Cinco movimentos"), ln(2, "orientadores")),
+          criviaH("p", rev(3, "crivia-sobre__lead"), "Eles organizam a leitura do problema e podem ser ajustados conforme a situação, as evidências e o trabalho contratado.")),
+        criviaH("ol", { className: "crivia-metodo__movs" }, CRIVIA_MOV.map((m, i) =>
+          criviaH("li", { key: m[0], className: "crivia-metodo__mov crivia-rev", style: { "--i": 4 + i } },
+            criviaH("span", { className: "crivia-metodo__ico" }, criviaH(CriviaIcone, { nome: m[2] })),
+            criviaH("strong", {}, m[0]),
+            criviaH("p", {}, m[1]))))),
+      parte(2,
+        criviaH("div", { className: "crivia-metodo__cab" },
+          eyebrow("Ordem de referência"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Da realidade"), ln(2, "à verificação"))),
+        criviaH("ol", { className: "crivia-metodo__ordem" }, CRIVIA_ORDEM.map((t, i) =>
+          criviaH("li", { key: t, className: "crivia-metodo__no crivia-rev", style: { "--i": 3 + i } }, criviaH("span", {}, t)))),
+        criviaH("p", rev(11, "crivia-metodo__apoio"), "Essa ordem ajuda a relacionar a recomendação à situação observada e à decisão que precisa ser tomada. A decisão e a execução cabem ao cliente; a CRIVIA oferece apoio estratégico dentro do escopo contratado.")));
+  };
   var HomeView = () => {
     return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("main", { className: "relative bg-scene-backdrop", children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { className: "sr-only", children: "CRIVIA Engenharia Consultiva — Engenharia para Decisão" }),
@@ -51468,10 +51723,12 @@ var CRIVIA_IR_CENARIO = () => {
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SiteHeader, {}),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0, 0], disappear: [0.05, 0.14], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(HeroOverlay, {}) }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.34, 0.41], disappear: [0.47, 0.53], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(HandOverlay, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.6, 0.67], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(WaveOverlay, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.93, 0.98], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TreeOverlay, {}) })
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.575, 0.615], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(WaveOverlay, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SobreOverlay, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(MetodoOverlay, {}),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.88, 0.93], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TreeOverlay, {}) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { "aria-hidden": true, className: "w-full", style: { height: `${sceneConfig.sequence.scrollVh}vh` } }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { "aria-hidden": true, className: "w-full", style: { height: `calc(${sceneConfig.sequence.scrollVh}vh + ${(CRIVIA_SOBRE_VH + CRIVIA_METODO_VH) * 100}vh)` } }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Preloader, {}),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TuningPanel, {})
     ] });

@@ -660,7 +660,7 @@ CAT_NOVO = r"""  var CRIVIA_ICONES = {
       }) }),
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__rodape", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "crivia-cat__metodo-bloco", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-geist crivia-cat__metodo-sel", children: "Método Sentinela" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { type: "button", className: "font-geist crivia-cat__metodo-sel", onClick: () => CRIVIA_NAV["Método"](), children: "Método Sentinela" }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(RevealText, { tag: "p", variant: "copy", act: "wave", delayIn: 320, className: "font-geist crivia-cat__metodo", children: "Observar, confrontar, integrar, propor e apoiar. Primeiro a referência, depois o campo, depois o confronto entre os dois." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-cat__dica", children: "Passe o cursor ou toque em uma carta para abri-la." })
@@ -679,12 +679,16 @@ CAT_NOVO = r"""  var CRIVIA_ICONES = {
       const tick2 = () => {
         raf3 = requestAnimationFrame(tick2);
         const progress = getScrollProgress();
-        if (progress === last) return;
-        last = progress;
+        const fator = criviaCatalogoFator();
+        const chave = progress + ":" + fator;
+        if (chave === last) return;
+        last = chave;
         const { left: l, right: r } = wipeLineAt(progress);
         root.style.clipPath = l >= 100 && r >= 100 ? "none" : `polygon(0% 0%, 100% 0%, 100% ${r}%, 0% ${l}%)`;
         content.style.transform = `translateY(${waveDriftAt(progress)}vh)`;
-        content.style.opacity = `${waveUiOpacityAt(progress)}`;
+        const opac = waveUiOpacityAt(progress) * fator;
+        content.style.opacity = `${opac}`;
+        content.style.visibility = opac <= 0.01 || progress < 0.57 ? "hidden" : "visible";
       };
       raf3 = requestAnimationFrame(tick2);
       return () => cancelAnimationFrame(raf3);
@@ -766,8 +770,9 @@ CSS_CAT = r"""
   .crivia-cat__intro { display: flex !important; max-width: 29rem; font-size: .84rem; font-weight: 450; line-height: 1.5; color: #2B4A6B; }
   .crivia-cat__rodape { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: auto; }
   .crivia-cat__metodo-bloco { display: flex !important; align-items: center; gap: 1rem; min-width: 0; }
-  .crivia-cat__metodo-sel { flex: none; padding: .5rem 1rem; border-radius: 999px; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; color: #fff;
+  .crivia-cat__metodo-sel { cursor: pointer; border: 0; pointer-events: auto; transition: transform .3s ease, filter .3s ease; flex: none; padding: .5rem 1rem; border-radius: 999px; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; color: #fff;
     background: linear-gradient(135deg, #0A369D, #2F6BFF); box-shadow: 0 8px 20px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.35); }
+  .crivia-cat__metodo-sel:hover, .crivia-cat__metodo-sel:focus-visible { transform: translateY(-2px) scale(1.04); filter: brightness(1.12); outline: none; }
   .crivia-cat__metodo { display: flex !important; max-width: 36rem; font-size: 1rem; font-weight: 550; line-height: 1.45; letter-spacing: -.01em; color: #001D3D; }
   .crivia-cat__dica { font-size: .72rem; font-weight: 500; letter-spacing: .04em; color: #2B4A6B; opacity: .8; text-align: right; }
   /* dois grupos em cima e dois embaixo (um em cada canto); a carta aberta cresce sobre a outra linha */
@@ -828,9 +833,9 @@ CSS_CAT = r"""
 
 PATCHES_TEXTO = [
     ("txt:cabecalho-esq", 'var LEFT_NAV = ["Projects", "Studio", "Process"];',
-     'var LEFT_NAV = ["Início", "Produtos", "Método"];', 1),
+     'var LEFT_NAV = ["Início", "Produtos", "Método", "Sobre"];', 1),
     ("txt:cabecalho-dir", 'var RIGHT_NAV = ["Journal", "About"];',
-     'var RIGHT_NAV = ["Decisão com IA", "Sobre"];', 1),
+     'var RIGHT_NAV = ["Decisão com IA"];', 1),
     ("txt:marca", 'var BRAND = "Auralis";', 'var BRAND = "CRIVIA";', 1),
     ("txt:cta", 'var CTA = "Say Hello";', MAILTO_JS, 1),
     # hero
@@ -929,13 +934,7 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
     if (l && l.scrollTo) l.scrollTo(max, { duration: 3.4, onComplete: foco });
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
-  var CRIVIA_IR_METODO = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const y = (max - (window.__criviaHoldPx || 0)) * 0.72;
-    const l = window.lenis;
-    if (l && l.scrollTo) l.scrollTo(y, { duration: 2.4 });
-    else window.scrollTo({ top: y, behavior: "smooth" });
-  };
+  var CRIVIA_IR_METODO = () => CRIVIA_NAV["Método"]();
   var criviaIcon = (paths) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("svg", {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
     "aria-hidden": true, children: paths.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("path", { d }, i))
@@ -1143,6 +1142,691 @@ footer .h-px.bg-overlay-line { background: linear-gradient(90deg, rgba(0,29,61,.
 @media (prefers-reduced-motion: reduce) {
   .crivia-bg-beam, .crivia-bg-rays, .crivia-cta__spin, .crivia-cta__spin::after, .crivia-cta__point { animation: none; }
 }
+"""
+
+SOBRE_JS = r"""  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + painel de apresentação ──
+  var CRIVIA_PCE_VIDEO = "";
+  var criviaH = (tag, props, ...kids) => kids.length ? (0, import_jsx_runtime26.jsxs)(tag, { ...props, children: kids }) : (0, import_jsx_runtime26.jsx)(tag, props);
+  var CRIVIA_FORMULAS = [
+    ["Visão", "Tornar possível o que parecia impossível."],
+    ["Missão", "Encontrar rápido a causa por trás do sintoma em projetos críticos e entregar a quem decide uma solução que cabe na realidade."],
+    ["Filosofia", "Controle mostra o sintoma. Compreensão revela a causa. Boa decisão precisa dos dois."],
+    ["Marca de liderança", "Vemos a realidade antes de opinar e tornamos compreensível o que precisa ser decidido."],
+    ["Lógica de atuação", "Observar → Confrontar → Integrar → Propor → Apoiar."],
+    ["Método Sentinela", "A inteligência da CRIVIA aplicada a cada problema: perguntas estruturantes, critérios de risco, diagnóstico e padrões de entrega."]
+  ];
+  var criviaIrY = (y, dur) => {
+    const l = window.lenis;
+    if (l && l.scrollTo) l.scrollTo(y, { duration: dur });
+    else window.scrollTo({ top: y, behavior: "smooth" });
+  };
+  var CRIVIA_NAV = {
+    "Início": () => criviaIrY(0, 2.6),
+    "CRIVIA": () => criviaIrY(0, 2.6),
+    "Produtos": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.02, 2.6); },
+    "Decisão com IA": () => CRIVIA_NAV["Produtos"](),
+    "Diagnóstico Sentinela": () => CRIVIA_NAV["Produtos"](),
+    "Sobre": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) * 0.78, 3); },
+    "Fale conosco": () => CRIVIA_IR_CENARIO(),
+    "Método": () => { const m = document.documentElement.scrollHeight - window.innerHeight; criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.22, 3); }
+  };
+  document.addEventListener("click", (e) => {
+    const a = e.target && e.target.closest ? e.target.closest("a") : null;
+    if (!a) return;
+    const nome = a.textContent.trim();
+    const ir = CRIVIA_NAV[nome];
+    if (!ir || !(a.getAttribute("href") === "#" || a.closest("header"))) return;
+    e.preventDefault();
+    if (a.closest('nav[aria-label="Mobile"]')) setTimeout(ir, 450);
+    else ir();
+  }, true);
+  var CriviaVideoPce = () => {
+    const [tocando, setTocando] = (0, import_react35.useState)(false);
+    const tem = !!CRIVIA_PCE_VIDEO;
+    return criviaH("div", { className: "crivia-sobre__pilha" },
+      criviaH("div", { className: "crivia-sobre__video" },
+        tocando
+          ? criviaH("video", { className: "crivia-sobre__video-el", src: CRIVIA_PCE_VIDEO, controls: true, autoPlay: true, playsInline: true })
+          : criviaH("button", { type: "button", className: "crivia-sobre__play", "aria-label": "Assistir ao vídeo", onClick: () => { if (tem) setTocando(true); } },
+              criviaH("span", { className: "crivia-sobre__play-anel", "aria-hidden": true }),
+              criviaH("svg", { viewBox: "0 0 24 24", "aria-hidden": true }, criviaH("path", { d: "M8 5.2v13.6a.6.6 0 0 0 .92.5l10.6-6.8a.6.6 0 0 0 0-1L8.92 4.7A.6.6 0 0 0 8 5.2z", fill: "currentColor" }))),
+        tocando || tem ? null : criviaH("div", { className: "crivia-sobre__legenda" }, criviaH("span", { className: "crivia-sobre__legenda-breve" }, "Vídeo em breve"))));
+  };
+  var SobreOverlay = () => {
+    const rootRef = (0, import_react35.useRef)(null);
+    const rolaRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const root = rootRef.current;
+      const rola = rolaRef.current;
+      if (!root || !rola) return;
+      let raf = 0;
+      let chave = "";
+      let ligado = false;
+      const marcar = () => {
+        if (rola.scrollHeight > rola.clientHeight + 2) rola.setAttribute("data-lenis-prevent", "");
+        else rola.removeAttribute("data-lenis-prevent");
+      };
+      const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(marcar) : null;
+      if (ro) { ro.observe(rola); if (rola.firstElementChild) ro.observe(rola.firstElementChild); }
+      marcar();
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        const y = window.scrollY;
+        const k = y + ":" + window.innerHeight + ":" + (window.__criviaHoldPx || 0);
+        if (k === chave) return;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const hold = window.__criviaHoldPx || 0;
+        if (max <= 0 || !hold) return;
+        chave = k;
+        const s0 = criviaS0(max);
+        const t = (y - s0) / hold;
+        const o = clamp01(Math.min((t - 0.5) / 0.16, (1 - t) / 0.08));
+        root.style.opacity = o.toFixed(3);
+        root.style.visibility = o <= 0.001 ? "hidden" : "visible";
+        root.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        root.style.transform = "translateY(" + ((1 - o) * 1.2).toFixed(2) + "rem)";
+        const on = t > 0.58 && t < 0.95;
+        if (on !== ligado) { ligado = on; root.classList.toggle("is-on", on); }
+      };
+      raf = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(raf); if (ro) ro.disconnect(); };
+    }, []);
+    const rev = (i, cls) => ({ className: "crivia-rev" + (cls ? " " + cls : ""), style: { "--i": i } });
+    return criviaH("section", { ref: rootRef, id: "sobre", className: "crivia-sobre", "aria-label": "Sobre a CRIVIA" },
+      criviaH("div", { className: "crivia-sobre__eixo", "aria-hidden": true }, criviaH("i", {})),
+      criviaH("div", { ref: rolaRef, className: "crivia-sobre__rola" },
+        criviaH("div", { className: "crivia-sobre__in" },
+          criviaH("div", { className: "crivia-sobre__cab" },
+            criviaH("div", { className: "crivia-sobre__cab-tit" },
+              criviaH("span", { className: "crivia-sobre__eyebrow crivia-rev", style: { "--i": 0 } }, criviaH("i", {}), "Sobre a CRIVIA"),
+              criviaH("h2", { className: "crivia-sobre__titulo" },
+                criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": 1 } }, "Engenharia")),
+                criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": 2 } }, "para decisão.")))),
+            criviaH("p", rev(4, "crivia-sobre__lead"), "A CRIVIA é engenharia independente para decisões críticas: encontra a causa por trás do sintoma e entrega a quem decide uma solução que cabe na realidade.")),
+          criviaH("div", rev(3, "crivia-sobre__videobox"), criviaH(CriviaVideoPce, {})),
+          criviaH("div", rev(5, "crivia-sobre__bruno"),
+            criviaH("div", { className: "crivia-sobre__bruno-topo" },
+              criviaH("span", { className: "crivia-sobre__mono", "aria-hidden": true }, "BM"),
+              criviaH("div", {}, criviaH("strong", {}, "Bruno Malta"), criviaH("span", {}, "Engenheiro e fundador da CRIVIA"))),
+            criviaH("p", { className: "crivia-sobre__bruno-txt" }, "Sou engenheiro e, há mais de 20 anos, lidero grandes projetos e equipes multidisciplinares. Fui chamado para o que ninguém queria assumir, e aprendi que, quase sempre, a causa não está onde o sintoma aparece."),
+            criviaH("p", { className: "crivia-sobre__bruno-cham" }, "Por isso criei a CRIVIA. Conto essa história no vídeo.")),
+          criviaH("div", { className: "crivia-sobre__formulas" },
+            criviaH("p", rev(4, "crivia-sobre__rotulo"), "Fórmulas centrais"),
+            criviaH("ol", {}, CRIVIA_FORMULAS.map((f, i) =>
+              criviaH("li", { key: f[0], className: "crivia-sobre__f", style: { "--i": 5 + i } },
+                criviaH("span", { className: "crivia-sobre__num" }, String(i + 1).padStart(2, "0")),
+                criviaH("div", { className: "crivia-sobre__f-corpo" }, criviaH("strong", {}, f[0]), criviaH("p", {}, ...(f[1].indexOf("→") < 0 ? [f[1]] : f[1].split(" → ").flatMap((x, k) => k ? [criviaH("span", { key: "s" + k, className: "crivia-sobre__seta" }, "→"), x] : [x])))))))))));
+  };
+
+  var CRIVIA_MOV = [
+    ["Observar", "Consultar as referências disponíveis e verificar a realidade dentro do escopo.", "olho"],
+    ["Confrontar", "Comparar projeto, contrato, cronograma ou premissas com o que foi observado.", "comparar"],
+    ["Integrar", "Relacionar equipe, materiais, equipamentos, projeto, contrato e fornecedores.", "integrar"],
+    ["Propor", "Apresentar causas sustentadas e caminhos compatíveis com as condições reais.", "caminhos"],
+    ["Apoiar", "Apoiar quem decide e verificar os efeitos quando isso fizer parte do escopo contratado.", "apoio"]
+  ];
+  var CRIVIA_MOV_ICONES = {
+    olho: ["M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z", "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"],
+    comparar: ["M4 5h6v14H4z", "M14 5h6v14h-6z", "M10.5 9h3", "M10.5 15h3"],
+    integrar: ["M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M20 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M14 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0z", "M8 6h8", "M5.6 7.8l5.2 8.6", "M18.4 7.8l-5.2 8.6"],
+    caminhos: ["M12 21v-8", "M12 13c0-3-6-3-6-8", "M12 13c0-3 6-3 6-8", "M3.5 7.5 6 5l2.5 2.5", "M15.5 7.5 18 5l2.5 2.5"],
+    apoio: ["M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z", "M9 12l2 2 4-4"]
+  };
+  var CRIVIA_ORDEM = ["Realidade", "causa", "risco", "responsabilidade", "decisão", "dinheiro", "execução", "verificação"];
+  var CRIVIA_PARTES = [[-1, 0.34], [0.34, 0.67], [0.67, 2]];
+  var CriviaIcone = ({ nome }) => criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true },
+    ...CRIVIA_MOV_ICONES[nome].map((d, i) => criviaH("path", { key: i, d })));
+  var CRIVIA_IR_MOVIMENTOS = () => {
+    const m = document.documentElement.scrollHeight - window.innerHeight;
+    criviaIrY(criviaS0(m) + (window.__criviaHoldPx || 0) + (window.__criviaMetodoPx || 0) * 0.51, 2.4);
+  };
+  var MetodoOverlay = () => {
+    const rootRef = (0, import_react35.useRef)(null);
+    const partesRef = (0, import_react35.useRef)([]);
+    const figRef = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const root = rootRef.current;
+      if (!root) return;
+      const partes = partesRef.current;
+      const ligadas = [false, false, false];
+      let raf = 0, chave = "";
+      const marcar = () => partes.forEach((p) => {
+        const rola = p && p.firstElementChild;
+        if (!rola) return;
+        if (rola.scrollHeight > rola.clientHeight + 2) rola.setAttribute("data-lenis-prevent", "");
+        else rola.removeAttribute("data-lenis-prevent");
+      });
+      const escala = () => { const f = figRef.current; if (f && f.clientWidth) f.style.setProperty("--k", (f.clientWidth / 1200).toFixed(4)); };
+      const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => { marcar(); escala(); }) : null;
+      if (ro) { partes.forEach((p) => { if (p && p.firstElementChild) { ro.observe(p.firstElementChild); if (p.firstElementChild.firstElementChild) ro.observe(p.firstElementChild.firstElementChild); } }); if (figRef.current) ro.observe(figRef.current); }
+      marcar(); escala();
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        const y = window.scrollY;
+        const k = y + ":" + window.innerHeight;
+        if (k === chave) return;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const hold = window.__criviaHoldPx || 0;
+        const hold2 = window.__criviaMetodoPx || 0;
+        if (max <= 0 || !hold2) return;
+        chave = k;
+        const u = (y - criviaS0(max) - hold) / hold2;
+        const o = clamp01(Math.min((u - 0.04) / 0.2, (1 - u) / 0.12));
+        root.style.opacity = o.toFixed(3);
+        root.style.visibility = o <= 0.001 ? "hidden" : "visible";
+        root.style.pointerEvents = o > 0.5 ? "auto" : "none";
+        CRIVIA_PARTES.forEach(([a, b], i) => {
+          const p = partes[i];
+          if (!p) return;
+          const po = clamp01(Math.min((u - a) / 0.07, (b - u) / 0.07));
+          p.style.opacity = po.toFixed(3);
+          p.style.visibility = po <= 0.001 ? "hidden" : "visible";
+          p.style.pointerEvents = po > 0.5 ? "auto" : "none";
+          const on = i === 0 ? u > 0.14 && u < b - 0.03 : u > a + 0.05 && u < (i === 2 ? 0.96 : b - 0.03);
+          if (on !== ligadas[i]) { ligadas[i] = on; p.classList.toggle("is-on", on); }
+        });
+      };
+      raf = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(raf); if (ro) ro.disconnect(); };
+    }, []);
+    const rev = (i, cls) => ({ className: "crivia-rev" + (cls ? " " + cls : ""), style: { "--i": i } });
+    const ln = (i, txt) => criviaH("span", { className: "crivia-ln" }, criviaH("span", { style: { "--i": i } }, txt));
+    const eyebrow = (txt) => criviaH("span", { className: "crivia-sobre__eyebrow crivia-rev", style: { "--i": 0 } }, criviaH("i", {}), txt);
+    const parte = (i, ...kids) => criviaH("div", { ref: (el) => { partesRef.current[i] = el; }, className: "crivia-metodo__parte" },
+      criviaH("div", { className: "crivia-sobre__rola" }, criviaH("div", { className: "crivia-metodo__in crivia-metodo__in--" + (i + 1) }, ...kids)));
+    return criviaH("section", { ref: rootRef, id: "metodo", className: "crivia-sobre crivia-metodo", "aria-label": "Método Sentinela" },
+      parte(0,
+        criviaH("div", { className: "crivia-metodo__txt" },
+          eyebrow("Método"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Método"), ln(2, "Sentinela")),
+          criviaH("p", rev(3, "crivia-metodo__frase"), "Compreender antes de decidir."),
+          criviaH("p", rev(4, "crivia-metodo__corpo"), "Em projetos e operações complexas, atrasos, custos acima do previsto e conflitos podem ser sintomas de uma situação ainda não compreendida. O Método Sentinela orienta a leitura da realidade, o confronto entre referências e evidências e a integração das interfaces para identificar causas sustentadas e apoiar caminhos compatíveis com as condições reais."),
+          criviaH("div", rev(5, "crivia-metodo__acoes"),
+            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO, children: "Apresentar meu cenário" }),
+            criviaH("button", { type: "button", className: "crivia-metodo__link", onClick: CRIVIA_IR_MOVIMENTOS },
+              "Conhecer os movimentos do método",
+              criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true }, criviaH("path", { d: "M12 5v14" }), criviaH("path", { d: "M6 13l6 6 6-6" })))),
+          criviaH("p", rev(6, "crivia-metodo__nota"), "Metodologia própria da CRIVIA, em desenvolvimento. A aplicação é ajustada ao problema, às evidências, aos riscos e ao escopo de cada trabalho.")),
+        criviaH("figure", { ref: figRef, className: "crivia-rev crivia-metodo__fig", style: { "--i": 4 } },
+          criviaH("div", { className: "crivia-metodo__quadro" },
+            criviaH("img", { src: "assets/images/metodo/tablet-industrial.png", width: 1200, height: 896, loading: "lazy", decoding: "async",
+              alt: "Tablet em primeiro plano sobre uma bancada, com uma instalação industrial de tubulações e tanques de aço inox ao fundo; a tela mostra os cinco movimentos do método: observar, confrontar, integrar, propor e apoiar." }),
+            criviaH("div", { className: "crivia-metodo__tela", "aria-hidden": true },
+              criviaH("div", { className: "crivia-metodo__tela-top" }, criviaH("i", {}), "Método Sentinela"),
+              criviaH("div", { className: "crivia-metodo__tela-trilha" }, ...CRIVIA_MOV.map((m) =>
+                criviaH("div", { key: m[0], className: "crivia-metodo__tela-mov" }, criviaH("span", {}, criviaH(CriviaIcone, { nome: m[2] })), criviaH("b", {}, m[0])))))))),
+      parte(1,
+        criviaH("div", { className: "crivia-metodo__cab" },
+          eyebrow("Método Sentinela"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Cinco movimentos"), ln(2, "orientadores")),
+          criviaH("p", rev(3, "crivia-sobre__lead"), "Eles organizam a leitura do problema e podem ser ajustados conforme a situação, as evidências e o trabalho contratado.")),
+        criviaH("ol", { className: "crivia-metodo__movs" }, CRIVIA_MOV.map((m, i) =>
+          criviaH("li", { key: m[0], className: "crivia-metodo__mov crivia-rev", style: { "--i": 4 + i } },
+            criviaH("span", { className: "crivia-metodo__ico" }, criviaH(CriviaIcone, { nome: m[2] })),
+            criviaH("strong", {}, m[0]),
+            criviaH("p", {}, m[1]))))),
+      parte(2,
+        criviaH("div", { className: "crivia-metodo__cab" },
+          eyebrow("Ordem de referência"),
+          criviaH("h2", { className: "crivia-sobre__titulo" }, ln(1, "Da realidade"), ln(2, "à verificação"))),
+        criviaH("ol", { className: "crivia-metodo__ordem" }, CRIVIA_ORDEM.map((t, i) =>
+          criviaH("li", { key: t, className: "crivia-metodo__no crivia-rev", style: { "--i": 3 + i } }, criviaH("span", {}, t)))),
+        criviaH("p", rev(11, "crivia-metodo__apoio"), "Essa ordem ajuda a relacionar a recomendação à situação observada e à decisão que precisa ser tomada. A decisão e a execução cabem ao cliente; a CRIVIA oferece apoio estratégico dentro do escopo contratado.")));
+  };
+"""
+
+CSS_METODO = r"""
+/* ════ CRIVIA ════ dobra "Método" (três partes na pausa de rolagem; mesma entrada de texto da Sobre) ════ */
+.crivia-metodo__parte { position: absolute; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; }
+.crivia-metodo .crivia-metodo__parte.is-on .crivia-rev, .crivia-metodo .crivia-metodo__parte.is-on .crivia-ln > span {
+  opacity: 1; transform: none; filter: none; transition: opacity 1.5s cubic-bezier(.16,1,.3,1), transform 1.6s cubic-bezier(.16,1,.3,1), filter 1.5s cubic-bezier(.16,1,.3,1);
+  transition-delay: calc(var(--i, 0) * 260ms + 120ms); }
+.crivia-metodo__in { box-sizing: border-box; min-height: 100%; max-width: 80rem; margin: 0 auto; padding: 5rem 1.25rem 2.5rem;
+  display: flex; flex-direction: column; justify-content: center; gap: 1.6rem; }
+.crivia-metodo__txt { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+.crivia-metodo__txt .crivia-sobre__titulo { margin-top: .5rem; }
+.crivia-metodo__cab { display: flex; flex-direction: column; gap: 1rem; }
+.crivia-metodo__frase { margin: .2rem 0 0; position: relative; padding-left: 1.1rem; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: clamp(1.15rem, 1.7vw, 1.5rem); font-weight: 650; letter-spacing: -.02em; color: #2F6BFF; }
+.crivia-metodo__frase::before { content: ""; position: absolute; left: 0; top: .2em; bottom: .2em; width: 2px; border-radius: 2px; background: linear-gradient(180deg, #F5B82E, rgba(245,184,46,.15)); }
+.crivia-metodo__corpo { margin: 0; max-width: 35rem; font-size: clamp(.93rem, 1.05vw, 1rem); line-height: 1.62; color: #1E3B63; }
+.crivia-metodo__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.6rem; margin-top: .3rem; }
+.crivia-metodo__link { display: inline-flex; align-items: center; gap: .5rem; padding: .4rem 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: .88rem; font-weight: 600; color: #0A369D;
+  border-bottom: 1px solid rgba(10,54,157,.3); transition: color .3s ease, border-color .3s ease, gap .3s ease; }
+.crivia-metodo__link svg { width: .95rem; height: .95rem; }
+.crivia-metodo__link:hover, .crivia-metodo__link:focus-visible { color: #2F6BFF; border-color: #2F6BFF; gap: .75rem; outline: none; }
+.crivia-metodo__nota { margin: .4rem 0 0; max-width: 34rem; font-size: .76rem; line-height: 1.5; color: #5A7595; }
+
+/* imagem: quadro com bordas empilhadas como a caixa de vídeo da Sobre; a tela do tablet recebe os ícones em HTML */
+.crivia-metodo__fig { position: relative; margin: 0; width: 100%; --k: .5; }
+.crivia-metodo__fig::before, .crivia-metodo__fig::after { content: ""; position: absolute; z-index: 0; height: 50%; border-radius: 1.2rem; background: linear-gradient(180deg, #0A369D, #001D3D); }
+.crivia-metodo__fig::before { left: 5%; right: 5%; bottom: -.6rem; opacity: .5; }
+.crivia-metodo__fig::after { left: 10%; right: 10%; bottom: -1.15rem; opacity: .26; }
+.crivia-metodo__quadro { position: relative; z-index: 1; width: 100%; aspect-ratio: 1200 / 896; border-radius: 1.4rem; overflow: hidden; border: 1px solid rgba(255,255,255,.35);
+  box-shadow: 0 2rem 3.4rem -1.6rem rgba(0,29,61,.6); background: #0A2A5E; }
+.crivia-metodo__quadro img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.crivia-metodo__tela { position: absolute; left: 0; top: 0; width: 480px; height: 340px; box-sizing: border-box; padding: 26px 22px; transform-origin: 0 0; pointer-events: none;
+  transform: scale(var(--k)) matrix3d(0.73971,-0.100311,0,-0.000240962,-0.205346,0.862302,0,-7.76226e-05,0,0,1,0,432,401,0,1);
+  display: flex; flex-direction: column; justify-content: space-between; color: #E8F4FF;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(47,107,255,.55), rgba(47,107,255,0) 60%), linear-gradient(170deg, #0B2C6B, #061B44 70%, #04122D); font-family: "Geist", system-ui, sans-serif; }
+.crivia-metodo__tela-top { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #BFE6FF; }
+.crivia-metodo__tela-top i { width: 9px; height: 9px; border-radius: 50%; background: #F5B82E; box-shadow: 0 0 0 4px rgba(245,184,46,.25); }
+.crivia-metodo__tela-trilha { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-bottom: 30px; }
+.crivia-metodo__tela-trilha::before { content: ""; position: absolute; left: 10%; right: 10%; top: 35px; height: 2px; background: linear-gradient(90deg, rgba(34,211,238,.15), rgba(34,211,238,.8), rgba(34,211,238,.15)); }
+.crivia-metodo__tela-mov { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.crivia-metodo__tela-mov span { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; color: #7EE3FF; background: rgba(6,27,68,.92);
+  border: 2px solid rgba(34,211,238,.7); box-shadow: 0 0 22px rgba(34,211,238,.35); }
+.crivia-metodo__tela-mov span svg { width: 38px; height: 38px; }
+.crivia-metodo__tela-mov b { font-size: 17px; font-weight: 600; letter-spacing: .01em; color: #E8F4FF; }
+
+/* segunda parte: cinco movimentos ligados por um traço sutil */
+.crivia-metodo__movs { list-style: none; margin: 1rem 0 0; padding: 0; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+.crivia-metodo__movs::before { content: ""; position: absolute; left: 1.7rem; top: 1.7rem; bottom: 1.7rem; width: 1px; background: linear-gradient(180deg, rgba(10,54,157,.4), rgba(10,54,157,.12)); }
+.crivia-metodo__mov { position: relative; display: grid; grid-template-columns: 3.4rem 1fr; column-gap: 1.1rem; align-items: center; }
+.crivia-metodo__mov strong { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 1.35rem; font-weight: 700; letter-spacing: -.03em; color: #001D3D; }
+.crivia-metodo__mov p { grid-column: 2; margin: .15rem 0 0; font-size: .92rem; line-height: 1.5; color: #2F4A70; }
+.crivia-metodo__ico { grid-row: 1 / span 2; width: 3.4rem; height: 3.4rem; border-radius: 50%; display: grid; place-items: center; color: #0A369D; position: relative; z-index: 1;
+  background: linear-gradient(160deg, rgba(255,255,255,.95), rgba(236,243,255,.85)); border: 1px solid rgba(47,107,255,.3);
+  box-shadow: 0 1rem 1.8rem -1rem rgba(10,54,157,.5), 0 0 0 5px rgba(47,107,255,.07); transition: transform .4s cubic-bezier(.16,1,.3,1), color .3s ease, box-shadow .3s ease; }
+.crivia-metodo__ico svg { width: 1.5rem; height: 1.5rem; }
+.crivia-metodo__mov:hover .crivia-metodo__ico { transform: translateY(-3px) scale(1.06); color: #2F6BFF; box-shadow: 0 1.2rem 2rem -1rem rgba(47,107,255,.6), 0 0 0 7px rgba(47,107,255,.1); }
+
+/* terceira parte: a ordem de referência */
+.crivia-metodo__ordem { list-style: none; margin: .8rem 0 0; padding: 1.2rem 1.2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem .4rem; align-items: center;
+  border-radius: 1.25rem; background: linear-gradient(160deg, rgba(255,255,255,.92), rgba(238,245,255,.78)); border: 1px solid rgba(47,107,255,.24);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 26px 60px -28px rgba(10,54,157,.45), 0 2px 0 rgba(255,255,255,.9) inset; }
+.crivia-metodo__no { display: flex; align-items: center; min-width: 0; }
+.crivia-metodo__no span { flex: 1; min-width: 0; box-sizing: border-box; padding: .75rem .6rem; border-radius: 9999px; text-align: center; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: clamp(.9rem, 1.5vw, 1.3rem); font-weight: 650; letter-spacing: -.01em;
+  color: #0A369D; background: rgba(47,107,255,.08); border: 1px solid rgba(47,107,255,.25); }
+.crivia-metodo__no:first-child span { color: #fff; background: linear-gradient(145deg, #2F6BFF, #0A369D); border-color: transparent; }
+.crivia-metodo__no:last-child span { color: #fff; background: linear-gradient(145deg, #0A369D, #001D3D); border-color: transparent; }
+.crivia-metodo__no:not(:nth-child(2n))::after { content: ""; width: 1.7rem; height: 1.7rem; flex: none; background: no-repeat center / 1.1rem 1.1rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 6l6 6-6 6'/%3E%3C/svg%3E"); }
+.crivia-metodo__apoio { margin: .4rem 0 0; max-width: 46rem; font-size: clamp(.95rem, 1.15vw, 1.05rem); line-height: 1.6; color: #1E3B63; }
+
+@media (min-width: 48rem) {
+  .crivia-metodo__in { padding: 5.25rem 2.5rem 2rem; }
+  .crivia-metodo__movs { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 1.2rem; margin-top: 1.6rem; }
+  .crivia-metodo__movs::before { left: 8%; right: 8%; top: 1.7rem; bottom: auto; width: auto; height: 1px; background: linear-gradient(90deg, rgba(10,54,157,.08), rgba(10,54,157,.4), rgba(10,54,157,.08)); }
+  .crivia-metodo__mov { grid-template-columns: 1fr; justify-items: start; row-gap: .6rem; }
+  .crivia-metodo__mov p { grid-column: 1; }
+  .crivia-metodo__ico { grid-row: auto; }
+}
+@media (min-width: 48rem) {
+  .crivia-metodo__ordem { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem .3rem; padding: 1.8rem 1.8rem; }
+  .crivia-metodo__no:not(:nth-child(2n))::after { display: block; }
+  .crivia-metodo__no:nth-child(2n)::after { content: ""; width: 1.7rem; height: 1.7rem; flex: none; background: no-repeat center / 1.1rem 1.1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 6l6 6-6 6'/%3E%3C/svg%3E"); }
+  .crivia-metodo__no:nth-child(4n)::after { display: none; }
+  .crivia-metodo__no span { padding: .95rem .8rem; }
+  .crivia-metodo__in--2 .crivia-metodo__cab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2rem; }
+  .crivia-metodo__in--2 .crivia-sobre__eyebrow { grid-column: 1; }
+  .crivia-metodo__in--2 .crivia-sobre__titulo { grid-column: 1; grid-row: 2; }
+  .crivia-metodo__in--2 .crivia-sobre__lead { grid-column: 2; grid-row: 2; align-self: end; padding-bottom: .6rem; }
+  .crivia-metodo__in--3 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); grid-template-areas: "cab apoio" "ordem ordem"; column-gap: 2rem; row-gap: 2.2rem; align-content: center; }
+  .crivia-metodo__in--3 .crivia-metodo__cab { grid-area: cab; }
+  .crivia-metodo__in--3 .crivia-metodo__apoio { grid-area: apoio; align-self: end; margin: 0; padding-bottom: .6rem; }
+  .crivia-metodo__in--3 .crivia-metodo__ordem { grid-area: ordem; margin: 0; }
+}
+@media (min-width: 64rem) {
+  .crivia-metodo__in--1 { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); column-gap: 4rem; align-items: center; padding: 4.6rem 3rem 1.6rem; }
+  .crivia-metodo__in { padding: 5rem 3rem 1.6rem; }
+  .crivia-metodo__in--3 .crivia-metodo__ordem { padding: 1.5rem 1.6rem; }
+  .crivia-metodo__in--2 .crivia-metodo__cab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 31rem); column-gap: 4rem; }
+  .crivia-metodo__in--2 .crivia-sobre__eyebrow { grid-column: 1; }
+  .crivia-metodo__in--2 .crivia-sobre__titulo { grid-column: 1; grid-row: 2; }
+  .crivia-metodo__in--2 .crivia-sobre__lead { grid-column: 2; grid-row: 2; align-self: end; padding-bottom: .6rem; }
+  .crivia-metodo__in--3 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 31rem); grid-template-areas: "cab apoio" "ordem ordem"; column-gap: 4rem; row-gap: 2.2rem; align-content: center; }
+  .crivia-metodo__in--3 .crivia-metodo__cab { grid-area: cab; }
+  .crivia-metodo__in--3 .crivia-metodo__apoio { grid-area: apoio; align-self: end; margin: 0; padding-bottom: .6rem; }
+  .crivia-metodo__in--3 .crivia-metodo__ordem { grid-area: ordem; margin: 0; }
+}
+@media (max-height: 760px) and (min-width: 64rem) {
+  .crivia-metodo__in--1 .crivia-sobre__titulo { font-size: clamp(2.2rem, 4vw, 3.4rem); }
+  .crivia-metodo__corpo { font-size: .9rem; line-height: 1.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crivia-metodo .crivia-rev, .crivia-metodo .crivia-ln > span { transition: none; }
+}
+"""
+
+CSS_SOBRE = r"""
+/* ════ CRIVIA ════ dobra "Sobre" (forma da hero Lumina, cores CRIVIA) ════ */
+.crivia-sobre { position: absolute; inset: 0; z-index: 12; overflow: hidden; opacity: 0; visibility: hidden; pointer-events: none;
+  background: radial-gradient(90% 80% at 50% 45%, rgba(242,246,253,.94), rgba(236,243,252,.88)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); font-family: "Geist", system-ui, sans-serif; color: #001D3D; will-change: opacity, transform; }
+.crivia-sobre__rola { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(10,54,157,.3) transparent; }
+.crivia-sobre__in { box-sizing: border-box; min-height: 100%; max-width: 80rem; margin: 0 auto; padding: 5rem 1.25rem 2.5rem;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.4rem; align-content: center; }
+.crivia-sobre__cab { display: flex; flex-direction: column; gap: 1rem; }
+.crivia-sobre__eixo { display: none; }
+
+/* surgimento igual ao da hero: cada linha sobe devagar, saindo do desfoque, uma depois da outra (260 ms) */
+.crivia-sobre .crivia-rev { opacity: 0; transform: translateY(70%); filter: blur(18px); transition: opacity .45s ease, transform .45s ease, filter .45s ease; }
+.crivia-sobre .crivia-ln { display: block; overflow: hidden; padding: .04em .08em .34em 0; margin-bottom: -.22em; }
+.crivia-sobre .crivia-ln > span { display: inline-block; opacity: 0; transform: translateY(100%); filter: blur(18px); transition: opacity .4s ease, transform .4s ease, filter .4s ease; }
+.crivia-sobre.is-on .crivia-rev, .crivia-sobre.is-on .crivia-ln > span {
+  opacity: 1; transform: none; filter: none; transition: opacity 1.5s cubic-bezier(.16,1,.3,1), transform 1.6s cubic-bezier(.16,1,.3,1), filter 1.5s cubic-bezier(.16,1,.3,1);
+  transition-delay: calc(var(--i, 0) * 260ms + 120ms); }
+.crivia-sobre .crivia-sobre__f { opacity: 0; transform: translateY(40%); filter: blur(14px); transition: opacity .4s ease, transform .4s ease, filter .4s ease; }
+.crivia-sobre.is-on .crivia-sobre__f { opacity: 1; transform: none; filter: none;
+  transition: opacity 1.3s cubic-bezier(.16,1,.3,1), transform 1.4s cubic-bezier(.16,1,.3,1), filter 1.3s cubic-bezier(.16,1,.3,1), background .4s ease;
+  transition-delay: calc(var(--i, 0) * 200ms + 120ms), calc(var(--i, 0) * 200ms + 120ms), calc(var(--i, 0) * 200ms + 120ms), 0s; }
+
+.crivia-sobre__eyebrow { display: inline-flex; align-items: center; gap: .65rem; font-size: .76rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: #0A369D; }
+.crivia-sobre__eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: #F5B82E; box-shadow: 0 0 0 4px rgba(245,184,46,.25); }
+.crivia-sobre__titulo { margin: .85rem 0 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: clamp(2.6rem, 5.6vw, 5rem);
+  line-height: 1.03; letter-spacing: -.04em; }
+.crivia-sobre .crivia-ln > span { padding: .06em .08em .3em 0; margin-bottom: -.3em; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.crivia-sobre .crivia-ln:nth-child(1) > span { background-image: linear-gradient(180deg, #2F6BFF 0%, #0A369D 100%); }
+.crivia-sobre .crivia-ln:nth-child(2) > span { background-image: linear-gradient(180deg, #0A369D 0%, #001D3D 100%); }
+.crivia-sobre__lead { margin: 0; max-width: 31rem; font-size: clamp(.95rem, 1.2vw, 1.075rem); line-height: 1.55; color: #2B4A6B; }
+
+.crivia-sobre__bruno { box-sizing: border-box; padding: 1.1rem 1.3rem 1.15rem; border-radius: 1.25rem;
+  background: rgba(255,255,255,.62); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border: 1px solid rgba(10,54,157,.14); box-shadow: 0 1.4rem 2.8rem -1.6rem rgba(0,29,61,.38); }
+.crivia-sobre__bruno-topo { display: flex; align-items: center; gap: .8rem; }
+.crivia-sobre__mono { flex: none; width: 2.7rem; height: 2.7rem; border-radius: 50%; display: grid; place-items: center; font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: .85rem; font-weight: 700; letter-spacing: .02em; color: #fff; background: linear-gradient(145deg, #2F6BFF, #0A369D 70%, #001D3D);
+  box-shadow: 0 .4rem 1rem -.3rem rgba(10,54,157,.65), inset 0 0 0 1px rgba(255,255,255,.25); }
+.crivia-sobre__bruno-topo strong { display: block; font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+.crivia-sobre__bruno-topo span:not(.crivia-sobre__mono) { display: block; margin-top: .1rem; font-size: .74rem; color: #4B6585; }
+.crivia-sobre__bruno-txt { margin: .85rem 0 0; font-size: .92rem; line-height: 1.55; color: #14305A; }
+.crivia-sobre__bruno-cham { margin: .65rem 0 0; font-size: .86rem; font-weight: 650; color: #0A369D; }
+
+.crivia-sobre__pilha { position: relative; margin-bottom: 1.25rem; }
+.crivia-sobre__pilha::before, .crivia-sobre__pilha::after { content: ""; position: absolute; z-index: 0; height: 50%; border-radius: 1.2rem;
+  background: linear-gradient(180deg, #0A369D, #001D3D); }
+.crivia-sobre__pilha::before { left: 5%; right: 5%; bottom: -.6rem; opacity: .5; }
+.crivia-sobre__pilha::after { left: 10%; right: 10%; bottom: -1.15rem; opacity: .26; }
+.crivia-sobre__video { position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 9; border-radius: 1.2rem; overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(120% 90% at 20% 0%, #2F6BFF 0%, rgba(47,107,255,0) 55%), linear-gradient(150deg, #0A369D 0%, #07245F 55%, #001D3D 100%);
+  border: 1px solid rgba(255,255,255,.2); box-shadow: 0 2rem 3.4rem -1.6rem rgba(0,29,61,.6); }
+.crivia-sobre__video::before { content: ""; position: absolute; inset: 0; opacity: .5;
+  background-image: radial-gradient(rgba(255,255,255,.22) 1px, transparent 1.4px); background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000, transparent); mask-image: radial-gradient(70% 70% at 50% 50%, #000, transparent); }
+.crivia-sobre__video-el { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #001D3D; }
+.crivia-sobre__play { position: relative; z-index: 2; width: 4.6rem; height: 4.6rem; border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: #fff;
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: 0 .8rem 2rem -.6rem rgba(0,13,40,.7); transition: transform .35s ease, background .35s ease; }
+.crivia-sobre__play svg { width: 1.7rem; height: 1.7rem; margin-left: .2rem; }
+.crivia-sobre__play:hover { transform: scale(1.07); background: rgba(255,255,255,.28); }
+.crivia-sobre__play-anel { position: absolute; inset: -1px; border-radius: 50%; border: 1px solid rgba(255,255,255,.55); animation: crivia-play-anel 2.6s ease-out infinite; }
+@keyframes crivia-play-anel { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
+.crivia-sobre__legenda { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: flex-end; padding: 1.4rem 1rem .7rem;
+  background: linear-gradient(180deg, rgba(0,13,40,0), rgba(0,13,40,.55)); color: #fff; font-size: .7rem; }
+.crivia-sobre__legenda-breve { opacity: .75; font-size: .68rem; letter-spacing: .04em; white-space: nowrap; }
+
+/* Fórmulas centrais: números grandes e legenda discreta, separados por fios de luz (como a lista de indicadores da Lumina) */
+.crivia-sobre__formulas { padding: .7rem 1.3rem .2rem; border-radius: 1.25rem; background: linear-gradient(160deg, rgba(255,255,255,.92), rgba(238,245,255,.78)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(47,107,255,.24); box-shadow: 0 26px 60px -28px rgba(10,54,157,.45), 0 2px 0 rgba(255,255,255,.9) inset; }
+.crivia-sobre__formulas ol { list-style: none; margin: 0; padding: 0; }
+.crivia-sobre__rotulo { margin: 0 0 .25rem; font-size: .66rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: #3F6A99; }
+.crivia-sobre__seta { display: inline-block; margin: 0 .38em; color: #2F6BFF; font-weight: 700; }
+.crivia-sobre__f { position: relative; display: flex; align-items: center; gap: 1rem; padding: .4rem .2rem .4rem 0; cursor: default; }
+.crivia-sobre__f::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, rgba(10,54,157,.4), rgba(10,54,157,.12) 60%, rgba(10,54,157,0)); }
+.crivia-sobre__f::after { content: ""; position: absolute; top: 0; left: 0; width: 18%; height: 1px; opacity: 0;
+  background: linear-gradient(90deg, rgba(47,107,255,0), #2F6BFF, rgba(47,107,255,0)); animation: crivia-fio 7s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .7s); }
+@keyframes crivia-fio { 0%, 55% { left: -20%; opacity: 0; } 62% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+.crivia-sobre__num { flex: none; width: 1.6rem; font-family: "Geist", monospace; font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: #2F6BFF; }
+.crivia-sobre__f-corpo { min-width: 0; transition: transform .45s cubic-bezier(.16,1,.3,1); }
+.crivia-sobre__f strong { display: block; width: fit-content; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: clamp(1.25rem, 1.7vw, 1.6rem); font-weight: 700; line-height: 1.08; letter-spacing: -.035em;
+  background: linear-gradient(100deg, #001D3D 0%, #0A369D 70%, #2F6BFF 100%); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.crivia-sobre__f p { margin: .2rem 0 0; font-size: .88rem; line-height: 1.36; color: #2F4A70; max-width: 38rem; transition: color .4s ease; }
+.crivia-sobre__f:hover .crivia-sobre__f-corpo { transform: translateX(.45rem); }
+.crivia-sobre__f:hover p { color: #14305A; }
+.crivia-sobre__f:hover .crivia-sobre__num { color: #0A369D; }
+.crivia-sobre__f:last-child::after { display: none; }
+.crivia-sobre__f:last-child { border-bottom: 1px solid rgba(10,54,157,.2); }
+
+@media (min-width: 48rem) {
+  .crivia-sobre__in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 2.5rem; row-gap: 1.6rem; padding: 5.25rem 2.5rem 2rem; }
+  .crivia-sobre__cab { grid-column: 1 / -1; flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 2.5rem; }
+  .crivia-sobre__lead { padding-bottom: .5rem; }
+  .crivia-sobre__formulas { grid-column: 1 / -1; }
+  .crivia-sobre__formulas ol { display: grid; grid-template-columns: 1fr 1fr; column-gap: 2.5rem; }
+  .crivia-sobre__f:last-child { border-bottom: 0; }
+}
+@media (min-width: 64rem) {
+  .crivia-sobre__in { grid-template-columns: minmax(0, .78fr) minmax(0, 1.3fr); column-gap: 3rem; row-gap: 1.1rem; padding: 4.6rem 3rem .9rem; grid-template-areas: "cab cab" "video formulas" "bruno formulas"; align-content: center; }
+  .crivia-sobre__cab { grid-area: cab; }
+  .crivia-sobre__videobox { grid-area: video; }
+  .crivia-sobre__bruno { grid-area: bruno; }
+  .crivia-sobre__formulas { grid-area: formulas; grid-column: auto; }
+  .crivia-sobre__formulas ol { display: block; }
+  .crivia-sobre__f:last-child { border-bottom: 1px solid rgba(10,54,157,.2); }
+  .crivia-sobre__eixo { display: block; position: absolute; z-index: 1; left: calc(3rem + (100% - 9rem) * .3750 + 1.5rem); top: 4.6rem; bottom: 0; width: 0; border-left: 1px dashed rgba(10,54,157,.2); pointer-events: none; }
+  .crivia-sobre__eixo i { position: absolute; left: -5px; top: 0; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #2F6BFF;
+    filter: drop-shadow(0 0 6px rgba(47,107,255,.7)); animation: crivia-eixo 6.5s ease-in-out infinite; }
+}
+@keyframes crivia-eixo { 0% { top: 4%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { top: 94%; opacity: 0; } }
+@media (min-width: 64rem) and (max-height: 760px) {
+  .crivia-sobre__in { padding-top: 4.4rem; padding-bottom: 1rem; row-gap: 1rem; }
+  .crivia-sobre__titulo { font-size: clamp(2.4rem, 4.6vw, 3.6rem); }
+  .crivia-sobre__bruno { padding: .85rem 1.1rem; }
+  .crivia-sobre__bruno-txt { font-size: .84rem; margin-top: .6rem; }
+  .crivia-sobre__f { padding-top: .55rem; padding-bottom: .55rem; }
+  .crivia-sobre__f p { font-size: .74rem; line-height: 1.35; }
+  .crivia-sobre__pilha { margin-bottom: .9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crivia-sobre .crivia-rev, .crivia-sobre .crivia-ln > span, .crivia-sobre .crivia-sobre__f { transition: none; }
+  .crivia-sobre__play-anel, .crivia-sobre__f::after, .crivia-sobre__eixo i { animation: none; }
+}
+"""
+
+PATCHES_SOBRE = [
+    ("sobre:progresso", "  var cachedProgress = 0;\n",
+     "  var CRIVIA_SOBRE_EM = 0.63;\n"
+     "  var CRIVIA_SOBRE_VH = 5.6;\n"
+     "  var CRIVIA_METODO_VH = 3.4;\n"
+     "  var criviaS0 = (max) => CRIVIA_SOBRE_EM * Math.max(1, max - (window.__criviaHoldPx || 0) - (window.__criviaMetodoPx || 0));\n"
+     "  var criviaLogico = (y, max) => {\n"
+     "    const hold = Math.round(window.innerHeight * CRIVIA_SOBRE_VH);\n"
+     "    const hold2 = Math.round(window.innerHeight * CRIVIA_METODO_VH);\n"
+     "    window.__criviaHoldPx = hold;\n"
+     "    window.__criviaMetodoPx = hold2;\n"
+     "    const base = Math.max(1, max - hold - hold2);\n"
+     "    const s0 = CRIVIA_SOBRE_EM * base;\n"
+     "    if (y <= s0) return clamp01(y / base);\n"
+     "    if (y <= s0 + hold) {\n"
+     "      const t = (y - s0) / hold;\n"
+     "      const b = t < 0.12 ? 0 : t < 0.3 ? (t - 0.12) / 0.18 : t < 0.62 ? 1 - (t - 0.3) / 0.32 : 0;\n"
+     "      return CRIVIA_SOBRE_EM - 0.075 * b * b * (3 - 2 * b);\n"
+     "    }\n"
+     "    if (y <= s0 + hold + hold2) return CRIVIA_SOBRE_EM;\n"
+     "    return clamp01((y - hold - hold2) / base);\n"
+     "  };\n"
+     "  var criviaCatalogoFator = () => {\n"
+     "    const max = document.documentElement.scrollHeight - window.innerHeight;\n"
+     "    const hold = window.__criviaHoldPx || 0;\n"
+     "    if (max <= 0 || !hold) return 1;\n"
+     "    const t = (window.scrollY - criviaS0(max)) / hold;\n"
+     "    return t <= 0.05 ? 1 : t >= 0.15 ? 0 : +(1 - (t - 0.05) / 0.1).toFixed(3);\n"
+     "  };\n"
+     "  var cachedProgress = 0;\n", 1),
+    ("sobre:progresso-calc", "cachedProgress = max > 0 ? clamp01(window.scrollY / max) : 0;",
+     "cachedProgress = max > 0 ? criviaLogico(window.scrollY, max) : 0;", 1),
+    ("sobre:componentes", "  var HomeView = () => {", SOBRE_JS + "  var HomeView = () => {", 1),
+    ("sobre:espaco", "style: { height: `${sceneConfig.sequence.scrollVh}vh` } }",
+     "style: { height: `calc(${sceneConfig.sequence.scrollVh}vh + ${(CRIVIA_SOBRE_VH + CRIVIA_METODO_VH) * 100}vh)` } }", 1),
+    ("sobre:no-palco", "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.93, 0.98]",
+     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SobreOverlay, {}),\n"
+     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(MetodoOverlay, {}),\n"
+     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.88, 0.93]", 1),
+    ("sobre:catalogo-surge", "(ScrollFade, { appear: [0.6, 0.67]", "(ScrollFade, { appear: [0.575, 0.615]", 1),
+    ("sobre:ato-onda", "    wave: [0.61, 0.955]", "    wave: [0.58, 0.955]", 1),
+    ("sobre:ato-final", "    tree: [0.94, 1]", "    tree: [0.9, 1]", 1),
+]
+
+FITAS_JS = r"""  // ── CRIVIA ── fitas de partículas: cada dobra chega por uma fita que se acalma e se dissolve ──
+  var CRIVIA_FITAS_EVENTOS = [
+    { dom: "p", a: 0.27, b: 0.36, c: 0.53, dir: 1, y: 0.7, seed: 11, amp: 1 },
+    { dom: "p", a: 0.5, b: 0.575, c: 0.625, dir: -1, y: 0.3, seed: 23, amp: 0.85 },
+    { dom: "t", a: 0.2, b: 0.44, c: 0.72, dir: 1, y: 0.78, seed: 37, amp: 0.9 },
+    { dom: "p", a: 0.8, b: 0.89, c: 0.985, dir: -1, y: 0.5, seed: 41, amp: 1 }
+  ];
+  var CRIVIA_FITAS_COR = ["56,209,255", "47,107,255", "10,54,157", "120,226,255"];
+  var criviaPrng = (s) => () => {
+    s |= 0; s = s + 0x6D2B79F5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+  var criviaSm = (x) => { x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); };
+  var criviaTornado = (ctx, W, H, T, e, q, mob) => {
+    const NF = mob ? 4 : 6, N = mob ? 170 : 340;
+    const cx = W * 0.5;
+    const Rmax = Math.min(W * 0.4, H * 0.62);
+    const abre = criviaSm((q - 0.5) / 0.5);
+    const alt = 0.2 + 0.78 * criviaSm(q / 0.4);
+    for (let f = 0; f < NF; f++) {
+      const ph = f / NF * 6.2832;
+      ctx.fillStyle = "rgb(" + CRIVIA_FITAS_COR[f % 4] + ")";
+      for (let k = 0; k < N; k++) {
+        const h = Math.sin((f * 131 + k * 17.13) * 12.9898) * 43758.5453;
+        const rnd = h - Math.floor(h);
+        const h2 = Math.sin((f * 71 + k * 5.7) * 78.233) * 12345.678;
+        const rnd2 = h2 - Math.floor(h2);
+        const s = (k / N + T * 0.03) % 1;
+        const funil = 0.1 + 0.9 * Math.pow(s, 1.5);
+        const r = Rmax * funil * (1 + abre * 0.8) * (1 + (rnd2 - 0.5) * 0.035);
+        const th = ph + s * 13 - T * 0.9 + (rnd - 0.5) * 0.16;
+        const bal = Math.sin(T * 0.5 + s * 3 + ph) * W * 0.025 * (1 - s);
+        const x = cx + bal + r * Math.cos(th);
+        const y = H * (0.99 - alt * s) + (rnd2 - 0.5) * 7;
+        const prof = (Math.sin(th) + 1) / 2;
+        const borda = criviaSm(s / 0.08) * (1 - criviaSm((s - 0.86) / 0.14));
+        const al = e * borda * (0.25 + 0.75 * prof);
+        if (al < 0.02) continue;
+        ctx.globalAlpha = Math.min(0.85, al);
+        ctx.beginPath();
+        ctx.arc(x, y, (0.6 + 1.5 * prof) * (0.6 + rnd * 0.7), 0, 6.2832);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  };
+  var CriviaFitas = () => {
+    const ref = (0, import_react35.useRef)(null);
+    (0, import_react35.useEffect)(() => {
+      const cv = ref.current;
+      const ctx = cv && cv.getContext("2d");
+      if (!cv || !ctx) return;
+      const reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const fios = CRIVIA_FITAS_EVENTOS.map((ev) => {
+        const r = criviaPrng(ev.seed);
+        return [0, 1, 2, 3].map((j) => ({
+          ph: r() + j * 0.19,
+          p: Array.from({ length: 300 }, () => ({ u: r(), l: r() * 2 - 1, z: r(), j: r() - 0.5, f: r() }))
+        }));
+      });
+      let W = 0, H = 0, dpr = 1, raf = 0, limpo = false, chave = "";
+      const medir = () => {
+        dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2);
+        W = window.innerWidth; H = window.innerHeight;
+        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+        chave = "";
+      };
+      medir();
+      window.addEventListener("resize", medir);
+      const tick = (ms) => {
+        raf = requestAnimationFrame(tick);
+        const y = window.scrollY;
+        const max = document.documentElement.scrollHeight - H;
+        const hold = window.__criviaHoldPx || 0;
+        if (max <= 0 || !hold) return;
+        const p = criviaLogico(y, max);
+        const t = (y - criviaS0(max)) / hold;
+        const ativos = [];
+        CRIVIA_FITAS_EVENTOS.forEach((ev, i) => {
+          const v = ev.dom === "t" ? t : p;
+          if (v <= ev.a || v >= ev.c) return;
+          const e = v < ev.b ? criviaSm((v - ev.a) / (ev.b - ev.a)) : 1 - criviaSm((v - ev.b) / (ev.c - ev.b));
+          ativos.push([i, e, (v - ev.a) / (ev.c - ev.a)]);
+        });
+        if (!ativos.length) {
+          if (!limpo) { ctx.clearRect(0, 0, cv.width, cv.height); limpo = true; }
+          return;
+        }
+        limpo = false;
+        const T = reduz ? 3 : ms / 1000;
+        const mob = W < 768;
+        const n = mob ? 150 : 300;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        for (const [i, e, q] of ativos) {
+          const ev = CRIVIA_FITAS_EVENTOS[i];
+          if (ev.tornado) { criviaTornado(ctx, W, H, T, e, q, mob); continue; }
+          const cabeca = -0.18 + q * 1.5;
+          const amp = 0.2 * ev.amp * (1 - 0.55 * q);
+          const N = mob ? 70 : 120;
+          ctx.lineCap = "round";
+          fios[i].forEach((fio, j) => {
+            const yc = ev.y + (j - 1.5) * 0.045;
+            for (const lado of [1, -1]) {
+              let ant = null;
+              for (let k = 0; k <= N; k++) {
+                const s = k / N;
+                const dist = cabeca - s;
+                const vis = dist <= 0 ? 0 : criviaSm(dist / 0.1) * (1 - criviaSm((dist - 0.22) / 0.5));
+                const onda = Math.sin(6.2832 * (1.3 * s + fio.ph + T * 0.12)) * 0.5 + Math.sin(6.2832 * (2.9 * s - fio.ph * 1.7 - T * 0.17)) * 0.22;
+                const larg = 0.05 * H * Math.cos(6.2832 * (1.6 * s + fio.ph * 0.7 + T * 0.1)) * (0.6 + 0.4 * e);
+                const px = ((ev.dir > 0 ? s : 1 - s) * 1.1 - 0.05) * W;
+                const py = (yc + onda * amp) * H + lado * larg;
+                if (ant && vis > 0.01) {
+                  ctx.strokeStyle = "rgba(" + CRIVIA_FITAS_COR[j] + "," + Math.min(0.6, e * vis * 0.7).toFixed(3) + ")";
+                  ctx.lineWidth = j % 2 ? 1.1 : 1.6;
+                  ctx.beginPath(); ctx.moveTo(ant[0], ant[1]); ctx.lineTo(px, py); ctx.stroke();
+                }
+                ant = [px, py];
+              }
+            }
+          });
+        }
+        ctx.globalAlpha = 1;
+      };
+      raf = requestAnimationFrame(tick);
+      return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", medir); };
+    }, []);
+    return criviaH("canvas", { ref, "aria-hidden": true, style: { position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 4 } });
+  };
+"""
+
+PATCHES_FITAS = [
+    ("fitas:componente", "  var HomeView = () => {", FITAS_JS + "  var HomeView = () => {", 1),
+    ("fitas:no-palco", "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Grain, {}),\n",
+     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Grain, {}),\n"
+     "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CriviaFitas, {}),\n", 1),
+]
+
+PATCHES_NAV = [
+    ("nav:fale-conosco", """            children: CTA
+          }
+        )
+      ] }),""", """            children: CTA
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: "#", className: "crivia-nav-fale", children: "Fale conosco" })
+      ] }),""", 1),
+    ("nav:fale-conosco-movel", "items: [...LEFT_NAV, ...RIGHT_NAV], cta: CTA", 'items: [...LEFT_NAV, ...RIGHT_NAV, "Fale conosco"], cta: CTA', 1),
+]
+
+CSS_NAV = r"""
+/* ════ CRIVIA ════ cabeçalho: grupos ancorados nas bordas, marca ao centro, espaços homogêneos e botão "Fale conosco" ════ */
+@media (min-width: 48rem) {
+  header.fixed { display: grid !important; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); justify-content: normal !important; }
+  header.fixed nav[aria-label="Primary"] { justify-self: start; }
+  header.fixed nav[aria-label="Secondary"] { justify-self: end; }
+  header.fixed nav[aria-label="Primary"], header.fixed nav[aria-label="Secondary"] { gap: clamp(.85rem, 1.8vw, 2.1rem) !important; align-items: center; }
+  header.fixed nav a { font-size: clamp(.58rem, .86vw, .7rem) !important; letter-spacing: .07em !important; }
+  header.fixed > a { position: static !important; transform: none !important; translate: none !important; flex: none; justify-self: center; }
+  header.fixed > a > span[aria-hidden] { display: none !important; }
+}
+@media (min-width: 90rem) {
+  header.fixed > a > span[aria-hidden] { display: block !important; }
+}
+header.fixed nav a.crivia-nav-fale { font-size: clamp(.58rem, .8vw, .72rem) !important; letter-spacing: .1em !important; }
+.crivia-nav-fale { display: inline-flex; align-items: center; white-space: nowrap; padding: .42rem clamp(.75rem, 1.3vw, 1.05rem); border-radius: 9999px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff !important;
+  background: linear-gradient(135deg, #0A369D, #2F6BFF); box-shadow: 0 6px 16px rgba(47,107,255,.32), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .3s ease, filter .3s ease, box-shadow .3s ease; }
+.crivia-nav-fale:hover, .crivia-nav-fale:focus-visible { transform: translateY(-1px) scale(1.04); filter: brightness(1.1); box-shadow: 0 10px 22px rgba(47,107,255,.42), inset 0 1px 0 rgba(255,255,255,.4); outline: none; opacity: 1 !important; }
 """
 
 PATCHES_HERO_FUNDO = [
@@ -1829,12 +2513,19 @@ def aplicar_patches(raiz_modelo):
     js = trocar_trecho(js, HAND_INI, HAND_FIM, HAND_NOVO, "ind:overlay")
     js = trocar_trecho(js, CAT_INI, CAT_FIM, CAT_NOVO, "cat:overlay")
     js = aplicar(js, PATCHES_HERO_FUNDO, "app.js")
+    js = aplicar(js, PATCHES_SOBRE, "app.js")
+    js = aplicar(js, PATCHES_NAV, "app.js")
     app.write_text(js, encoding="utf-8", newline="\n")
 
     css = ov / "assets" / "css" / "main.css"
-    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND + CSS_CAT,
+    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND + CSS_CAT + CSS_SOBRE + CSS_METODO + CSS_NAV,
                    encoding="utf-8", newline="\n")
     copiar_fontes_nexus(ov / "assets" / "fonts")
+    img_metodo = REPO / "assets" / "metodo" / "tablet-industrial.png"
+    if img_metodo.is_file():
+        destino_metodo = ov / "assets" / "images" / "metodo"
+        destino_metodo.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(img_metodo, destino_metodo / img_metodo.name)
     fotos = REPO / "assets" / "produtos"
     if fotos.is_dir():
         destino_fotos = ov / "assets" / "images" / "produtos"
