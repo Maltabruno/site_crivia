@@ -1,0 +1,7 @@
+# Nunca versionar dados de leads (dados pessoais)
+leads.db
+leads.db-*
+*.db
+*.db-wal
+*.db-shm
+__pycache__/

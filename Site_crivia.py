@@ -39,6 +39,7 @@ import hashlib
 import http.server
 import json
 import math
+import os
 import random
 import shutil
 import socketserver
@@ -160,7 +161,7 @@ PATCHES_CENA = [
     # menos névoa ciano nas formas (o fluxo do modelo é forte demais sobre contas escuras)
     ("cena:fluxo-c", "glyph: { flow: 0.55,", "glyph: { flow: 0.15,", 1),
     ("cena:fluxo-i", "hand: { flow: 0.45,", "hand: { flow: 0.28,", 1),
-    ("cena:fluxo-o", "tree: { flow: 0.8,", "tree: { flow: 0.5,", 1),
+    ("cena:fluxo-o", "tree: { flow: 0.8, sway: 0.14, rock: 0.055, bob: 0.18", "tree: { flow: 0.12, sway: 0.14, rock: 0.26, bob: 0.2", 1),
     # o material multiplicava a cor da partícula duas vezes (material x instância): o âmbar virava
     # preto e o azul-marinho, quase preto. Com o material branco, a cor real fica só na instância.
     ("cena:material-branco", "    const material = new MeshStandardMaterial({\n      color,\n      roughness: finish.roughness,",
@@ -174,6 +175,39 @@ PATCHES_CENA = [
     ("cena:industria-nitida", "      density: 12,", "      density: 4,", 1),
     ("cena:industria-conta", "      // Same bead size as the glyph.\n      particleSize: 0.1,", "      // Same bead size as the glyph.\n      particleSize: 0.052,", 1),
     ("cena:industria-rotacao", "      rotation: -Math.PI / 6,", "      rotation: -Math.PI / 16,", 1),
+    # última dobra: poeira (aDust/uDust) no shader das contas; a mesma uniform vale 1 (sem efeito) nas outras nuvens
+    ("cena:dust-uniform", "      shader.uniforms.uFlowAmp = life.uFlowAmp;\n",
+     "      shader.uniforms.uFlowAmp = life.uFlowAmp;\n      shader.uniforms.uDust = life.uDust;\n      shader.uniforms.uCloudHide = life.uCloudHide;\n", 1),
+    ("cena:dust-decl", 'uniform float uFlowAmp;" + (relax ?', 'uniform float uFlowAmp;\\nattribute vec4 aDust;\\nuniform float uDust;\\nuniform float uCloudHide;" + (relax ?', 1),
+    ("cena:dust-vida", "      uFlowAmp: { value: 0 }\n    };\n    patchParticleShader",
+     "      uFlowAmp: { value: 0 },\n      uDust: { value: 1 },\n      uCloudHide: { value: 0 }\n    };\n    patchParticleShader", 1),
+    ("cena:dust-shader", '          "vGlow += uFlowTint * ( lifeBand * lifeBand * lifeBand );",\n',
+     '          "vGlow += uFlowTint * ( lifeBand * lifeBand * lifeBand );",\n'
+     '          "float dSpin = ( 1.0 - dT ) * 7.0;",\n'
+     '          "vec3 dOff = vec3( aDust.x * cos( dSpin ) - aDust.z * sin( dSpin ), aDust.y, aDust.x * sin( dSpin ) + aDust.z * cos( dSpin ) );",\n'
+     '          "dOff.z *= 0.3;",\n'
+     '          "dOff += ( 1.0 - dRush ) * vec3( sin( uTime * 0.4 + aDust.y ), cos( uTime * 0.3 + aDust.x ), sin( uTime * 0.5 + aDust.z ) ) * 1.4;",\n'
+     '          "wPos.xyz += dOff * ( 1.0 - dRush ) * dHas;",\n'
+     '          "vGlow += vec3( 0.0, 0.4, 0.6 ) * ( 1.0 - dT ) * 0.22 * dHas;",\n', 1),
+    ("cena:dust-escala", '          "vec3 scanned = transformed * sRev;",\n',
+     '          "float dHas = step( 0.0001, dot( aDust.xyz, aDust.xyz ) );",\n'
+     '          "float dT = clamp( ( uDust - aDust.w * 0.4 ) / max( 0.0001, 1.0 - aDust.w * 0.4 ), 0.0, 1.0 );",\n'
+     '          "float dRush = 1.0 - pow( 1.0 - dT, 4.0 );",\n'
+     '          "float dBoost = mix( 1.0 + 0.9 * dHas, 1.0, dRush );",\n'
+     '          "vec3 scanned = transformed * sRev * dBoost;",\n', 1),
+    ("cena:dust-scroll",
+     "          treeCloud.scan.uScan.value = range(\n            progress,\n            sequence.treeScanRange[0],\n            sequence.treeScanRange[1]\n          );\n",
+     "          treeCloud.scan.uScan.value = 1;\n          treeCloud.life.uDust.value = range(progress, 0.885, 0.935);\n", 1),
+    ("cena:sem-rede-final", "        treeNet.uBuild.value = range(progress, treeScanMid, sequence.treeScanRange[1]);", "        treeNet.uBuild.value = 0;", 1),
+    ("cena:logo-gira", "Math.sin(time * 0.24 + 3) * life.tree.rock + cursorYaw", "Math.sin(time * 0.34 + 3) * life.tree.rock + cursorYaw", 1),
+    ("cena:logo-revela", "treeCloud.life.uDust.value = range(progress, 0.885, 0.935);\n",
+     "treeCloud.life.uDust.value = range(progress, 0.885, 0.935);\n          if (treeCloud.logo) treeCloud.logo.setReveal(range(progress, 0.94, 0.96));\n", 1),
+    ("cena:logo-cursor", "            treeRelax?.step(renderer, pointerOnPlaneCam(treeCamera, treeCenter));\n",
+     "            const logoHit = pointerOnPlaneCam(treeCamera, treeCenter);\n            treeRelax?.step(renderer, logoHit);\n            if (treeCloud.logo) treeCloud.logo.setPointer(logoHit);\n", 1),
+    ("cena:nuvem-oculta", '            "vGlow = max( vGlow, uPointerTint * rel.w );"\n',
+     '            "vGlow = max( vGlow, uPointerTint * rel.w );",\n'
+     '            "if ( uCloudHide > 0.0 ) { float cVis = mix( 1.0, smoothstep( 0.08, 0.3, rel.w ), uCloudHide ); if ( cVis < 0.02 ) wPos.xyz = vec3( 1e5 ); }"\n', 1),
+    ("cena:dust-wipe", "      wipeRange: [0.74, 0.95],", "      wipeRange: [0.74, 0.9],", 1),
     # nome do mapa de dados embutidos
     ("cena:embutidos", "window.__AURALIS_EMBEDDED_ASSETS__", "window.__CRIVIA_EMBEDDED_ASSETS__", 1),
 ]
@@ -323,7 +357,7 @@ ARVORE_FIM_NOVO = r"""      pointerRelax: true,
 """
 
 # ── Textos e comportamento (app.js) ─────────────────────────────────────────
-MAILTO_JS = r"""var CRIVIA_EMAIL = "contato@crivia.eng.br";
+MAILTO_JS = r"""var CRIVIA_EMAIL = "contato@criviaengenharia.com.br";
   var CRIVIA_MAILTO = (comDados) => {
     let corpo = "";
     if (comDados) {
@@ -447,7 +481,7 @@ HAND_NOVO = r"""  var HandOverlay = () => {
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("ol", { className: "crivia-ind-seq", "aria-label": "Sintomas, causas, decisão", children: passos.map((nome, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { tag: "li", act: "hand", index: i, count: passos.length, delay: 320, className: "crivia-ind-passo" + (i === passos.length - 1 ? " crivia-ind-passo--ouro" : ""), children: nome }, nome)) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind__acao", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: () => CRIVIA_ABRIR_CENARIO("industria"), children: "Apresentar meu cenário" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealText, { tag: "p", variant: "copy", act: "hand", delayIn: 640, className: "font-geist crivia-ind-nota", children: "O formulário reúne as informações iniciais para compreender o contexto." })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind-faixa", children: [
@@ -617,7 +651,7 @@ CAT_NOVO = r"""  var CRIVIA_ICONES = {
           /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { className: "crivia-carta__titulo", children: p.nome }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "font-geist crivia-carta__txt", children: p.txt }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { className: "font-geist crivia-carta__ent", children: [/* @__PURE__ */ (0, import_jsx_runtime20.jsx)("b", { children: "Você recebe" }), p.ent] }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-carta__acao", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCtaPrimary, { compacto: true, onClick: () => { window.__criviaProduto = p.cod + " — " + p.nome; CRIVIA_IR_CENARIO(); }, children: "Apresentar meu cenário" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "crivia-carta__acao", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CriviaCtaPrimary, { compacto: true, onClick: () => { CRIVIA_ABRIR_CENARIO("produtos", p.cod); }, children: "Apresentar meu cenário" }) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "crivia-carta__vert", "aria-hidden": true, children: p.nome })
       ]
@@ -929,12 +963,17 @@ PATCHES_TEXTO = [
 # Componentes novos (inseridos antes de HomeView; usam o mesmo runtime JSX do modelo).
 JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const foco = () => { const campo = document.querySelector('input[aria-label="Nome"]'); if (campo) campo.focus({ preventScroll: true }); };
+    const foco = () => { const campo = document.querySelector('.crivia-fim .crivia-cta--primary'); if (campo) campo.focus({ preventScroll: true }); };
     const l = window.lenis;
     if (l && l.scrollTo) l.scrollTo(max, { duration: 3.4, onComplete: foco });
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
   var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
+  var CRIVIA_CTA_MICRO = "Leva cerca de 2 minutos. Você não precisa saber qual serviço escolher.";
+  var CRIVIA_ABRIR_CENARIO = (origem, interesse) => {
+    const q = "?origem=" + encodeURIComponent(origem || "direto") + (interesse ? "&interesse=" + encodeURIComponent(interesse) : "");
+    window.location.assign("apresentar-cenario.html" + q);
+  };
   var CRIVIA_IR_METODO = () => CRIVIA_NAV["Método"]();
   var criviaIcon = (paths) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("svg", {
     viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round",
@@ -951,12 +990,12 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
       ] })
     ]
   });
-  var CriviaCtaSecondary = ({ onClick, children }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
+  var CriviaCtaSecondary = ({ onClick, children, icone }) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("button", {
     type: "button", onClick, className: "crivia-cta crivia-cta--secondary", children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__points", "aria-hidden": true, children: [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("i", { className: "crivia-cta__point" }, i)) }),
       /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "crivia-cta__inner", children: [
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__label", children }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__arrow", children: criviaIcon(["M12 5v14", "M6 13l6 6 6-6"]) })
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "crivia-cta__arrow", children: criviaIcon(icone || ["M12 5v14", "M6 13l6 6 6-6"]) })
       ] })
     ]
   });
@@ -1174,7 +1213,7 @@ SOBRE_JS = r"""  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + paine
   document.addEventListener("click", (e) => {
     const a = e.target && e.target.closest ? e.target.closest("a") : null;
     if (!a) return;
-    const nome = a.textContent.trim();
+    const nome = a.textContent.trim() || (a.getAttribute("aria-label") || "").split(" — ")[0];
     const ir = CRIVIA_NAV[nome];
     if (!ir || !(a.getAttribute("href") === "#" || a.closest("header"))) return;
     e.preventDefault();
@@ -1343,11 +1382,12 @@ SOBRE_JS = r"""  // ── CRIVIA ── dobra "Sobre": pausa na rolagem + paine
           criviaH("p", rev(3, "crivia-metodo__frase"), "Compreender antes de decidir."),
           criviaH("p", rev(4, "crivia-metodo__corpo"), "Em projetos e operações complexas, atrasos, custos acima do previsto e conflitos podem ser sintomas de uma situação ainda não compreendida. O Método Sentinela orienta a leitura da realidade, o confronto entre referências e evidências e a integração das interfaces para identificar causas sustentadas e apoiar caminhos compatíveis com as condições reais."),
           criviaH("div", rev(5, "crivia-metodo__acoes"),
-            criviaH(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }),
+            criviaH(CriviaCtaPrimary, { onClick: () => CRIVIA_ABRIR_CENARIO("metodo"), children: "Apresentar meu cenário" }),
             criviaH("button", { type: "button", className: "crivia-metodo__link", onClick: CRIVIA_IR_MOVIMENTOS },
               "Conhecer os movimentos do método",
               criviaH("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true }, criviaH("path", { d: "M12 5v14" }), criviaH("path", { d: "M6 13l6 6 6-6" })))),
-          criviaH("p", rev(6, "crivia-metodo__nota"), "Metodologia própria da CRIVIA, em desenvolvimento. A aplicação é ajustada ao problema, às evidências, aos riscos e ao escopo de cada trabalho.")),
+          criviaH("p", rev(6, "crivia-metodo__micro"), CRIVIA_CTA_MICRO),
+          criviaH("p", rev(7, "crivia-metodo__nota"), "Metodologia própria da CRIVIA, em desenvolvimento. A aplicação é ajustada ao problema, às evidências, aos riscos e ao escopo de cada trabalho.")),
         criviaH("figure", { ref: figRef, className: "crivia-rev crivia-metodo__fig", style: { "--i": 4 } },
           criviaH("div", { className: "crivia-metodo__quadro" },
             criviaH("img", { src: "assets/images/metodo/tablet-industrial.png", width: 1200, height: 896, loading: "lazy", decoding: "async",
@@ -1395,6 +1435,7 @@ CSS_METODO = r"""
   border-bottom: 1px solid rgba(10,54,157,.3); transition: color .3s ease, border-color .3s ease, gap .3s ease; }
 .crivia-metodo__link svg { width: .95rem; height: .95rem; }
 .crivia-metodo__link:hover, .crivia-metodo__link:focus-visible { color: #2F6BFF; border-color: #2F6BFF; gap: .75rem; outline: none; }
+.crivia-metodo__micro { margin: -.2rem 0 0; font-size: .8rem; color: #3F5E82; }
 .crivia-metodo__nota { margin: .4rem 0 0; max-width: 34rem; font-size: .76rem; line-height: 1.5; color: #5A7595; }
 
 /* imagem: quadro com bordas empilhadas como a caixa de vídeo da Sobre; a tela do tablet recebe os ícones em HTML */
@@ -1615,16 +1656,20 @@ CSS_SOBRE = r"""
 
 PATCHES_SOBRE = [
     ("sobre:progresso", "  var cachedProgress = 0;\n",
+     "  var CRIVIA_BASE_VH = 1180;\n"
      "  var CRIVIA_SOBRE_EM = 0.63;\n"
-     "  var CRIVIA_SOBRE_VH = 5.6;\n"
-     "  var CRIVIA_METODO_VH = 3.4;\n"
-     "  var criviaS0 = (max) => CRIVIA_SOBRE_EM * Math.max(1, max - (window.__criviaHoldPx || 0) - (window.__criviaMetodoPx || 0));\n"
+     "  var CRIVIA_SOBRE_VH = 4;\n"
+     "  var CRIVIA_METODO_VH = 2.4;\n"
+     "  var CRIVIA_FIM_VH = 3;\n"
+     "  var criviaS0 = (max) => CRIVIA_SOBRE_EM * (CRIVIA_BASE_VH / 100) * window.innerHeight;\n"
      "  var criviaLogico = (y, max) => {\n"
-     "    const hold = Math.round(window.innerHeight * CRIVIA_SOBRE_VH);\n"
-     "    const hold2 = Math.round(window.innerHeight * CRIVIA_METODO_VH);\n"
+     "    const vh = window.innerHeight;\n"
+     "    const hold = Math.round(vh * CRIVIA_SOBRE_VH);\n"
+     "    const hold2 = Math.round(vh * CRIVIA_METODO_VH);\n"
+     "    const tail = Math.round(vh * CRIVIA_FIM_VH);\n"
      "    window.__criviaHoldPx = hold;\n"
      "    window.__criviaMetodoPx = hold2;\n"
-     "    const base = Math.max(1, max - hold - hold2);\n"
+     "    const base = (CRIVIA_BASE_VH / 100) * vh;\n"
      "    const s0 = CRIVIA_SOBRE_EM * base;\n"
      "    if (y <= s0) return clamp01(y / base);\n"
      "    if (y <= s0 + hold) {\n"
@@ -1633,7 +1678,7 @@ PATCHES_SOBRE = [
      "      return CRIVIA_SOBRE_EM - 0.075 * b * b * (3 - 2 * b);\n"
      "    }\n"
      "    if (y <= s0 + hold + hold2) return CRIVIA_SOBRE_EM;\n"
-     "    return clamp01((y - hold - hold2) / base);\n"
+     "    return clamp01(CRIVIA_SOBRE_EM + (1 - CRIVIA_SOBRE_EM) * (y - s0 - hold - hold2) / tail);\n"
      "  };\n"
      "  var criviaCatalogoFator = () => {\n"
      "    const max = document.documentElement.scrollHeight - window.innerHeight;\n"
@@ -1647,14 +1692,14 @@ PATCHES_SOBRE = [
      "cachedProgress = max > 0 ? criviaLogico(window.scrollY, max) : 0;", 1),
     ("sobre:componentes", "  var HomeView = () => {", SOBRE_JS + "  var HomeView = () => {", 1),
     ("sobre:espaco", "style: { height: `${sceneConfig.sequence.scrollVh}vh` } }",
-     "style: { height: `calc(${sceneConfig.sequence.scrollVh}vh + ${(CRIVIA_SOBRE_VH + CRIVIA_METODO_VH) * 100}vh)` } }", 1),
+     "style: { height: `calc(${CRIVIA_SOBRE_EM * CRIVIA_BASE_VH}vh + ${(CRIVIA_SOBRE_VH + CRIVIA_METODO_VH + CRIVIA_FIM_VH) * 100 + 100}vh)` } }", 1),
     ("sobre:no-palco", "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.93, 0.98]",
      "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SobreOverlay, {}),\n"
      "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(MetodoOverlay, {}),\n"
      "        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.88, 0.93]", 1),
     ("sobre:catalogo-surge", "(ScrollFade, { appear: [0.6, 0.67]", "(ScrollFade, { appear: [0.575, 0.615]", 1),
     ("sobre:ato-onda", "    wave: [0.61, 0.955]", "    wave: [0.58, 0.955]", 1),
-    ("sobre:ato-final", "    tree: [0.94, 1]", "    tree: [0.9, 1]", 1),
+    ("sobre:ato-final", "    tree: [0.94, 1]", "    tree: [0.962, 1]", 1),
 ]
 
 PATCHES_NAV = [
@@ -1666,6 +1711,10 @@ PATCHES_NAV = [
         ),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: "#", className: "crivia-nav-fale", children: "Fale conosco" })
       ] }),""", 1),
+    ("nav:logo", "            BRAND,\n            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\n              \"span\",",
+     "            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\"img\", { src: \"assets/images/logo/crivia-palavra.png\", alt: \"CRIVIA Engenharia Consultiva\", width: 560, height: 130, className: \"crivia-nav-logo\", draggable: false }),\n            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\n              \"span\",", 1),
+    ("nav:logo-rotulo", "          href: \"/\",\n          className: \"flex items-center gap-[0.5rem] whitespace-nowrap md:absolute md:left-1/2 md:-translate-x-1/2\",",
+     "          href: \"/\",\n          \"aria-label\": \"CRIVIA — voltar ao início\",\n          className: \"flex items-center gap-[0.5rem] whitespace-nowrap md:absolute md:left-1/2 md:-translate-x-1/2\",", 1),
     ("nav:fale-conosco-movel", "items: [...LEFT_NAV, ...RIGHT_NAV], cta: CTA", 'items: [...LEFT_NAV, ...RIGHT_NAV, "Fale conosco"], cta: CTA', 1),
 ]
 
@@ -1706,7 +1755,7 @@ BOTOES_INI = ('            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealI
 BOTOES_FIM = "\n          ] })\n        ] })\n      ] })\n    ] });\n  };\n\n  // orig/src/components/common/hero-overlay/hand-overlay.tsx"
 BOTOES_NOVOS = (
     '            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 0, count: 2, delay: 2300, className: "flex-none", '
-    'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: CRIVIA_IR_CENARIO_GERAL, children: "Apresentar meu cenário" }) }),\n'
+    'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaPrimary, { onClick: () => CRIVIA_ABRIR_CENARIO("hero"), children: "Apresentar meu cenário" }) }),\n'
     '            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealItem, { act: "hero", index: 1, count: 2, delay: 2300, className: "flex-none", '
     'children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CriviaCtaSecondary, { onClick: CRIVIA_IR_METODO, children: "Conhecer o método" }) })')
 
@@ -2244,6 +2293,8 @@ def quantizar_e_embutir():
         "/assets/hand/tags.bin": {"type": "application/octet-stream", "base64": base64.b64encode(tags_ind).decode("ascii")}}))
     mapa.update(entrada_embutida(b_obra, m_obra, "tree", {
         "/assets/tree/tags.bin": {"type": "application/octet-stream", "base64": base64.b64encode(tags).decode("ascii")}}))
+    logo = REPO / "assets" / "logo" / "crivia-pontos.png"
+    mapa["/assets/logo/crivia-pontos.png"] = {"type": "image/png", "base64": base64.b64encode(logo.read_bytes()).decode("ascii")}
     linhas = ['/* Dados que a cena 3D busca com fetch() (bloqueado em file://): nuvens de pontos da indústria',
               '   ("hand") e da obra-circuito ("tree"), quantizadas em uint16 (ver *.manifest.json). Gerado por',
               '   Site_crivia.py — não edite à mão. Lido por embeddedFetch() em app.js. */',
@@ -2350,6 +2401,488 @@ def copiar_fontes_nexus(destino):
             shutil.copyfile(achados[0], destino / nome)
 
 
+def publicar_cenario(ov):
+    """Página "Apresentar meu cenário" + minuta do Aviso de Privacidade (fontes em ./cenario)."""
+    fonte = REPO / "cenario"
+    endpoint = os.environ.get("CRIVIA_LEAD_ENDPOINT", "http://localhost:8787").rstrip("/")
+    if "CRIVIA_LEAD_ENDPOINT" not in os.environ:
+        print("[CRIVIA] aviso: CRIVIA_LEAD_ENDPOINT não definido; usando o servidor local de desenvolvimento (%s)." % endpoint)
+    conexoes = endpoint + (" https://script.googleusercontent.com" if "script.google.com" in endpoint else "")   # o Apps Script responde por redirecionamento
+    csp = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' %s; "
+           "form-action 'self'; base-uri 'none'; object-src 'none'" % conexoes)
+    (ov / "assets" / "css").mkdir(parents=True, exist_ok=True)
+    (ov / "assets" / "js").mkdir(parents=True, exist_ok=True)
+    html = (fonte / "cenario.html").read_text(encoding="utf-8").replace("__CRIVIA_CSP__", csp)
+    (ov / "apresentar-cenario.html").write_text(html, encoding="utf-8", newline=chr(10))
+    shutil.copyfile(fonte / "cenario.css", ov / "assets" / "css" / "cenario.css")
+    shutil.copyfile(fonte / "regras.js", ov / "assets" / "js" / "cenario-regras.js")
+    shutil.copyfile(fonte / "cenario.js", ov / "assets" / "js" / "cenario.js")
+    cfg = (fonte / "config.js").read_text(encoding="utf-8").replace("__CRIVIA_LEAD_ENDPOINT__", endpoint)
+    (ov / "assets" / "js" / "cenario-config.js").write_text(cfg, encoding="utf-8", newline=chr(10))
+    aviso = (fonte / "aviso-privacidade.html").read_text(encoding="utf-8")
+    (ov / "aviso-privacidade.html").write_text(aviso, encoding="utf-8", newline=chr(10))
+
+
+# ════════════════════════════════════════════════════════════════════════════
+#  ÚLTIMA DOBRA: o C sólido em 3D (com a esfera dourada) chega "esfarelado" em poeira e firma na tela
+# ════════════════════════════════════════════════════════════════════════════
+FINAL_ARVORE_INI = "  var createTreeParticles = async (config2, baseColor, finish) => {"
+FINAL_ARVORE_FIM = "\n  // orig/src/components/common/scene/tuning.ts"
+FINAL_ARVORE_NOVA = r"""  var createTreeParticles = async (config2, baseColor, finish) => {
+    // CRIVIA: a cena final deixa de ser a obra-circuito. A marca (C em 3D com a esfera dourada + CRIVIA + Engenharia Consultiva)
+    // é amostrada da arte oficial (PNG com fundo transparente, embutido) e vira uma nuvem de pontos com a cor de cada pixel e volume
+    // dado pela distância à borda. Cada conta tem uma origem de "poeira" (aDust) que o shader desfaz por rolagem, no ritmo do Clarix.
+    const { lightDirection, center, density, seed } = config2;
+    const random = createRandom(seed + 5);
+    const mobile = window.innerWidth <= 768;
+    const aspect = window.innerWidth / window.innerHeight;
+    const stacked = aspect < 0.7;
+    const rec = window.__CRIVIA_EMBEDDED_ASSETS__["/assets/logo/crivia-pontos.png"];
+    const img = new Image();
+    img.src = "data:" + rec.type + ";base64," + rec.base64;
+    await img.decode();
+    const W = img.naturalWidth;
+    const H = img.naturalHeight;
+    const cv = document.createElement("canvas");
+    cv.width = W;
+    cv.height = H;
+    const cx = cv.getContext("2d", { willReadFrequently: true });
+    cx.drawImage(img, 0, 0);
+    const px = cx.getImageData(0, 0, W, H).data;
+    const mask = new Uint8Array(W * H);
+    for (let k = 0; k < W * H; k += 1) mask[k] = px[k * 4 + 3] > 110 ? 1 : 0;
+    // distância à borda (chanfro em duas passadas): dá o arredondado do volume
+    const dt = new Float32Array(W * H);
+    for (let k = 0; k < W * H; k += 1) dt[k] = mask[k] ? 1e4 : 0;
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
+      const k = y * W + x;
+      if (!mask[k]) continue;
+      let v = dt[k];
+      if (x > 0) v = Math.min(v, dt[k - 1] + 1);
+      if (y > 0) { v = Math.min(v, dt[k - W] + 1); if (x > 0) v = Math.min(v, dt[k - W - 1] + 1.4); if (x < W - 1) v = Math.min(v, dt[k - W + 1] + 1.4); }
+      dt[k] = v;
+    }
+    for (let y = H - 1; y >= 0; y -= 1) for (let x = W - 1; x >= 0; x -= 1) {
+      const k = y * W + x;
+      if (!mask[k]) continue;
+      let v = dt[k];
+      if (x < W - 1) v = Math.min(v, dt[k + 1] + 1);
+      if (y < H - 1) { v = Math.min(v, dt[k + W] + 1); if (x < W - 1) v = Math.min(v, dt[k + W + 1] + 1.4); if (x > 0) v = Math.min(v, dt[k + W - 1] + 1.4); }
+      dt[k] = v;
+    }
+    // onde separar o C do texto (versão empilhada do celular): coluna com menos pixels entre 27% e 34% da largura
+    let splitX = Math.round(W * 0.3);
+    let best = 1e9;
+    for (let x = Math.round(W * 0.27); x < Math.round(W * 0.34); x += 1) {
+      let n = 0;
+      for (let y = 0; y < H; y += 1) n += mask[y * W + x];
+      if (n < best) { best = n; splitX = x; }
+    }
+    const fov = 32 * Math.PI / 180;
+    const visH = 2 * 50 * Math.tan(fov / 2);
+    const visW = visH * aspect;
+    const total = Math.max(40e3, Math.round(Math.max(1, density) * (mobile ? 40e3 : 80e3)));
+    let maskCount = 0;
+    for (let k = 0; k < W * H; k += 1) maskCount += mask[k];
+    const p = Math.min(1, total / (maskCount * 2));
+    // linhas ocupadas por cada parte (C e texto) para empilhar no celular
+    let cTop = H, cBot = 0, tTop = H, tBot = 0;
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
+      if (!mask[y * W + x]) continue;
+      if (x < splitX) { if (y < cTop) cTop = y; if (y > cBot) cBot = y; } else { if (y < tTop) tTop = y; if (y > tBot) tBot = y; }
+    }
+    // pixel -> mundo: uma peça horizontal (desktop) ou duas empilhadas (celular)
+    let partC;
+    let partT;
+    if (!stacked) {
+      const lw = Math.min(visW * (aspect < 1.1 ? 0.86 : 0.7), 36);
+      partC = partT = { s: lw / W, x0: 0, cxw: -lw / 2, cyPix: H / 2, cyw: visH * 0.14 };
+    } else {
+      const cw = visW * 0.38;
+      const tw = visW * 0.8;
+      const sC = cw / splitX;
+      const sT = tw / (W - splitX);
+      const hC = (cBot - cTop) * sC;
+      const hT = (tBot - tTop) * sT;
+      const gap = 0.6;
+      const top = (hC + gap + hT) / 2 + visH * 0.255;
+      partC = { s: sC, x0: 0, cxw: -cw / 2 - 0, cyPix: (cTop + cBot) / 2, cyw: top - hC / 2 };
+      partT = { s: sT, x0: splitX, cxw: -tw / 2, cyPix: (tTop + tBot) / 2, cyw: top - hC - gap - hT / 2 };
+    }
+    const points = [];
+    const normalList = [];
+    const colorList = [];
+    for (let y = 1; y < H - 1; y += 1) {
+      for (let x = 1; x < W - 1; x += 1) {
+        const k = y * W + x;
+        if (!mask[k]) continue;
+        const part = x < splitX ? partC : partT;
+        const s = part.s;
+        const gx = (dt[k + 1] - dt[k - 1]) * 0.5;
+        const gy = (dt[k + W] - dt[k - W]) * 0.5;
+        const dd = dt[k];
+        const zMax = Math.sqrt(Math.min(dd, 70)) * s * 1.7;
+        for (let layer = 0; layer < 2; layer += 1) {
+          if (random() > p) continue;
+          const side = layer === 0 ? 1 : -1;
+          const wx = part.cxw + (x - part.x0 + random() - 0.5) * s;
+          const wy = part.cyw - (y - part.cyPix + random() - 0.5) * s;
+          const wz = side * zMax * (0.55 + 0.45 * random()) - 0.14;
+          points.push({ x: wx, y: wy, z: wz });
+          const nl = Math.hypot(gx, gy, 1.2) || 1;
+          normalList.push(-gx / nl, gy / nl, side * 1.2 / nl);
+          const shade = side > 0 ? 0.95 : 0.8;
+          colorList.push(px[k * 4] / 255 * shade, px[k * 4 + 1] / 255 * shade, px[k * 4 + 2] / 255 * shade);
+        }
+      }
+    }
+    const count = points.length;
+    const beadSize = Math.max(0.024, Math.min(0.085, partC.s * 1.2));
+    const cloud = buildParticleCloud(points, {
+      particleSize: beadSize,
+      sizeJitter: 0.16,
+      bigFraction: 0,
+      bigScale: 1,
+      color: baseColor,
+      finish,
+      center,
+      lightDirection,
+      extent: visW,
+      normals: new Float32Array(normalList),
+      pointerRelax: true,
+      seed: seed + 1
+    });
+    const col = new Color();
+    const glow = cloud.glowAttribute.array;
+    for (let i = 0; i < count; i += 1) {
+      col.setRGB(colorList[i * 3], colorList[i * 3 + 1], colorList[i * 3 + 2], SRGBColorSpace);
+      cloud.mesh.setColorAt(i, col);
+      cloud.baseColors[i * 3] = col.r;
+      cloud.baseColors[i * 3 + 1] = col.g;
+      cloud.baseColors[i * 3 + 2] = col.b;
+      glow[i * 3] = col.r * 0.06;
+      glow[i * 3 + 1] = col.g * 0.06;
+      glow[i * 3 + 2] = col.b * 0.06;
+    }
+    cloud.mesh.instanceColor.needsUpdate = true;
+    cloud.glowAttribute.needsUpdate = true;
+    // poeira: origem aleatória de cada conta (curva em sino; larga na horizontal) e ordem de chegada
+    const dust = new Float32Array(count * 4);
+    const bell = () => (random() + random() + random() - 1.5) / 1.5;
+    for (let i = 0; i < count; i += 1) {
+      dust[i * 4] = bell() * Math.max(visW, 26) * 0.7;
+      dust[i * 4 + 1] = bell() * visH * 0.6;
+      dust[i * 4 + 2] = bell() * 30;
+      dust[i * 4 + 3] = random();
+    }
+    cloud.mesh.geometry.setAttribute("aDust", new InstancedBufferAttribute(dust, 4));
+    // ── logo 3D: relevo (frente e verso) com a arte oficial como textura. Gira e flutua com a cena; materializa por blocos
+    // no fim da chegada e abre sob o cursor (a poeira aparece por baixo). A esfera dourada é uma calota de verdade.
+    const logoTex = new Texture(img);
+    logoTex.colorSpace = SRGBColorSpace;
+    logoTex.anisotropy = 8;
+    logoTex.minFilter = LinearMipmapLinearFilter;
+    logoTex.generateMipmaps = true;
+    logoTex.needsUpdate = true;
+    let gxMin = 1e9;
+    let gxMax = -1;
+    let gyMin = 1e9;
+    let gyMax = -1;
+    let gCount = 0;
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) {
+      const k = y * W + x;
+      if (!mask[k]) continue;
+      const r = px[k * 4];
+      const g = px[k * 4 + 1];
+      const b = px[k * 4 + 2];
+      if (r > 150 && g > 90 && b < 100 && r > b * 2.1 && r > g) {
+        gCount += 1;
+        if (x < gxMin) gxMin = x;
+        if (x > gxMax) gxMax = x;
+        if (y < gyMin) gyMin = y;
+        if (y > gyMax) gyMax = y;
+      }
+    }
+    const ball = gCount > 200 ? { cx: (gxMin + gxMax) / 2, cy: (gyMin + gyMax) / 2, R: ((gxMax - gxMin) + (gyMax - gyMin)) / 4 * 1.05 } : null;
+    const logoUniforms = {
+      uReveal: { value: 0 },
+      uPointer: { value: new Vector3(0, -1e4, 0) },
+      uHoleR: { value: 5.2 },
+      uHole: { value: 0 },
+      uFlash: { value: 0 }
+    };
+    const makeLogoMat = (cutBall) => {
+      const mat = new MeshStandardMaterial({
+      map: logoTex,
+      roughness: 0.42,
+      metalness: 0.18,
+      alphaTest: 0.45,
+      emissive: 0xffffff,
+      emissiveMap: logoTex,
+      emissiveIntensity: 0.55
+    });
+      mat.customProgramCacheKey = () => "crivia-logo3d" + (cutBall ? "-cut" : "");
+      mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uReveal = logoUniforms.uReveal;
+      shader.uniforms.uPointer = logoUniforms.uPointer;
+      shader.uniforms.uHoleR = logoUniforms.uHoleR;
+      shader.uniforms.uHole = logoUniforms.uHole;
+      shader.uniforms.uFlash = logoUniforms.uFlash;
+      shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vWPos;").replace("#include <begin_vertex>", "#include <begin_vertex>\n	vWPos = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;");
+      shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vWPos;\nuniform float uReveal;\nuniform vec3 uPointer;\nuniform float uHoleR;\nuniform float uHole;\nuniform float uFlash;\nfloat cNoise( vec2 p ) { return fract( sin( dot( floor( p ), vec2( 12.9898, 78.233 ) ) ) * 43758.5453 ); }").replace(
+        "#include <clipping_planes_fragment>",
+        [
+          "#include <clipping_planes_fragment>",
+          "float cN = cNoise( vWPos.xy * 24.0 );",
+          "float cReveal = clamp( uReveal * 1.25 - cN * 0.25, 0.0, 1.0 );",
+          "if ( cN > uReveal * 1.1 ) discard;",
+          "float cD = distance( vWPos, uPointer );",
+          "float cHole = uHole * step( cD, uHoleR * ( 0.72 + 0.28 * cNoise( vWPos.xy * 18.0 + 3.0 ) ) );",
+          "if ( cHole > 0.5 ) discard;",
+          "float cRim = uHole * smoothstep( uHoleR * 1.12, uHoleR * 0.78, cD );"
+        ].concat(cutBall ? [ "if ( distance( vMapUv * vec2( " + W + ".0, " + H + ".0 ), vec2( " + ball.cx.toFixed(2) + ", " + (H - ball.cy).toFixed(2) + " ) ) < " + (ball.R * 0.97).toFixed(2) + " ) discard;" ] : []).join("\n")
+      ).replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\n	totalEmissiveRadiance += vec3( 1.0, 0.72, 0.2 ) * cRim * 0.9 + vec3( 0.4, 0.8, 1.0 ) * ( 1.0 - uReveal ) * 0.4 + vec3( 1.0, 0.96, 0.85 ) * uFlash;");
+    };
+      return mat;
+    };
+    const logoMat = makeLogoMat(!!ball);
+    const ballMat = new ShaderMaterial({
+      uniforms: { uReveal: logoUniforms.uReveal, uPointer: logoUniforms.uPointer, uHoleR: logoUniforms.uHoleR, uHole: logoUniforms.uHole, uFlash: logoUniforms.uFlash },
+      vertexShader: "varying vec3 vN;\nvarying vec3 vW;\nvoid main() {\n  vec4 w = modelMatrix * vec4( position, 1.0 );\n  vW = w.xyz;\n  vN = normalize( mat3( modelMatrix ) * normal );\n  gl_Position = projectionMatrix * viewMatrix * w;\n}",
+      fragmentShader: "uniform float uReveal;\nuniform vec3 uPointer;\nuniform float uHoleR;\nuniform float uHole;\nuniform float uFlash;\nvarying vec3 vN;\nvarying vec3 vW;\nfloat cNoise( vec2 p ) { return fract( sin( dot( floor( p ), vec2( 12.9898, 78.233 ) ) ) * 43758.5453 ); }\nvoid main() {\n  float cN = cNoise( vW.xy * 24.0 );\n  if ( cN > uReveal * 1.1 ) discard;\n  float cD = distance( vW, uPointer );\n  if ( uHole * step( cD, uHoleR * ( 0.72 + 0.28 * cNoise( vW.xy * 18.0 + 3.0 ) ) ) > 0.5 ) discard;\n  float cRim = uHole * smoothstep( uHoleR * 1.12, uHoleR * 0.78, cD );\n  vec3 N = normalize( vN );\n  vec3 V = normalize( cameraPosition - vW );\n  vec3 R = reflect( -V, N );\n  float up = R.y * 0.5 + 0.5;\n  vec3 sky = mix( vec3( 0.50, 0.24, 0.03 ), vec3( 1.0, 0.88, 0.5 ), smoothstep( 0.0, 1.0, up ) );\n  float key = pow( max( dot( R, normalize( vec3( -0.45, 0.75, 0.55 ) ) ), 0.0 ), 16.0 );\n  float fill = pow( max( dot( R, normalize( vec3( 0.65, 0.2, 0.75 ) ) ), 0.0 ), 28.0 );\n  float horizon = smoothstep( 0.4, 0.0, abs( R.y ) ) * 0.22;\n  float fres = pow( 1.0 - max( dot( N, V ), 0.0 ), 3.0 );\n  vec3 gold = vec3( 1.0, 0.70, 0.16 );\n  vec3 col = sky * gold * 1.05 + vec3( 1.0, 0.97, 0.88 ) * ( key * 1.3 + fill * 0.55 ) + vec3( 1.0, 0.8, 0.35 ) * ( horizon + fres * 0.35 );\n  col *= 0.8 + 0.2 * N.y;\n  col += vec3( 1.0, 0.72, 0.2 ) * cRim * 0.9 + vec3( 0.4, 0.8, 1.0 ) * ( 1.0 - uReveal ) * 0.4 + vec3( 1.0, 0.96, 0.85 ) * uFlash;\n  gl_FragColor = vec4( col, 1.0 );\n  #include <tonemapping_fragment>\n  #include <colorspace_fragment>\n}"
+    });
+    const ST = 2;
+    const BEV = 9;
+    const HPLATE = 0.42;
+    const makeLogoMesh = (xa, xb, part) => {
+      const s = part.s;
+      const nx = Math.floor((xb - 1 - xa) / ST) + 1;
+      const ny = Math.floor((H - 2) / ST) + 1;
+      const n = nx * ny;
+      const zA = new Float32Array(n);
+      const ins = new Uint8Array(n);
+      const wxA = new Float32Array(n);
+      const wyA = new Float32Array(n);
+      const pxA = new Float32Array(n);
+      const pyA = new Float32Array(n);
+      for (let j = 0; j < ny; j += 1) {
+        for (let i = 0; i < nx; i += 1) {
+          const x = Math.min(W - 2, xa + i * ST);
+          const y = Math.min(H - 2, j * ST + 1);
+          const k = y * W + x;
+          const v = j * nx + i;
+          pxA[v] = x;
+          pyA[v] = y;
+          wxA[v] = part.cxw + (x - part.x0) * s;
+          wyA[v] = part.cyw - (y - part.cyPix) * s;
+          ins[v] = mask[k] || mask[k + 1] || mask[k + W] ? 1 : 0;
+          let z = 0;
+          if (mask[k]) {
+            const t = Math.min(1, dt[k] / BEV);
+            z = HPLATE * Math.min(1.3, s / 0.0327) * (1 - (1 - t) * (1 - t));
+          }
+          if (ball) {
+            const dx = (x - ball.cx) * s;
+            const dy = (y - ball.cy) * s;
+            const Rw = ball.R * s;
+            const rr = dx * dx + dy * dy;
+            if (rr < Rw * Rw) z = Math.max(z, Math.sqrt(Rw * Rw - rr) * 0.92);
+          }
+          zA[v] = z;
+        }
+      }
+      // suaviza a altura (2 passadas): o sombreamento varia só com o volume, sem granulado
+      const tmp = new Float32Array(n);
+      for (let pass = 0; pass < 2; pass += 1) {
+        for (let j = 0; j < ny; j += 1) {
+          for (let i = 0; i < nx; i += 1) {
+            let acc = 0;
+            let cnt = 0;
+            for (let dj = -1; dj <= 1; dj += 1) for (let di = -1; di <= 1; di += 1) {
+              const jj = j + dj;
+              const ii = i + di;
+              if (jj < 0 || jj >= ny || ii < 0 || ii >= nx) continue;
+              acc += zA[jj * nx + ii];
+              cnt += 1;
+            }
+            tmp[j * nx + i] = acc / cnt;
+          }
+        }
+        zA.set(tmp);
+      }
+      const pos = new Float32Array(n * 6);
+      const nor = new Float32Array(n * 6);
+      const uv = new Float32Array(n * 4);
+      for (let j = 0; j < ny; j += 1) {
+        for (let i = 0; i < nx; i += 1) {
+          const v = j * nx + i;
+          const i0 = Math.max(0, i - 1);
+          const i1 = Math.min(nx - 1, i + 1);
+          const j0 = Math.max(0, j - 1);
+          const j1 = Math.min(ny - 1, j + 1);
+          const dzdx = (zA[j * nx + i1] - zA[j * nx + i0]) / ((i1 - i0) * ST * s);
+          const dzdy = -(zA[j1 * nx + i] - zA[j0 * nx + i]) / ((j1 - j0) * ST * s);
+          let nxv = -dzdx;
+          let nyv = -dzdy;
+          let nzv = 1;
+          const nl = Math.hypot(nxv, nyv, nzv) || 1;
+          nxv /= nl; nyv /= nl; nzv /= nl;
+          pos[v * 3] = wxA[v] + center[0];
+          pos[v * 3 + 1] = wyA[v] + center[1];
+          pos[v * 3 + 2] = zA[v] + center[2];
+          nor[v * 3] = nxv; nor[v * 3 + 1] = nyv; nor[v * 3 + 2] = nzv;
+          const vb = v + n;
+          pos[vb * 3] = pos[v * 3];
+          pos[vb * 3 + 1] = pos[v * 3 + 1];
+          pos[vb * 3 + 2] = center[2] - zA[v];
+          nor[vb * 3] = nxv; nor[vb * 3 + 1] = nyv; nor[vb * 3 + 2] = -nzv;
+          uv[v * 2] = pxA[v] / W;
+          uv[v * 2 + 1] = 1 - pyA[v] / H;
+          uv[vb * 2] = uv[v * 2];
+          uv[vb * 2 + 1] = uv[v * 2 + 1];
+        }
+      }
+      const tri = [];
+      for (let j = 0; j < ny - 1; j += 1) {
+        for (let i = 0; i < nx - 1; i += 1) {
+          const a = j * nx + i;
+          const b = a + 1;
+          const c = a + nx;
+          const d = c + 1;
+          if (!(ins[a] || ins[b] || ins[c] || ins[d])) continue;
+          tri.push(a, c, b, b, c, d);
+          tri.push(a + n, b + n, c + n, b + n, d + n, c + n);
+        }
+      }
+      const geo = new BufferGeometry();
+      geo.setAttribute("position", new Float32BufferAttribute(pos, 3));
+      geo.setAttribute("normal", new Float32BufferAttribute(nor, 3));
+      geo.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+      geo.setIndex(new BufferAttribute(new Uint32Array(tri), 1));
+      const m = new Mesh(geo, logoMat);
+      m.frustumCulled = false;
+      m.visible = false;
+      return m;
+    };
+    const logoMeshesAll = stacked ? [makeLogoMesh(0, splitX, partC), makeLogoMesh(splitX, W, partT)] : [makeLogoMesh(0, W, partC)];
+    let ballMesh = null;
+    if (ball) {
+      const Rw = ball.R * partC.s;
+      const gx = partC.cxw + (ball.cx - partC.x0) * partC.s + center[0];
+      const gy = partC.cyw - (ball.cy - partC.cyPix) * partC.s + center[1];
+      const sgeo = new SphereGeometry(Rw * 0.985, 64, 48);
+      sgeo.translate(gx, gy, center[2]);
+      ballMesh = new Mesh(sgeo, ballMat);
+      ballMesh.frustumCulled = false;
+      ballMesh.visible = false;
+    }
+    const logoMeshes = ballMesh ? [...logoMeshesAll, ballMesh] : logoMeshesAll;
+    // centro da marca (para a chegada "maior" assentar sobre o próprio centro)
+    let pxMin = 1e9;
+    let pxMax = -1e9;
+    let pyMin = 1e9;
+    let pyMax = -1e9;
+    for (const part of (stacked ? [partC, partT] : [partC])) {
+      const x0 = part.cxw;
+      const y0 = part.cyw;
+      pxMin = Math.min(pxMin, x0);
+      pyMin = Math.min(pyMin, y0 - H * part.s * 0.5);
+      pyMax = Math.max(pyMax, y0 + H * part.s * 0.5);
+      pxMax = Math.max(pxMax, x0 + W * part.s);
+    }
+    const pivot = stacked
+      ? [center[0], center[1] + (partC.cyw + partT.cyw) / 2, center[2]]
+      : [center[0] + (pxMin + pxMax) / 2, center[1] + (pyMin + pyMax) / 2, center[2]];
+    logoMeshes.forEach((m) => cloud.mesh.add(m));
+    cloud.logo = {
+      setReveal: (v) => {
+        logoUniforms.uReveal.value = v;
+        cloud.life.uCloudHide.value = v;
+        const k = 1 + 0.07 * (1 - v) * (1 - v);
+        logoUniforms.uFlash.value = 0.9 * Math.max(0, Math.sin(Math.min(1, v) * Math.PI)) ** 2;
+        for (const m of logoMeshes) {
+          m.scale.setScalar(k);
+          m.position.set(pivot[0] * (1 - k), pivot[1] * (1 - k), pivot[2] * (1 - k));
+        }
+        const on = v > 0.001;
+        for (const m of logoMeshes) m.visible = on;
+      },
+      setPointer: (hit) => {
+        if (hit) { logoUniforms.uPointer.value.copy(hit); logoUniforms.uHole.value = 1; } else logoUniforms.uHole.value = 0;
+      }
+    };
+    return cloud;
+  };
+"""
+
+# Rodapé da última dobra: marca, contatos e créditos (componente que substitui o TreeOverlay do modelo)
+FINAL_OVERLAY_INI = "  var TreeOverlay = () => {"
+FINAL_OVERLAY_FIM = "\n  // orig/src/components/common/hero-overlay/scroll-fade.tsx"
+FINAL_OVERLAY_NOVO = r"""  var TreeOverlay = () => {
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "crivia-fim pointer-events-none absolute inset-0 select-none font-display text-overlay-ink", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "crivia-fim__lados", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(RevealItem, { act: "tree", delay: 380, className: "crivia-fim__lado", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "font-geist crivia-fim__texto", children: [/* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { children: "Projeto em risco?" }), " A Inteligência Artificial organiza e compara. Quem decide continua sendo você."] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(RevealItem, { act: "tree", delay: 520, className: "crivia-fim__lado", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "font-geist crivia-fim__texto", children: [/* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { children: "A CRIVIA ajuda" }), " as pessoas e as áreas a trabalhar com conferência e responsabilidade claras."] }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(RevealItem, { act: "tree", delay: 700, className: "crivia-fim__base pointer-events-auto", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "crivia-fim__chamada", children: "Comece pela realidade." }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "crivia-fim__acoes", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CriviaCtaPrimary, { compacto: true, onClick: () => CRIVIA_ABRIR_CENARIO("final"), children: "Apresentar meu cenário" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CriviaCtaSecondary, { icone: ["M4 6.5h16v11H4z", "M4.5 7l7.5 6 7.5-6"], onClick: () => { window.location.href = "mailto:" + CRIVIA_EMAIL + "?subject=" + encodeURIComponent("Contato pelo site"); }, children: "Escrever para a CRIVIA" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "font-geist crivia-fim__contato", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("a", { href: "mailto:" + CRIVIA_EMAIL, children: CRIVIA_EMAIL }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": true, children: "·" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("a", { href: "aviso-privacidade.html", children: "Aviso de Privacidade" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "font-geist crivia-fim__credito", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "© 2026 CRIVIA Engenharia Consultiva · Engenharia para Decisão" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": true, children: "·" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Site produzido pela CRIVIA" })
+        ] })
+      ] })
+    ] });
+  };
+"""
+
+CSS_FINAL = r"""
+/* ════ CRIVIA ════ última dobra: marca, chamada, contatos e créditos sobre o C em poeira ════ */
+.crivia-nav-logo { display: block; height: 1.2rem; width: auto; max-width: none; }
+@media (min-width: 48rem) { .crivia-nav-logo { height: 1.45rem; } }
+.crivia-fim { --fim-gutter: clamp(1rem, 3.2vw, 2.5rem); }
+.crivia-fim__lados { position: absolute; left: var(--fim-gutter); right: var(--fim-gutter); top: 61%; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.crivia-fim__lado { width: min(21rem, 31vw); height: 6.6rem; display: flex; align-items: center; padding: 1rem 1.3rem; border-radius: 1.1rem; text-align: left;
+  background: linear-gradient(160deg, rgba(255,255,255,.58), rgba(255,255,255,.26)); border: 1px solid rgba(255,255,255,.72);
+  box-shadow: 0 14px 44px rgba(10,54,157,.10), inset 0 1px 0 rgba(255,255,255,.8); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.crivia-fim__texto { margin: 0; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #123A7A; }
+.crivia-fim__texto strong { font-family: var(--font-google-sans), system-ui, sans-serif; font-weight: 700; letter-spacing: -.02em; color: #001D3D; }
+.crivia-fim__acoes .crivia-cta { width: 12.6rem; height: 2.1rem; min-height: 0; padding: 0; justify-content: center; box-shadow: 0 3px 12px rgba(0,29,61,.24); }
+.crivia-fim__acoes .crivia-cta .crivia-cta__inner { width: 100%; height: 100%; justify-content: center; padding: 0 .65rem; gap: .45rem; font-size: .76rem; white-space: nowrap; }
+.crivia-fim__acoes .crivia-cta svg, .crivia-fim__acoes .crivia-cta .crivia-cta__icon, .crivia-fim__acoes .crivia-cta .crivia-cta__chip, .crivia-fim__acoes .crivia-cta .crivia-cta__arrow { flex: none; }
+.crivia-fim__acoes .crivia-cta .crivia-cta__icon { width: 1.3rem; height: 1.3rem; padding: .3rem; }
+.crivia-fim__acoes .crivia-cta .crivia-cta__chip, .crivia-fim__acoes .crivia-cta .crivia-cta__arrow { width: 1.1rem; height: 1.1rem; padding: .22rem; }
+
+.crivia-fim__base { position: absolute; left: 0; right: 0; bottom: clamp(.9rem, 2.4vh, 1.8rem); display: flex; flex-direction: column; align-items: center; gap: .85rem; padding: 0 1rem; text-align: center; }
+.crivia-fim__chamada { margin: 0; font-size: clamp(1.45rem, 2.5vw, 2.1rem); font-weight: 650; letter-spacing: -.02em; color: #001D3D; }
+.crivia-fim__acoes { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem 1rem; }
+.crivia-fim__contato, .crivia-fim__credito { margin: 0; font-size: .8125rem; line-height: 1.4; color: #40597F; display: flex; flex-wrap: wrap; justify-content: center; gap: .3rem .7rem; }
+.crivia-fim__contato a { color: #0A369D; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(10,54,157,.3); transition: border-color .2s; }
+.crivia-fim__contato a:hover, .crivia-fim__contato a:focus-visible { border-bottom-color: #0A369D; outline: none; }
+.crivia-fim__credito { font-size: .75rem; color: #5B7396; }
+@media (max-width: 47.99rem) {
+  .crivia-fim__lados { top: 47.5%; flex-direction: column; gap: .55rem; left: 1rem; right: 1rem; }
+  .crivia-fim__lado { width: 100%; height: 4.6rem; padding: .6rem .9rem; border-radius: .9rem; }
+  .crivia-fim__texto { font-size: .8rem; line-height: 1.4; }
+  .crivia-fim__base { gap: .45rem; bottom: .6rem; }
+  .crivia-fim__chamada { font-size: 1.3rem; }
+  .crivia-fim__contato, .crivia-fim__credito { flex-direction: column; align-items: center; gap: .2rem; }
+  .crivia-fim__contato span[aria-hidden], .crivia-fim__credito span[aria-hidden] { display: none; }
+  .crivia-fim__acoes { flex-direction: column; width: min(15rem, 100%); }
+  .crivia-fim__acoes .crivia-cta { width: 100%; height: 2.2rem; justify-content: center; }
+}
+"""
+
+
 def aplicar_patches(raiz_modelo):
     """Aplica todos os patches sobre a cópia temporária do modelo e devolve o resumo da geração."""
     ov = raiz_modelo / "assets" / "overview"
@@ -2357,10 +2890,7 @@ def aplicar_patches(raiz_modelo):
     js = app.read_text(encoding="utf-8")
     js = aplicar(js, PATCHES_CENA, "app.js")
     js = trocar_trecho(js, GLIFO_INI, GLIFO_FIM, GLIFO_C, "glifo X->C")
-    js = aplicar(js, [("arvore:busca", ARVORE_BUSCA_ANTIGA, ARVORE_BUSCA_NOVA, 1)], "app.js")
-    js = trocar_apos(js, "var createTreeParticles = async", "    return buildParticleCloud(points, {",
-                     "    const cloud = buildParticleCloud(points, {", "arvore:retorno")
-    js = aplicar(js, [("arvore:fim", ARVORE_FIM_ANTIGO, ARVORE_FIM_NOVO, 1)], "app.js")
+    js = trocar_trecho(js, FINAL_ARVORE_INI, FINAL_ARVORE_FIM, FINAL_ARVORE_NOVA, "final:C-em-poeira")
     js = trocar_trecho(js, REDE_INI, REDE_FIM, REDE_NOVA, "rede de comunicação")
     js = trocar_trecho(js, FRASE2_INI, FRASE2_FIM, FRASE2_NOVA, "hero:frase2")
     js = trocar_trecho(js, HERO_BLOCO_INI, HERO_BLOCO_FIM, HERO_BLOCO_NOVO, "hero:titulo")
@@ -2369,6 +2899,7 @@ def aplicar_patches(raiz_modelo):
     js = trocar_apos(js, "var createHandParticles = async", "    return buildParticleCloud(points, {", "    const cloud = buildParticleCloud(points, {", "mao:retorno")
     js = aplicar(js, PATCHES_REDE_OPACIDADE, "app.js")
     js = aplicar(js, PATCHES_TEXTO, "app.js")
+    js = trocar_trecho(js, FINAL_OVERLAY_INI, FINAL_OVERLAY_FIM, FINAL_OVERLAY_NOVO, "final:overlay")
     js = aplicar(js, PATCHES_TIPO_IND, "app.js")
     js = trocar_trecho(js, HAND_INI, HAND_FIM, HAND_NOVO, "ind:overlay")
     js = trocar_trecho(js, CAT_INI, CAT_FIM, CAT_NOVO, "cat:overlay")
@@ -2378,9 +2909,14 @@ def aplicar_patches(raiz_modelo):
     app.write_text(js, encoding="utf-8", newline="\n")
 
     css = ov / "assets" / "css" / "main.css"
-    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND + CSS_CAT + CSS_SOBRE + CSS_METODO + CSS_NAV,
+    css.write_text(aplicar(css.read_text(encoding="utf-8"), PATCHES_CSS, "main.css") + CSS_CRIVIA + CSS_IND + CSS_CAT + CSS_SOBRE + CSS_METODO + CSS_NAV + CSS_FINAL,
                    encoding="utf-8", newline="\n")
     copiar_fontes_nexus(ov / "assets" / "fonts")
+    publicar_cenario(ov)
+    destino_logo = ov / "assets" / "images" / "logo"
+    destino_logo.mkdir(parents=True, exist_ok=True)
+    for nome_logo in ("crivia-palavra.png",):
+        shutil.copyfile(REPO / "assets" / "logo" / nome_logo, destino_logo / nome_logo)
     img_metodo = REPO / "assets" / "metodo" / "tablet-industrial.png"
     if img_metodo.is_file():
         destino_metodo = ov / "assets" / "images" / "metodo"
