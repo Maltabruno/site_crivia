@@ -48887,7 +48887,7 @@ void main() {
                 className: "hidden h-px w-20 bg-gradient-to-r from-transparent to-overlay-edge md:block"
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: "assets/images/logo/crivia-palavra.png", alt: "CRIVIA Engenharia Consultiva", width: 560, height: 130, className: "crivia-nav-logo", draggable: false }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "crivia-nav-logo", children: "CRIVIA" }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               "span",
               {

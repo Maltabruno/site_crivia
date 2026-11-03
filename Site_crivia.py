@@ -515,10 +515,10 @@ CSS_IND = r"""
 .crivia-ind-texto::before { content: ""; position: absolute; top: 0; left: 0; width: 2.6rem; height: 3px; border-radius: 2px;
   background: linear-gradient(90deg, #F5B82E, #0A369D); }
 /* percurso: três etapas em texto, ligadas por setas (sem fundo nem borda, para não parecerem botões) */
-.crivia-ind-seq { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem 1.9rem; margin: 0; padding: 0; list-style: none; }
+.crivia-ind-seq { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem 2.6rem; margin: 0; padding: 0; list-style: none; }
 .crivia-ind-passo { position: relative; padding-left: .95rem; font-size: .88rem; font-weight: 650; line-height: 1.2; letter-spacing: -.01em; color: #0A369D; }
 .crivia-ind-passo::before { content: ""; position: absolute; left: 0; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #0A369D; }
-.crivia-ind-passo:not(:last-child)::after { content: "\2192"; position: absolute; right: -1.35rem; top: 50%; transform: translateY(-52%); font-weight: 500; color: #0A369D; opacity: .55; }
+.crivia-ind-passo:not(:last-child)::after { content: "\2192"; position: absolute; right: -1.95rem; top: 50%; transform: translateY(-54%); font-size: 1.7em; line-height: 1; font-weight: 500; color: #0A369D; opacity: .75; }
 .crivia-ind-passo--ouro { color: #001D3D; }
 .crivia-ind-passo--ouro::before { background: #F5B82E; box-shadow: 0 0 0 3px rgba(245,184,46,.28); }
 .crivia-ind-nota { font-family: "Geist", system-ui, sans-serif; font-size: .76rem; font-weight: 450; line-height: 1.45; color: #2B4A6B; width: 0; min-width: 100%; }
@@ -548,15 +548,15 @@ CSS_IND = r"""
   .crivia-ind-texto { font-size: 1.04rem; padding-top: 1.05rem; }
   .crivia-ind-passo { font-size: 1rem; }
   .crivia-ind-nota { font-size: .82rem; }
-  .crivia-ind-faixa { padding: 1.1rem 1.7rem 1.3rem; }
+  .crivia-ind-faixa { padding: clamp(1.1rem, 1.5vw, 1.7rem) clamp(1.7rem, 2.2vw, 2.6rem) clamp(1.3rem, 1.7vw, 2rem); }
   .crivia-ind-faixa__cab { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 0; margin-bottom: 1rem; padding-bottom: .85rem; }
   .crivia-ind-faixa__titulo { grid-column: 1; }
-  .crivia-ind-faixa__titulo { font-size: 1.2rem; }
-  .crivia-ind-faixa__apoio { grid-column: 2 / span 2; max-width: none; padding-left: 1.7rem; font-size: .88rem; line-height: 1.45; }
-  .crivia-ind-stat { padding: 0 1.7rem; gap: .4rem; }
+  .crivia-ind-faixa__titulo { font-size: clamp(1.2rem, 1.55vw, 1.85rem); }
+  .crivia-ind-faixa__apoio { grid-column: 2 / span 2; max-width: none; padding-left: clamp(1.7rem, 2.2vw, 2.6rem); font-size: clamp(.88rem, 1.02vw, 1.2rem); line-height: 1.45; }
+  .crivia-ind-stat { padding: 0 clamp(1.7rem, 2.2vw, 2.6rem); gap: .4rem; }
   .crivia-ind-stat:first-child { padding-left: 0; }
-  .crivia-ind-valor { font-size: 2.15rem; }
-  .crivia-ind-rotulo { font-size: .82rem; }
+  .crivia-ind-valor { font-size: clamp(2.15rem, 2.75vw, 3.4rem); }
+  .crivia-ind-rotulo { font-size: clamp(.82rem, 1vw, 1.2rem); }
 }
 @media (min-width: 48rem) and (max-height: 760px) {
   .crivia-ind { padding-top: 5.75rem; padding-bottom: 1.75rem; }
@@ -1036,9 +1036,9 @@ CSS_CRIVIA = r"""
 .crivia-hero-tagline { font-size: 1.5rem; font-weight: 650; letter-spacing: -.03em; line-height: 1.1; margin-top: 1rem; color: #0A369D; }
 .crivia-hero-copy { font-size: .9375rem; font-weight: 400; line-height: 1.55; }
 /* frase lateral: cheio (grotesca firme) em contraste com contorno (a palavra "impossível" vazada, que ganha corpo em "possível") */
-.crivia-hero-tagline--right { font-family: "Geist", system-ui, sans-serif; font-weight: 700; letter-spacing: -.045em; line-height: 1.06; }
+.crivia-hero-tagline--right { font-family: "Geist", system-ui, sans-serif; font-weight: 700; letter-spacing: -.02em; line-height: 1.12; text-transform: uppercase; }
 .crivia-hero-tagline--right .line-word:has(.crivia-tg-oco) { flex-basis: 100%; }
-.crivia-tg-oco { font-weight: 500; letter-spacing: -.03em; color: transparent; -webkit-text-fill-color: transparent;
+.crivia-tg-oco { font-weight: 500; letter-spacing: -.01em; color: transparent; -webkit-text-fill-color: transparent;
   -webkit-text-stroke: max(1px, .028em) #0A369D; paint-order: stroke fill; }
 @media (min-width: 48rem) {
   .crivia-hero-title { text-align: left; }
@@ -1718,7 +1718,7 @@ PATCHES_NAV = [
         /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("a", { href: "#", className: "crivia-nav-fale", children: "Fale conosco" })
       ] }),""", 1),
     ("nav:logo", "            BRAND,\n            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\n              \"span\",",
-     "            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\"img\", { src: \"assets/images/logo/crivia-palavra.png\", alt: \"CRIVIA Engenharia Consultiva\", width: 560, height: 130, className: \"crivia-nav-logo\", draggable: false }),\n            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\n              \"span\",", 1),
+     "            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\"span\", { className: \"crivia-nav-logo\", children: \"CRIVIA\" }),\n            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(\n              \"span\",", 1),
     ("nav:logo-rotulo", "          href: \"/\",\n          className: \"flex items-center gap-[0.5rem] whitespace-nowrap md:absolute md:left-1/2 md:-translate-x-1/2\",",
      "          href: \"/\",\n          \"aria-label\": \"CRIVIA — voltar ao início\",\n          className: \"flex items-center gap-[0.5rem] whitespace-nowrap md:absolute md:left-1/2 md:-translate-x-1/2\",", 1),
     ("nav:fale-conosco-movel", "items: [...LEFT_NAV, ...RIGHT_NAV], cta: CTA", 'items: [...LEFT_NAV, ...RIGHT_NAV, "Fale conosco"], cta: CTA', 1),
@@ -2859,8 +2859,10 @@ FINAL_OVERLAY_NOVO = r"""  var TreeOverlay = () => {
 
 CSS_FINAL = r"""
 /* ════ CRIVIA ════ última dobra: marca, chamada, contatos e créditos sobre o C em poeira ════ */
-.crivia-nav-logo { display: block; height: 1.2rem; width: auto; max-width: none; }
-@media (min-width: 48rem) { .crivia-nav-logo { height: 1.45rem; } }
+/* palavra da barra: mesma tipografia da Hero (títulos, 700, caixa alta, degradê azul), em corpo de barra */
+.crivia-nav-logo { display: block; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; text-transform: uppercase; white-space: nowrap;
+  color: transparent; -webkit-text-fill-color: transparent; background: linear-gradient(180deg, #2F5599 0%, #0F3A8C 55%, #001D3D 100%); -webkit-background-clip: text; background-clip: text; }
+@media (min-width: 48rem) { .crivia-nav-logo { font-size: 1.4rem; } }
 .crivia-fim { --fim-gutter: clamp(1rem, 3.2vw, 2.5rem); }
 .crivia-fim__lados { position: absolute; left: var(--fim-gutter); right: var(--fim-gutter); top: 61%; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .crivia-fim__lado { width: min(21rem, 31vw); height: 6.6rem; display: flex; align-items: center; padding: 1rem 1.3rem; border-radius: 1.1rem; text-align: left;
