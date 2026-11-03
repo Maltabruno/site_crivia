@@ -47355,7 +47355,8 @@ void main() {
     let partC;
     let partT;
     if (!stacked) {
-      const lw = Math.min(visW * (aspect < 1.1 ? 0.86 : 0.7), 36);
+      // marca 30% menor que a versão anterior (visW * 0.86 / 0.7 e teto de 36): mais harmônica com os cartões laterais
+      const lw = Math.min(visW * (aspect < 1.1 ? 0.86 : 0.7), 36) * 0.7;
       partC = partT = { s: lw / W, x0: 0, cxw: -lw / 2, cyPix: H / 2, cyw: visH * 0.14 };
     } else {
       const cw = visW * 0.38;
@@ -51222,7 +51223,7 @@ void main() {
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 200, className: "crivia-hero-wordmark", children: "CRIVIA" }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 800, className: "crivia-hero-eyebrow", children: "Engenharia Consultiva" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "absolute right-[1.875rem] top-1/2 hidden -translate-y-1/2 md:block crivia-hero-right", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 1900, className: "crivia-hero-tagline crivia-hero-tagline--right", children: "Tornando o impossível em possível." }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "absolute right-[1.875rem] top-1/2 hidden -translate-y-1/2 md:block crivia-hero-right", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 1900, className: "crivia-hero-tagline crivia-hero-tagline--right", children: ["Tornando o ", /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "crivia-tg-oco", children: "impossível" }), " em possível."] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("footer", { className: "absolute inset-x-0 bottom-0 px-[1.25rem] pb-[1.25rem] md:px-[1.875rem] md:pb-[1.875rem]", children: [
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "crivia-hero-frase2", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 1400, className: "crivia-hero-tagline crivia-hero-tagline--rodape", children: "Engenharia para Decisão" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "my-[1.25rem] h-px bg-overlay-line md:my-[1.875rem]" }),

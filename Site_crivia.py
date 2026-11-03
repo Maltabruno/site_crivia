@@ -1035,6 +1035,11 @@ CSS_CRIVIA = r"""
   letter-spacing: .26em; text-transform: uppercase; margin-top: .6rem; padding-left: .26em; color: #0B7FA3; }
 .crivia-hero-tagline { font-size: 1.5rem; font-weight: 650; letter-spacing: -.03em; line-height: 1.1; margin-top: 1rem; color: #0A369D; }
 .crivia-hero-copy { font-size: .9375rem; font-weight: 400; line-height: 1.55; }
+/* frase lateral: cheio (grotesca firme) em contraste com contorno (a palavra "impossível" vazada, que ganha corpo em "possível") */
+.crivia-hero-tagline--right { font-family: "Geist", system-ui, sans-serif; font-weight: 700; letter-spacing: -.045em; line-height: 1.06; }
+.crivia-hero-tagline--right .line-word:has(.crivia-tg-oco) { flex-basis: 100%; }
+.crivia-tg-oco { font-weight: 500; letter-spacing: -.03em; color: transparent; -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: max(1px, .028em) #0A369D; paint-order: stroke fill; }
 @media (min-width: 48rem) {
   .crivia-hero-title { text-align: left; }
   .crivia-hero-wordmark { font-size: clamp(3.5rem, 7.2vw, 6rem); }
@@ -1058,7 +1063,8 @@ CSS_CRIVIA = r"""
   .crivia-hero-title { top: 4.6rem; }
   .crivia-hero-right { display: block !important; left: 1.25rem; right: 1.25rem; top: auto; bottom: 17.2rem;
     translate: none !important; transform: none !important; text-align: center; }
-  .crivia-hero-tagline--right { margin: 0 auto; justify-content: center; text-align: center; max-width: none; font-size: 1.3rem; }
+  .crivia-hero-tagline--right { margin: 0 auto; justify-content: center; text-align: center; max-width: none; font-size: 1.3rem;
+    text-shadow: 0 0 .4em rgba(240,248,253,.95), 0 0 .9em rgba(240,248,253,.75); }
   .crivia-hero-tags { display: none !important; }
   .crivia-hero-copy { font-size: .875rem; line-height: 1.45; }
 }
@@ -1767,7 +1773,7 @@ HERO_BLOCO_NOVO = r"""      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div"
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 200, className: "crivia-hero-wordmark", children: "CRIVIA" }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 800, className: "crivia-hero-eyebrow", children: "Engenharia Consultiva" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "absolute right-[1.875rem] top-1/2 hidden -translate-y-1/2 md:block crivia-hero-right", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 1900, className: "crivia-hero-tagline crivia-hero-tagline--right", children: "Tornando o impossível em possível." }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "absolute right-[1.875rem] top-1/2 hidden -translate-y-1/2 md:block crivia-hero-right", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RevealText, { act: "hero", tag: "p", variant: "heading", delayIn: 1900, className: "crivia-hero-tagline crivia-hero-tagline--right", children: ["Tornando o ", /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "crivia-tg-oco", children: "impossível" }), " em possível."] }) }),
 """
 
 FRASE2_INI = '        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("ul", { className: "grid grid-cols-2 gap-[0.5rem] md:w-fit", children: TAGS.map('
@@ -2500,7 +2506,8 @@ FINAL_ARVORE_NOVA = r"""  var createTreeParticles = async (config2, baseColor, f
     let partC;
     let partT;
     if (!stacked) {
-      const lw = Math.min(visW * (aspect < 1.1 ? 0.86 : 0.7), 36);
+      // marca 30% menor que a versão anterior (visW * 0.86 / 0.7 e teto de 36): mais harmônica com os cartões laterais
+      const lw = Math.min(visW * (aspect < 1.1 ? 0.86 : 0.7), 36) * 0.7;
       partC = partT = { s: lw / W, x0: 0, cxw: -lw / 2, cyPix: H / 2, cyw: visH * 0.14 };
     } else {
       const cw = visW * 0.38;

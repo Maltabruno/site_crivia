@@ -15,13 +15,17 @@ var SITUACOES_ = {
 };
 var AUDIENCIA_ = { company_manager: 'Empresa / gestor', contractor: 'Empreiteira / prestador', owner_investor: 'Proprietário / investidor', technical_team: 'Profissional ou equipe técnica', other: 'Outro perfil' };
 var PAPEIS_ = { decides: 'Decido ou aprovo a contratação', recommends: 'Participo da análise e recomendo', gathering: 'Estou levantando informações', referring: 'Estou indicando a situação', other_unsure: 'Outro / ainda não sei' };
+var URGENCIAS_ = { immediate: 'Imediata', this_week: 'Nesta semana', this_month: 'Neste mês', undefined: 'Sem urgência definida' };
+var DOCUMENTOS_ = { yes: 'Sim', partial: 'Parcialmente', no: 'Não', unknown: 'Ainda não sei' };
+var PERIODOS_ = { morning: 'Manhã', afternoon: 'Tarde', evening: 'Noite', any: 'Indiferente' };
+var CONSEQUENCIAS_ = { penalty: 'Multa ou penalidade', stoppage: 'Paralisação ou atraso', margin_cash_loss: 'Perda de margem ou caixa', technical_quality_risk: 'Risco técnico ou de qualidade',
+  contract_conflict: 'Conflito contratual', decision_without_information: 'Decisão sem informação suficiente', other: 'Outra' };
+var FAIXAS_ = { up_to_100k: 'Até R$ 100 mil', '100k_to_1m': 'R$ 100 mil a R$ 1 milhão', '1m_to_10m': 'R$ 1 a 10 milhões', '10m_to_50m': 'R$ 10 a 50 milhões',
+  above_50m: 'Acima de R$ 50 milhões', undisclosed: 'Prefiro não informar', unknown: 'Ainda não sei' };
+// Múltipla escolha: opções que não combinam com as outras da mesma pergunta (ex.: "Ainda não sei")
+var EXCLUSIVAS_ = { situationCodes: ['outra_nao_sei'], urgencies: ['undefined'], documents: ['unknown'], estimatedRanges: ['undisclosed', 'unknown'], contactPeriods: ['any'] };
 var LISTAS = {
   CHANNELS: ['whatsapp', 'email'],
-  URGENCIES: ['immediate', 'this_week', 'this_month', 'undefined'],
-  DOCS_AVAILABLE: ['yes', 'partial', 'no', 'unknown'],
-  CONTACT_PERIODS: ['morning', 'afternoon', 'evening', 'any'],
-  CONSEQUENCES: ['penalty', 'stoppage', 'margin_cash_loss', 'technical_quality_risk', 'contract_conflict', 'decision_without_information', 'other'],
-  RANGES: ['up_to_100k', '100k_to_1m', '1m_to_10m', '10m_to_50m', 'above_50m', 'undisclosed', 'unknown'],
   ORIGINS: ['hero', 'industria', 'produtos', 'metodo', 'sobre', 'header', 'final', 'direto'],
   PRODUCTS: ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10', 'P11', 'P12', 'IA-1', 'IA-2', 'CV01'],
   DEVICES: ['mobile', 'tablet', 'desktop', 'unknown']
@@ -50,16 +54,17 @@ function novoValidador_() {
       if (typeof valor !== 'string' || permitidos.indexOf(valor) < 0) { v.erro(caminho, 'valor_invalido'); return null; }
       return valor;
     },
-    lista: function (valor, caminho, permitidos, maximo) {
-      if (valor === null || valor === undefined || (Array.isArray(valor) && !valor.length)) return [];
+    /** Múltipla escolha: lista de códigos permitidos, sem repetição e sem misturar opção exclusiva com outras. Devolve na ordem da lista permitida. */
+    lista: function (valor, caminho, permitidos, obrigatorio, exclusivas) {
+      if (valor === null || valor === undefined || (Array.isArray(valor) && !valor.length)) { if (obrigatorio) v.erro(caminho, 'obrigatorio'); return []; }
       if (!Array.isArray(valor)) { v.erro(caminho, 'tipo'); return []; }
-      if (valor.length > maximo) { v.erro(caminho, 'limite_de_selecoes'); return []; }
-      var saida = [];
+      if (valor.length > 2 * permitidos.length) { v.erro(caminho, 'limite_de_selecoes'); return []; }
       for (var i = 0; i < valor.length; i++) {
         if (typeof valor[i] !== 'string' || permitidos.indexOf(valor[i]) < 0) { v.erro(caminho, 'valor_invalido'); return []; }
-        if (saida.indexOf(valor[i]) < 0) saida.push(valor[i]);
       }
-      return saida;
+      var escolhidos = permitidos.filter(function (k) { return valor.indexOf(k) >= 0; });
+      if (escolhidos.length > 1 && (exclusivas || []).some(function (x) { return escolhidos.indexOf(x) >= 0; })) { v.erro(caminho, 'opcoes_incompativeis'); return []; }
+      return escolhidos;
     },
     texto: function (valor, caminho, maximo, obrigatorio, minimo) {
       if (valor === null || valor === undefined || valor === '') { if (obrigatorio) v.erro(caminho, 'obrigatorio'); return ''; }
@@ -169,25 +174,27 @@ function validarLead_(corpo) {
     else v.erro('source.' + k, 'valor_invalido');
   });
 
-  var s = v.obj(topo.scenario, 'scenario', ['situationCode', 'contextAnswerCode', 'audienceProfile', 'decisionRole', 'location', 'narrative', 'urgency', 'consequences', 'documents', 'estimatedRange'],
-    ['situationCode', 'audienceProfile', 'decisionRole', 'location', 'narrative']);
-  var situacao = v.enm(s.situationCode, 'scenario.situationCode', chaves_(SITUACOES_), true);
-  var def = situacao ? SITUACOES_[situacao] : ['', {}];
-  var resposta = v.enm(s.contextAnswerCode, 'scenario.contextAnswerCode', chaves_(def[1]), false);
-  var perfil = v.enm(s.audienceProfile, 'scenario.audienceProfile', chaves_(AUDIENCIA_), true);
+  var s = v.obj(topo.scenario, 'scenario', ['situationCodes', 'contextAnswerCode', 'audienceProfiles', 'decisionRole', 'location', 'narrative', 'urgencies', 'consequences', 'documents', 'estimatedRanges'],
+    ['situationCodes', 'audienceProfiles', 'decisionRole', 'location', 'narrative']);
+  var situacoes = v.lista(s.situationCodes, 'scenario.situationCodes', chaves_(SITUACOES_), true, EXCLUSIVAS_.situationCodes);
+  // a pergunta curta de contexto depende da situação: só vale quando há exatamente uma situação marcada
+  var respostasCtx = situacoes.length === 1 ? SITUACOES_[situacoes[0]][1] : {};
+  var resposta = v.enm(s.contextAnswerCode, 'scenario.contextAnswerCode', chaves_(respostasCtx), false);
+  var perfis = v.lista(s.audienceProfiles, 'scenario.audienceProfiles', chaves_(AUDIENCIA_), true);
   var papel = v.enm(s.decisionRole, 'scenario.decisionRole', chaves_(PAPEIS_), true);
   var cenario = {
-    situationCode: situacao, situationLabel: def[0], contextAnswerCode: resposta || '', contextAnswerLabel: resposta ? def[1][resposta] : '',
-    audienceProfile: perfil, audienceProfileLabel: perfil ? AUDIENCIA_[perfil] : '', decisionRole: papel, decisionRoleLabel: papel ? PAPEIS_[papel] : '',
+    situationCodes: situacoes, situationLabels: situacoes.map(function (x) { return SITUACOES_[x][0]; }),
+    contextAnswerCode: resposta || '', contextAnswerLabel: resposta ? respostasCtx[resposta] : '',
+    audienceProfiles: perfis, audienceProfileLabels: perfis.map(function (x) { return AUDIENCIA_[x]; }), decisionRole: papel, decisionRoleLabel: papel ? PAPEIS_[papel] : '',
     location: localizacao_(v, s.location),
-    urgency: v.enm(s.urgency, 'scenario.urgency', L.URGENCIES, false) || '',
-    consequences: v.lista(s.consequences, 'scenario.consequences', L.CONSEQUENCES, 2),
-    documents: v.enm(s.documents, 'scenario.documents', L.DOCS_AVAILABLE, false) || '',
-    estimatedRange: v.enm(s.estimatedRange, 'scenario.estimatedRange', L.RANGES, false) || '',
+    urgencies: v.lista(s.urgencies, 'scenario.urgencies', chaves_(URGENCIAS_), false, EXCLUSIVAS_.urgencies),
+    consequences: v.lista(s.consequences, 'scenario.consequences', chaves_(CONSEQUENCIAS_), false),
+    documents: v.lista(s.documents, 'scenario.documents', chaves_(DOCUMENTOS_), false, EXCLUSIVAS_.documents),
+    estimatedRanges: v.lista(s.estimatedRanges, 'scenario.estimatedRanges', chaves_(FAIXAS_), false, EXCLUSIVAS_.estimatedRanges),
     narrative: v.texto(s.narrative, 'scenario.narrative', LIMITES.narrative, true, LIMITES.narrativeMin)
   };
 
-  var c = v.obj(topo.contact, 'contact', ['name', 'organization', 'preferredChannel', 'phone', 'email', 'contactPeriod'], ['name', 'preferredChannel']);
+  var c = v.obj(topo.contact, 'contact', ['name', 'organization', 'preferredChannel', 'phone', 'email', 'contactPeriods'], ['name', 'preferredChannel']);
   var canal = v.enm(c.preferredChannel, 'contact.preferredChannel', L.CHANNELS, true);
   var nome = v.texto(c.name, 'contact.name', LIMITES.name, true, 2);
   if (nome && /[\d<>{}\[\]\\|^~`@#$%*=+_]/.test(nome)) v.erro('contact.name', 'valor_invalido');
@@ -200,7 +207,7 @@ function validarLead_(corpo) {
   if (canal === 'whatsapp' && !telefone && !v.erros['contact.phone']) v.erro('contact.phone', 'obrigatorio');
   if (canal === 'email' && !email && !v.erros['contact.email']) v.erro('contact.email', 'obrigatorio');
   var contato = { name: nome, organization: v.texto(c.organization, 'contact.organization', LIMITES.organization, false), preferredChannel: canal, phone: telefone || '', email: email || '',
-    contactPeriod: v.enm(c.contactPeriod, 'contact.contactPeriod', L.CONTACT_PERIODS, false) || '' };
+    contactPeriods: v.lista(c.contactPeriods, 'contact.contactPeriods', chaves_(PERIODOS_), false, EXCLUSIVAS_.contactPeriods) };
 
   var p = v.obj(topo.privacy, 'privacy', ['privacyNoticeVersion', 'acknowledged', 'marketingConsent'], ['privacyNoticeVersion', 'acknowledged']);
   if (typeof p.privacyNoticeVersion !== 'string' || !/^[A-Za-z0-9._-]{1,40}$/.test(p.privacyNoticeVersion)) v.erro('privacy.privacyNoticeVersion', 'valor_invalido');
@@ -217,7 +224,7 @@ function validarLead_(corpo) {
 function validarDetalhes_(corpo) {
   var v = novoValidador_(), L = LISTAS;
   var c = v.obj(corpo, '$', ['urgency', 'documents', 'contactPeriod']);
-  var saida = { urgency: v.enm(c.urgency, 'urgency', L.URGENCIES, false), documents: v.enm(c.documents, 'documents', L.DOCS_AVAILABLE, false), contactPeriod: v.enm(c.contactPeriod, 'contactPeriod', L.CONTACT_PERIODS, false) };
+  var saida = { urgency: v.enm(c.urgency, 'urgency', chaves_(URGENCIAS_), false), documents: v.enm(c.documents, 'documents', chaves_(DOCUMENTOS_), false), contactPeriod: v.enm(c.contactPeriod, 'contactPeriod', chaves_(PERIODOS_), false) };
   if (!saida.urgency && !saida.documents && !saida.contactPeriod && !Object.keys(v.erros).length) v.erro('$', 'vazio');
   if (Object.keys(v.erros).length) throw new ErroValidacao_(v.erros);
   return saida;

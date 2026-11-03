@@ -7,15 +7,17 @@
   var CFG = window.CRIVIA_CENARIO_CONFIG;
   var R = window.CRIVIA_REGRAS;
   var app = document.getElementById("app");
-  var STORE = "crivia_cenario_v2";
+  var STORE = "crivia_cenario_v3";
   var ORIGEM = R.lerOrigem(location.search);
   var inicio = Date.now();
-  var FORM_VERSION = "form-2";
+  var FORM_VERSION = "form-3";
 
-  var estado = { situationCode: "", contextAnswerCode: "", audienceProfile: "", decisionRole: "", narrative: "",
-    urgency: "", consequences: [], documents: "", estimatedRange: "",
+  // Perguntas de múltipla escolha guardam listas de códigos; a pergunta de contexto e a participação na decisão continuam de escolha única.
+  var estado = { situationCodes: [], contextAnswerCode: "", audienceProfiles: [], decisionRole: "", narrative: "",
+    urgencies: [], consequences: [], documents: [], estimatedRanges: [],
     location: { type: "brazil", stateCode: "", cityCode: "", cityName: "", countryCode: "", countryName: "", intlCity: "", foreignRegion: "" },
-    contact: { name: "", organization: "", preferredChannel: "", phone: "", email: "", contactPeriod: "" } };
+    contact: { name: "", organization: "", preferredChannel: "", phone: "", email: "", contactPeriods: [] } };
+  var LISTAS_MULTI = ["situationCodes", "audienceProfiles", "urgencies", "consequences", "documents", "estimatedRanges"];
   var ui = { erros: {}, enviando: false, erroEnvio: "", resultado: null, idem: null, mostrarOutroCanal: false };
   var reg = {};        // campo -> { caixa, ctrl, msg }: onde mostrar o erro de cada campo
   var refs = {};       // elementos usados por várias funções
@@ -60,19 +62,20 @@
   function salvar() {
     clearTimeout(tSalvar);
     tSalvar = setTimeout(function () {
-      try { sessionStorage.setItem(STORE, JSON.stringify({ v: 2, e: { situationCode: estado.situationCode, contextAnswerCode: estado.contextAnswerCode, audienceProfile: estado.audienceProfile,
-        decisionRole: estado.decisionRole, narrative: estado.narrative, urgency: estado.urgency, consequences: estado.consequences, documents: estado.documents,
-        estimatedRange: estado.estimatedRange, location: estado.location, contact: estado.contact } })); } catch (e) { /* armazenamento indisponível: segue sem salvar */ }
+      try { sessionStorage.setItem(STORE, JSON.stringify({ v: 3, e: { situationCodes: estado.situationCodes, contextAnswerCode: estado.contextAnswerCode, audienceProfiles: estado.audienceProfiles,
+        decisionRole: estado.decisionRole, narrative: estado.narrative, urgencies: estado.urgencies, consequences: estado.consequences, documents: estado.documents,
+        estimatedRanges: estado.estimatedRanges, location: estado.location, contact: estado.contact } })); } catch (e) { /* armazenamento indisponível: segue sem salvar */ }
     }, 300);
   }
   function restaurar() {
     try {
       var d = JSON.parse(sessionStorage.getItem(STORE) || "null");
-      if (!d || d.v !== 2 || !d.e) return;
-      ["situationCode", "contextAnswerCode", "audienceProfile", "decisionRole", "narrative", "urgency", "documents", "estimatedRange"].forEach(function (k) { if (typeof d.e[k] === "string") estado[k] = d.e[k]; });
-      if (Array.isArray(d.e.consequences)) estado.consequences = d.e.consequences.filter(function (x) { return typeof x === "string"; }).slice(0, R.MAX_CONSEQUENCIAS);
+      if (!d || d.v !== 3 || !d.e) return;
+      ["contextAnswerCode", "decisionRole", "narrative"].forEach(function (k) { if (typeof d.e[k] === "string") estado[k] = d.e[k]; });
+      LISTAS_MULTI.forEach(function (k) { if (Array.isArray(d.e[k])) estado[k] = d.e[k].filter(function (x) { return typeof x === "string"; }); });
       Object.keys(estado.location).forEach(function (k) { if (d.e.location && typeof d.e.location[k] === "string") estado.location[k] = d.e.location[k]; });
-      Object.keys(estado.contact).forEach(function (k) { if (d.e.contact && typeof d.e.contact[k] === "string") estado.contact[k] = d.e.contact[k]; });
+      ["name", "organization", "preferredChannel", "phone", "email"].forEach(function (k) { if (d.e.contact && typeof d.e.contact[k] === "string") estado.contact[k] = d.e.contact[k]; });
+      if (d.e.contact && Array.isArray(d.e.contact.contactPeriods)) estado.contact.contactPeriods = d.e.contact.contactPeriods.filter(function (x) { return typeof x === "string"; });
     } catch (e) { /* ignora */ }
   }
   function limparRascunho() { clearTimeout(tSalvar); try { sessionStorage.removeItem(STORE); } catch (e) { /* ignora */ } }
@@ -82,7 +85,7 @@
   function marcarErro(chave, texto) {
     var r = reg[chave]; if (!r) return;
     r.msg.textContent = texto || "";
-    r.caixa.classList.toggle(r.caixa.tagName === "FIELDSET" ? "grupo--erro" : "campo--erro", !!texto);
+    r.caixa.classList.toggle(r.caixa.classList.contains("grupo") ? "grupo--erro" : "campo--erro", !!texto);
     if (r.ctrl) { if (texto) r.ctrl.setAttribute("aria-invalid", "true"); else r.ctrl.removeAttribute("aria-invalid"); }
     if (!texto) delete ui.erros[chave];
   }
@@ -101,19 +104,44 @@
   }
   function marcar(cx, valor) { Array.prototype.forEach.call(cx.querySelectorAll("input"), function (i) { i.checked = Array.isArray(valor) ? valor.indexOf(i.value) >= 0 : i.value === valor; }); }
 
-  /** Várias escolhas (caixas) com limite; ao passar do limite a última escolha é desfeita e o motivo é anunciado. */
-  function chipsMulti(nome, lista, max, atual, aoMudar) {
+  /** Múltipla escolha: caixas de seleção, "Marcar todas" e "Limpar". `exclusivas` são opções que não combinam com as demais
+      (ex.: "Ainda não sei"): ao marcá-las as outras saem; ao marcar outra, elas saem. O resultado segue a ordem da lista. */
+  function multi(nome, lista, aoMudar, o) {
+    o = o || {};
     contador += 1;
-    var cx = h("div", { class: "chips" });
-    lista.forEach(function (o) {
-      var inp = h("input", { type: "checkbox", name: nome + "-" + contador, value: o.v, onchange: function (ev) {
-        var sel = Array.prototype.slice.call(cx.querySelectorAll("input:checked")).map(function (i) { return i.value; });
-        if (sel.length > max) { ev.target.checked = false; anunciar("Você pode escolher até " + max + " opções."); return; }
-        aoMudar(sel);
+    var excl = o.exclusivas || [];
+    var cx = h("div", { class: o.classe || "chips" });
+    function entradas() { return Array.prototype.slice.call(cx.querySelectorAll("input")); }
+    function lidos() { return entradas().filter(function (i) { return i.checked; }).map(function (i) { return i.value; }); }
+    lista.forEach(function (op) {
+      var inp = h("input", { type: "checkbox", name: nome + "-" + contador, value: op.v, onchange: function (ev) {
+        if (ev.target.checked) {
+          var eExcl = excl.indexOf(op.v) >= 0;
+          entradas().forEach(function (i) { if (i !== ev.target && (eExcl || excl.indexOf(i.value) >= 0)) i.checked = false; });
+        }
+        aoMudar(lidos());
       } });
-      cx.appendChild(h("label", { class: "chip" }, inp, h("span", { texto: o.l })));
+      cx.appendChild(h("label", { class: "chip chip--caixa" }, inp, h("span", { class: "chip__caixa", "aria-hidden": "true" }), h("span", { texto: op.l })));
     });
-    return cx;
+    function todas() { entradas().forEach(function (i) { i.checked = excl.indexOf(i.value) < 0; }); aoMudar(lidos()); anunciar("Todas as opções marcadas."); }
+    function nenhuma() { entradas().forEach(function (i) { i.checked = false; }); aoMudar(lidos()); anunciar("Seleção limpa."); }
+    return { cx: cx, todas: todas, nenhuma: nenhuma };
+  }
+
+  /** Pergunta de múltipla escolha com os botões "Marcar todas" e "Limpar" no canto da pergunta. */
+  function grupoMulti(chave, rotulo, m, opcional) {
+    var erId = "er-" + chave.replace(/\W/g, "-");
+    var msg = h("p", { class: "campo__erro", id: erId, role: "alert" });
+    var botoes = h("div", { class: "grupo__acoes" },
+      h("button", { type: "button", class: "grupo__acao", "aria-label": "Marcar todas as opções de: " + rotulo, texto: "Marcar todas", onclick: m.todas }),
+      h("span", { class: "grupo__sep", "aria-hidden": "true", texto: "·" }),
+      h("button", { type: "button", class: "grupo__acao", "aria-label": "Limpar a seleção de: " + rotulo, texto: "Limpar", onclick: m.nenhuma }));
+    // div com role="group" (e não fieldset): o botão fica ao lado do título, e o título nomeia o grupo para leitores de tela
+    var lid = "lb-" + chave.replace(/\W/g, "-");
+    var fs = h("div", { class: "grupo grupo--multi", role: "group", "aria-labelledby": lid, "aria-describedby": erId },
+      h("div", { class: "grupo__rotulo", id: lid }, rotulo, opcional ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null), botoes, m.cx, msg);
+    registrar(chave, fs, null, msg);
+    return fs;
   }
 
   function grupo(chave, rotulo, conteudo, opcional) {
@@ -228,20 +256,24 @@
     refs.resumo = h("div", { id: "resumo" });
 
     // 1. situação + pergunta curta que depende dela
-    refs.situacao = chips("sit", R.SITUACOES.map(function (s) { return { v: s.v, l: s.l }; }), function (v) {
-      e.situationCode = v; e.contextAnswerCode = ""; limpar("situationCode"); desenharContexto(); salvar(); rastrear("scenario_branch_selected", { branch: v });
-    }, "chips chips--2");
+    var sitMulti = multi("sit", R.SITUACOES.map(function (s) { return { v: s.v, l: s.l }; }), function (sel) {
+      var antes = e.situationCodes.length;
+      e.situationCodes = sel; e.contextAnswerCode = ""; limpar("situationCodes"); desenharContexto(); salvar();
+      if (sel.length && sel.length > antes) rastrear("scenario_branch_selected", { branch: sel[0] });
+    }, { classe: "chips chips--2", exclusivas: R.EXCLUSIVAS.situationCodes });
+    refs.situacao = sitMulti.cx;
     refs.contextoChips = h("div");
     refs.contextoLegenda = h("legend", { class: "grupo__rotulo" });
     refs.contexto = h("fieldset", { class: "grupo sub", hidden: "hidden" }, refs.contextoLegenda, refs.contextoChips);
-    var b1 = h("div", { class: "bloco" }, grupo("situationCode", "O que mais se aproxima do seu cenário hoje?", refs.situacao), refs.contexto);
+    var b1 = h("div", { class: "bloco" }, grupoMulti("situationCodes", "O que mais se aproxima do seu cenário hoje?", sitMulti), refs.contexto);
 
     // 2. perfil e participação
-    refs.perfil = chips("perfil", R.PERFIS, function (v) { e.audienceProfile = v; limpar("audienceProfile"); sincronizar(); salvar(); });
+    var perfMulti = multi("perfil", R.PERFIS, function (sel) { e.audienceProfiles = sel; limpar("audienceProfiles"); sincronizar(); salvar(); });
+    refs.perfil = perfMulti.cx;
     refs.papel = chips("papel", R.PAPEIS, function (v) { e.decisionRole = v; limpar("decisionRole"); salvar(); });
     refs.papelGrupo = grupo("decisionRole", "Qual é a sua participação nessa decisão?", refs.papel);
     refs.papelGrupo.classList.add("sub");
-    var b2 = h("div", { class: "bloco" }, grupo("audienceProfile", "Você está falando como:", refs.perfil), refs.papelGrupo);
+    var b2 = h("div", { class: "bloco" }, grupoMulti("audienceProfiles", "Você está falando como:", perfMulti), refs.papelGrupo);
 
     // 3. localização (Brasil estruturado | Exterior)
     refs.tipoLoc = chips("loc", [{ v: "brazil", l: "Brasil" }, { v: "international", l: "Exterior" }], function (v) { l.type = v; limpar("location.type"); sincronizar(); salvar();
@@ -279,20 +311,21 @@
     var b4 = h("div", { class: "bloco" }, rel.caixa);
 
     // 4b. perguntas opcionais que ajudam a preparar a conversa (na mesma página; podem ser recolhidas)
-    refs.urgencia = chips("urg", R.URGENCIAS, function (v) { e.urgency = v; salvar(); });
-    refs.consequencias = chipsMulti("cons", R.CONSEQUENCIAS, R.MAX_CONSEQUENCIAS, e.consequences, function (sel) { e.consequences = sel; salvar(); });
-    refs.documentos = chips("docs", R.DOCUMENTOS, function (v) { e.documents = v; salvar(); });
-    refs.faixa = chips("faixa", R.FAIXAS, function (v) { e.estimatedRange = v; salvar(); });
-    refs.periodo = chips("per", R.PERIODOS, function (v) { c.contactPeriod = v; salvar(); });
-    var opc = function (rot, cx) { return h("fieldset", { class: "grupo" }, h("legend", { class: "grupo__rotulo", texto: rot }), cx); };
+    var X = R.EXCLUSIVAS;
+    var mUrg = multi("urg", R.URGENCIAS, function (sel) { e.urgencies = sel; salvar(); }, { exclusivas: X.urgencies });
+    var mCons = multi("cons", R.CONSEQUENCIAS, function (sel) { e.consequences = sel; salvar(); });
+    var mDocs = multi("docs", R.DOCUMENTOS, function (sel) { e.documents = sel; salvar(); }, { exclusivas: X.documents });
+    var mFaixa = multi("faixa", R.FAIXAS, function (sel) { e.estimatedRanges = sel; salvar(); }, { exclusivas: X.estimatedRanges });
+    var mPer = multi("per", R.PERIODOS, function (sel) { c.contactPeriods = sel; salvar(); }, { exclusivas: X.contactPeriods });
+    refs.urgencia = mUrg.cx; refs.consequencias = mCons.cx; refs.documentos = mDocs.cx; refs.faixa = mFaixa.cx; refs.periodo = mPer.cx;
     var b4b = h("details", { class: "bloco opcionais", open: "open" },
-      h("summary", { class: "opcionais__titulo" }, "Para adiantar a análise ", h("span", { class: "grupo__opcional", texto: "(opcional — responda o que souber)" })),
+      h("summary", { class: "opcionais__titulo" }, "Para adiantar a análise ", h("span", { class: "grupo__opcional", texto: "(opcional — responda o que souber; pode marcar mais de uma)" })),
       h("div", { class: "opcionais__corpo" },
-        opc("Quando essa decisão precisa avançar?", refs.urgencia),
-        opc("O que mais preocupa se nada mudar? (até 2)", refs.consequencias),
-        opc("Você já tem documentos do caso (contrato, projeto, cronograma, medições)?", refs.documentos),
-        opc("Faixa aproximada do empreendimento ou contrato", refs.faixa),
-        opc("Melhor período para contato", refs.periodo)));
+        grupoMulti("urgencies", "Quando essa decisão precisa avançar?", mUrg),
+        grupoMulti("consequences", "O que mais preocupa se nada mudar?", mCons),
+        grupoMulti("documents", "Você já tem documentos do caso (contrato, projeto, cronograma, medições)?", mDocs),
+        grupoMulti("estimatedRanges", "Faixa aproximada do empreendimento ou contrato", mFaixa),
+        grupoMulti("contactPeriods", "Melhor período para contato", mPer)));
 
     // 5. contato mínimo
     var nome = campo("contact.name", "Nome", { autocomplete: "name", obrigatorio: true, aoMudar: function (v) { c.name = v; } });
@@ -314,7 +347,18 @@
       h("a", { href: CFG.privacyNoticeUrl, target: "_blank", rel: "noopener", texto: "Aviso de Privacidade" }), "."));
     var armadilha = h("div", { class: "armadilha", "aria-hidden": "true" }, h("label", null, "Não preencha este campo", h("input", { type: "text", name: "website", id: "campo-website", tabindex: "-1", autocomplete: "off" })));
     refs.erroEnvio = h("p", { class: "erro-envio", role: "alert", hidden: "hidden" });
-    refs.botao = h("button", { type: "submit", class: "btn btn--prim", id: "btn-enviar", texto: "Enviar meu cenário" });
+    // mesmo botão do "Conhecer o método" da Hero: pílula azul com brilho ciano na base e pontos de luz subindo
+    var pontos = h("span", { class: "btn__pontos", "aria-hidden": "true" });
+    for (var p = 0; p < 7; p++) pontos.appendChild(h("i", { class: "btn__ponto" }));
+    var seta = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    seta.setAttribute("viewBox", "0 0 24 24"); seta.setAttribute("fill", "none"); seta.setAttribute("stroke", "currentColor");
+    seta.setAttribute("stroke-width", "2"); seta.setAttribute("stroke-linecap", "round"); seta.setAttribute("stroke-linejoin", "round"); seta.setAttribute("aria-hidden", "true");
+    ["M5 12h14", "M13 6l6 6-6 6"].forEach(function (d) {
+      var tr = document.createElementNS("http://www.w3.org/2000/svg", "path"); tr.setAttribute("d", d); seta.appendChild(tr);
+    });
+    refs.rotuloBotao = h("span", { class: "btn__rotulo", texto: "Enviar meu cenário" });
+    refs.botao = h("button", { type: "submit", class: "btn btn--metodo", id: "btn-enviar" },
+      pontos, h("span", { class: "btn__interno" }, refs.rotuloBotao, h("span", { class: "btn__seta", "aria-hidden": "true" }, seta)));
     var b6 = h("div", { class: "bloco" }, privac, armadilha, refs.erroEnvio, h("div", { class: "acoes" }, refs.botao));
 
     var form = h("form", { id: "form-cenario", novalidate: "novalidate", onsubmit: function (ev) { ev.preventDefault(); enviar(); } }, refs.resumo, b1, b2, b3, b4, b4b, b5, b6);
@@ -324,9 +368,10 @@
   }
 
   function desenharContexto() {
-    var s = R.achar(R.SITUACOES, estado.situationCode);
+    // a pergunta curta depende da situação: só aparece quando há exatamente uma situação marcada
+    var s = estado.situationCodes.length === 1 ? R.achar(R.SITUACOES, estado.situationCodes[0]) : null;
     refs.contextoChips.textContent = "";
-    if (!s) { refs.contexto.hidden = true; return; }
+    if (!s) { refs.contexto.hidden = true; estado.contextAnswerCode = ""; return; }
     refs.contextoLegenda.textContent = "";
     refs.contextoLegenda.appendChild(document.createTextNode(s.q));
     refs.contextoLegenda.appendChild(h("span", { class: "grupo__opcional", texto: " (opcional)" }));
@@ -339,7 +384,7 @@
   /** Mostra/oculta o que depende das respostas, sem recriar controles (o foco e o texto digitado ficam intactos). */
   function sincronizar() {
     var e = estado, l = e.location, c = e.contact;
-    refs.papelGrupo.hidden = !e.audienceProfile;
+    refs.papelGrupo.hidden = !e.audienceProfiles.length;
     refs.brasil.hidden = l.type !== "brazil";
     refs.exterior.hidden = l.type !== "international";
     marcar(refs.tipoLoc, l.type);
@@ -395,10 +440,10 @@
 
   function aplicarEstado() {
     var e = estado, l = e.location, c = e.contact;
-    marcar(refs.situacao, e.situationCode); desenharContexto();
-    marcar(refs.perfil, e.audienceProfile); marcar(refs.papel, e.decisionRole);
+    marcar(refs.situacao, e.situationCodes); desenharContexto();
+    marcar(refs.perfil, e.audienceProfiles); marcar(refs.papel, e.decisionRole);
     marcar(refs.canal, c.preferredChannel);
-    marcar(refs.urgencia, e.urgency); marcar(refs.consequencias, e.consequences); marcar(refs.documentos, e.documents); marcar(refs.faixa, e.estimatedRange); marcar(refs.periodo, c.contactPeriod);
+    marcar(refs.urgencia, e.urgencies); marcar(refs.consequencias, e.consequences); marcar(refs.documentos, e.documents); marcar(refs.faixa, e.estimatedRanges); marcar(refs.periodo, c.contactPeriods);
     refs.nome.value = c.name; refs.org.value = c.organization; refs.fone.ctrl.value = c.phone; refs.mail.ctrl.value = c.email;
     refs.narrativa.value = e.narrative; refs.narrativa.dispatchEvent(new Event("input"));
     refs.cidadeEx.value = l.intlCity; refs.regiaoEx.value = l.foreignRegion;
@@ -441,7 +486,7 @@
 
   function definirEnvio(sim, erro) {
     ui.enviando = sim;
-    refs.botao.disabled = sim; refs.botao.textContent = sim ? "Enviando com segurança…" : "Enviar meu cenário";
+    refs.botao.disabled = sim; refs.rotuloBotao.textContent = sim ? "Enviando com segurança…" : "Enviar meu cenário";
     refs.erroEnvio.hidden = !erro; refs.erroEnvio.textContent = erro || "";
   }
 

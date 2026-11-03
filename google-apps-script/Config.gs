@@ -4,7 +4,7 @@
  * (Configurações do projeto > Propriedades do script) e nunca no repositório nem no navegador.
  */
 var CRIVIA = {
-  SCHEMA_VERSION: 2,
+  SCHEMA_VERSION: 3,
   SCORE_RULE_VERSION: 'score-v3',
   TIMEZONE: 'America/Sao_Paulo',
   // Canal público de contato comercial. NÃO é o e-mail de privacidade nem o destinatário dos alertas internos.
@@ -15,7 +15,7 @@ var CRIVIA = {
   RATE_MAX: 30,            // envios aceitos por janela (contador global; o Apps Script não informa o IP do visitante)
   RATE_WINDOW_SEC: 600,
   CONTACT_RATE_MAX: 3,     // envios por contato normalizado na mesma janela (guardado só como hash, no cache)
-  SHEETS: { LEADS: 'Leads', CONFIG: 'Config', AUDIT: 'Audit' },
+  SHEETS: { LEADS: 'Leads', ANSWERS: 'Respostas', CONFIG: 'Config', AUDIT: 'Audit' },
   LEGAL_BASIS_PLACEHOLDER: '[VALIDAR_BASE_LEGAL]'   // a base legal NÃO é definida em código: depende de validação jurídica
 };
 
@@ -52,6 +52,10 @@ var CABECALHOS_LEADS = ['submission_id', 'created_at', 'updated_at', 'status', '
   'sensitive_content_suspected', 'score_json'];
 
 var STATUS_INICIAIS = ['Novo', 'Em análise', 'Aguardando informação', 'Contatado', 'Qualificado', 'Proposta em preparação', 'Proposta enviada', 'Não aderente', 'Encerrado'];
+
+/** Respostas: formato "longo" das perguntas de lista fechada. Uma linha por opção marcada (a múltipla escolha repete o submission_id).
+    Serve para contar, filtrar e cruzar (tabela dinâmica) sem separar texto. Sem relato, telefone ou e-mail. */
+var CABECALHOS_RESPOSTAS = ['submission_id', 'question', 'code', 'label', 'position'];
 
 /** Audit: eventos mínimos, sem relato, telefone ou e-mail. */
 var CABECALHOS_AUDIT = ['at', 'submission_id', 'event', 'actor', 'result'];

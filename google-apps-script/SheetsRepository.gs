@@ -1,7 +1,7 @@
 /**
  * Acesso à planilha privada "CRIVIA — Cenários recebidos pelo site". Somente este arquivo abre a planilha.
  * O ID vem de Script Properties (SPREADSHEET_ID). Nada daqui é devolvido ao navegador.
- * Abas: Leads (uma linha por cenário), Config (não sigilosa, só leitura humana) e Audit (eventos mínimos, sem dados pessoais).
+ * Abas: Leads (uma linha por cenário), Respostas (uma linha por opção marcada), Config (não sigilosa, só leitura humana) e Audit (eventos mínimos, sem dados pessoais).
  */
 function planilha_() { return SpreadsheetApp.openById(prop_('SPREADSHEET_ID')); }
 
@@ -20,6 +20,7 @@ function aba_(nome, cabecalhos) {
 function prepararPlanilha() {
   if (!configuracaoCompleta_()) throw new Error('Configure SPREADSHEET_ID, NOTIFICATION_EMAIL e PRIVACY_NOTICE_VERSION em Script Properties.');
   var leads = aba_(CRIVIA.SHEETS.LEADS, CABECALHOS_LEADS);
+  aba_(CRIVIA.SHEETS.ANSWERS, CABECALHOS_RESPOSTAS);
   aba_(CRIVIA.SHEETS.AUDIT, CABECALHOS_AUDIT);
   var ss = planilha_();
   var col = function (nome) { return CABECALHOS_LEADS.indexOf(nome) + 1; };
@@ -78,19 +79,44 @@ function gravarCenario_(lead, q, hashChave) {
   var texto = seguroParaPlanilha_;
   var dias = Number(prop_('UNQUALIFIED_LEAD_RETENTION_DAYS'));
   var revisao = dias > 0 ? Utilities.formatDate(new Date(Date.now() + dias * 86400000), CRIVIA.TIMEZONE, 'yyyy-MM-dd') : '';   // sem prazo aprovado, fica vazio
-  var linha = [codigo, agora, agora, 'Novo', s.situationCode, s.situationLabel, 'ctx_' + s.situationCode,
-    s.contextAnswerCode, s.contextAnswerLabel, s.audienceProfile, s.audienceProfileLabel, s.decisionRole, s.decisionRoleLabel,
+  var junta = function (lista) { return lista.join(' | '); };   // múltipla escolha: códigos/rótulos na mesma célula; a aba Respostas traz uma linha por opção
+  var linha = [codigo, agora, agora, 'Novo', junta(s.situationCodes), junta(s.situationLabels), s.situationCodes.length === 1 ? 'ctx_' + s.situationCodes[0] : '',
+    s.contextAnswerCode, s.contextAnswerLabel, junta(s.audienceProfiles), junta(s.audienceProfileLabels), s.decisionRole, s.decisionRoleLabel,
     loc.type, loc.countryCode, texto(loc.countryName), loc.stateCode, texto(loc.stateName), loc.cityCode, texto(loc.cityName), texto(loc.foreignRegion), texto(s.narrative),
     texto(c.name), texto(c.organization), c.preferredChannel, telefoneParaPlanilha_(c.phone), texto(c.email), prop_('PRIVACY_NOTICE_VERSION'), agora,
     CRIVIA.LEGAL_BASIS_PLACEHOLDER, p.marketingConsent ? 'true' : 'false', p.marketingConsent ? agora : '',
     o.landingPage, o.originCta, texto(o.utmSource), texto(o.utmMedium), texto(o.utmCampaign), texto(o.utmContent), texto(o.utmTerm), texto(o.referrer),
-    s.urgency, s.documents, c.contactPeriod, s.consequences.join('|'), s.estimatedRange, '', '', revisao, '',
+    junta(s.urgencies), junta(s.documents), junta(c.contactPeriods), junta(s.consequences), junta(s.estimatedRanges), '', '', revisao, '',
     q.priority, q.candidateProducts.join('|'), q.missingInformation.join('|'), hashChave, 'pending', lead.formVersion, CRIVIA.SCHEMA_VERSION,
     lead.sensitiveContentSuspected ? 'true' : 'false', JSON.stringify(q)];
   if (linha.length !== CABECALHOS_LEADS.length) throw new Error('colunas_inconsistentes');
   var numero = acrescentar_(CRIVIA.SHEETS.LEADS, CABECALHOS_LEADS, linha);
+  gravarRespostas_(codigo, respostas_(lead));
   auditar_(codigo, 'created', 'site', 'schema=' + CRIVIA.SCHEMA_VERSION + ';priority=' + q.priority);
   return { codigo: codigo, linha: numero };
+}
+
+/** Respostas de lista fechada em formato "longo": [pergunta, código, rótulo, posição] por opção marcada. Só códigos e rótulos fixos (nada digitado). */
+function respostas_(lead) {
+  var s = lead.scenario, c = lead.contact, linhas = [];
+  var add = function (pergunta, codigos, rotulo) { codigos.forEach(function (cod, i) { linhas.push([pergunta, cod, rotulo(cod), i + 1]); }); };
+  add('situation', s.situationCodes, function (x) { return SITUACOES_[x][0]; });
+  if (s.contextAnswerCode) add('context_answer', [s.contextAnswerCode], function () { return s.contextAnswerLabel; });
+  add('audience_profile', s.audienceProfiles, function (x) { return AUDIENCIA_[x]; });
+  add('decision_role', [s.decisionRole], function (x) { return PAPEIS_[x]; });
+  add('urgency', s.urgencies, function (x) { return URGENCIAS_[x]; });
+  add('consequence', s.consequences, function (x) { return CONSEQUENCIAS_[x]; });
+  add('documents', s.documents, function (x) { return DOCUMENTOS_[x]; });
+  add('estimated_range', s.estimatedRanges, function (x) { return FAIXAS_[x]; });
+  add('contact_period', c.contactPeriods, function (x) { return PERIODOS_[x]; });
+  return linhas;
+}
+
+function gravarRespostas_(codigo, linhas) {
+  if (!linhas.length) return;
+  var a = aba_(CRIVIA.SHEETS.ANSWERS, CABECALHOS_RESPOSTAS), r = a.getLastRow() + 1;
+  var valores = linhas.map(function (l) { return [codigo, l[0], l[1], l[2], String(l[3])]; });
+  a.getRange(r, 1, valores.length, CABECALHOS_RESPOSTAS.length).setNumberFormat('@').setValues(valores);
 }
 
 /** Complemento opcional: atualiza o MESMO registro pelo identificador público (nunca pelo número da linha). */

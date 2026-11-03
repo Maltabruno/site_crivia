@@ -49,7 +49,7 @@ function receberCenario_(dados) {
   // Só depois da gravação confirmada. Falha de e-mail não apaga o cenário: fica registrada para reenvio.
   var loc = lead.scenario.location, local = [loc.countryName, loc.stateCode, loc.cityName].filter(function (x) { return x; }).join(' / ');
   try {
-    notificarNovoCenario_(gravado.codigo, lead.scenario.situationLabel, local, lead.contact, q.priority, agora_());
+    notificarNovoCenario_(gravado.codigo, lead.scenario.situationLabels.join(' | '), local, lead.contact, q.priority, agora_());
     atualizarStatusNotificacao_(gravado.linha, 'sent');
   } catch (err) { atualizarStatusNotificacao_(gravado.linha, 'failed'); registrarErro_('notification', 'falha_no_envio'); }
   var emailEnviado = false;

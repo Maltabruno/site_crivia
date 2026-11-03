@@ -1,4 +1,4 @@
-"""Regras do formulário "Apresentar meu cenário" (página única): esquema v2, validação estrita, normalização,
+"""Regras do formulário "Apresentar meu cenário" (página única): esquema v3, validação estrita, normalização,
 pontuação de prioridade e produtos candidatos.
 
 Tudo aqui é determinístico e não tem efeitos colaterais, para poder ser testado sem rede nem banco.
@@ -11,7 +11,7 @@ import re
 import unicodedata
 from functools import lru_cache
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 SCORE_RULE_VERSION = "score-v3"
 MIN_ELAPSED_MS = 4000        # tempo mínimo plausível entre abrir a página e enviar
 
@@ -39,13 +39,17 @@ AUDIENCE = {"company_manager": "Empresa / gestor", "contractor": "Empreiteira / 
 DECISION_ROLES = {"decides": "Decido ou aprovo a contratação", "recommends": "Participo da análise e recomendo", "gathering": "Estou levantando informações",
                   "referring": "Estou indicando a situação", "other_unsure": "Outro / ainda não sei"}
 CHANNELS = ("whatsapp", "email")
-URGENCIES = ("immediate", "this_week", "this_month", "undefined")
-DOCS_AVAILABLE = ("yes", "partial", "no", "unknown")
-CONTACT_PERIODS = ("morning", "afternoon", "evening", "any")
-CONSEQUENCES = ("penalty", "stoppage", "margin_cash_loss", "technical_quality_risk", "contract_conflict", "decision_without_information", "other")
+URGENCIES = {"immediate": "Imediata", "this_week": "Nesta semana", "this_month": "Neste mês", "undefined": "Sem urgência definida"}
+DOCS_AVAILABLE = {"yes": "Sim", "partial": "Parcialmente", "no": "Não", "unknown": "Ainda não sei"}
+CONTACT_PERIODS = {"morning": "Manhã", "afternoon": "Tarde", "evening": "Noite", "any": "Indiferente"}
+CONSEQUENCES = {"penalty": "Multa ou penalidade", "stoppage": "Paralisação ou atraso", "margin_cash_loss": "Perda de margem ou caixa",
+                "technical_quality_risk": "Risco técnico ou de qualidade", "contract_conflict": "Conflito contratual",
+                "decision_without_information": "Decisão sem informação suficiente", "other": "Outra"}
 HIGH_CONSEQUENCES = ("penalty", "stoppage", "margin_cash_loss", "contract_conflict")
-MAX_CONSEQUENCES = 2
-RANGES = ("up_to_100k", "100k_to_1m", "1m_to_10m", "10m_to_50m", "above_50m", "undisclosed", "unknown")
+RANGES = {"up_to_100k": "Até R$ 100 mil", "100k_to_1m": "R$ 100 mil a R$ 1 milhão", "1m_to_10m": "R$ 1 a 10 milhões", "10m_to_50m": "R$ 10 a 50 milhões",
+          "above_50m": "Acima de R$ 50 milhões", "undisclosed": "Prefiro não informar", "unknown": "Ainda não sei"}
+# Múltipla escolha: opções que não combinam com as outras da mesma pergunta (ex.: "Ainda não sei")
+EXCLUSIVAS = {"situationCodes": ("outra_nao_sei",), "urgencies": ("undefined",), "documents": ("unknown",), "estimatedRanges": ("undisclosed", "unknown"), "contactPeriods": ("any",)}
 ORIGINS = ("hero", "industria", "produtos", "metodo", "sobre", "header", "final", "direto")
 PRODUCT_HINTS = ("P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12", "IA-1", "IA-2", "CV01")
 DEVICES = ("mobile", "tablet", "desktop", "unknown")
@@ -177,23 +181,28 @@ class _V:
             return None
         return valor
 
-    def lista(self, valor, caminho, permitidos, maximo):
+    def lista(self, valor, caminho, permitidos, obrigatorio=False, exclusivas=()):
+        """Múltipla escolha: lista de códigos permitidos, sem repetição (repetidos são ignorados) e sem misturar uma opção
+        exclusiva com outras. Devolve na ordem canônica da lista permitida, não na ordem recebida."""
         if valor in (None, []):
+            if obrigatorio:
+                self.erro(caminho, "obrigatorio")
             return []
         if not isinstance(valor, list):
             self.erro(caminho, "tipo")
             return []
-        if len(valor) > maximo:
+        if len(valor) > 2 * len(permitidos):
             self.erro(caminho, "limite_de_selecoes")
             return []
-        saida = []
         for item in valor:
             if not isinstance(item, str) or item not in permitidos:
                 self.erro(caminho, "valor_invalido")
                 return []
-            if item not in saida:
-                saida.append(item)
-        return saida
+        escolhidos = [k for k in permitidos if k in valor]
+        if len(escolhidos) > 1 and any(x in escolhidos for x in exclusivas):
+            self.erro(caminho, "opcoes_incompativeis")
+            return []
+        return escolhidos
 
     def texto(self, valor, caminho, maximo, obrigatorio=False, minimo=0):
         if valor in (None, ""):
@@ -297,29 +306,30 @@ def validar_lead(corpo):
             v.erro(f"source.{utm}", "valor_invalido")
 
     # cenário
-    s = v.objeto(topo.get("scenario"), "scenario", {"situationCode", "contextAnswerCode", "audienceProfile", "decisionRole", "location", "narrative",
-                                                "urgency", "consequences", "documents", "estimatedRange"},
-                 ("situationCode", "audienceProfile", "decisionRole", "location", "narrative"))
-    situacao = v.enum(s.get("situationCode"), "scenario.situationCode", tuple(SITUATIONS))
-    rotulo_sit, pergunta, respostas = SITUATIONS[situacao] if situacao else ("", "", {})
-    resposta = v.enum(s.get("contextAnswerCode"), "scenario.contextAnswerCode", tuple(respostas), False)
-    perfil = v.enum(s.get("audienceProfile"), "scenario.audienceProfile", tuple(AUDIENCE))
+    s = v.objeto(topo.get("scenario"), "scenario", {"situationCodes", "contextAnswerCode", "audienceProfiles", "decisionRole", "location", "narrative",
+                                                "urgencies", "consequences", "documents", "estimatedRanges"},
+                 ("situationCodes", "audienceProfiles", "decisionRole", "location", "narrative"))
+    situacoes = v.lista(s.get("situationCodes"), "scenario.situationCodes", tuple(SITUATIONS), True, EXCLUSIVAS["situationCodes"])
+    # a pergunta curta de contexto depende da situação: só vale quando há exatamente uma situação marcada
+    pergunta, respostas_ctx = (SITUATIONS[situacoes[0]][1], SITUATIONS[situacoes[0]][2]) if len(situacoes) == 1 else ("", {})
+    resposta = v.enum(s.get("contextAnswerCode"), "scenario.contextAnswerCode", tuple(respostas_ctx), False)
+    perfis = v.lista(s.get("audienceProfiles"), "scenario.audienceProfiles", tuple(AUDIENCE), True)
     papel = v.enum(s.get("decisionRole"), "scenario.decisionRole", tuple(DECISION_ROLES))
     cenario = {
-        "situationCode": situacao, "situationLabel": rotulo_sit,
-        "contextQuestion": pergunta if resposta else "", "contextAnswerCode": resposta or "", "contextAnswerLabel": respostas.get(resposta, "") if resposta else "",
-        "audienceProfile": perfil, "audienceProfileLabel": AUDIENCE.get(perfil, ""),
+        "situationCodes": situacoes, "situationLabels": [SITUATIONS[x][0] for x in situacoes],
+        "contextQuestion": pergunta if resposta else "", "contextAnswerCode": resposta or "", "contextAnswerLabel": respostas_ctx.get(resposta, "") if resposta else "",
+        "audienceProfiles": perfis, "audienceProfileLabels": [AUDIENCE[x] for x in perfis],
         "decisionRole": papel, "decisionRoleLabel": DECISION_ROLES.get(papel, ""),
         "location": _localizacao(v, s.get("location")),
-        "urgency": v.enum(s.get("urgency"), "scenario.urgency", URGENCIES, False) or "",
-        "consequences": v.lista(s.get("consequences"), "scenario.consequences", CONSEQUENCES, MAX_CONSEQUENCES),
-        "documents": v.enum(s.get("documents"), "scenario.documents", DOCS_AVAILABLE, False) or "",
-        "estimatedRange": v.enum(s.get("estimatedRange"), "scenario.estimatedRange", RANGES, False) or "",
+        "urgencies": v.lista(s.get("urgencies"), "scenario.urgencies", tuple(URGENCIES), False, EXCLUSIVAS["urgencies"]),
+        "consequences": v.lista(s.get("consequences"), "scenario.consequences", tuple(CONSEQUENCES)),
+        "documents": v.lista(s.get("documents"), "scenario.documents", tuple(DOCS_AVAILABLE), False, EXCLUSIVAS["documents"]),
+        "estimatedRanges": v.lista(s.get("estimatedRanges"), "scenario.estimatedRanges", tuple(RANGES), False, EXCLUSIVAS["estimatedRanges"]),
         "narrative": v.texto(s.get("narrative"), "scenario.narrative", LIMITS["narrative"], True, LIMITS["narrative_min"]),
     }
 
     # contato
-    c = v.objeto(topo.get("contact"), "contact", {"name", "organization", "preferredChannel", "phone", "email", "contactPeriod"}, ("name", "preferredChannel"))
+    c = v.objeto(topo.get("contact"), "contact", {"name", "organization", "preferredChannel", "phone", "email", "contactPeriods"}, ("name", "preferredChannel"))
     canal = v.enum(c.get("preferredChannel"), "contact.preferredChannel", CHANNELS)
     nome = v.texto(c.get("name"), "contact.name", LIMITS["name"], True, 2)
     if nome and not _NOME.match(nome):
@@ -341,7 +351,7 @@ def validar_lead(corpo):
         v.erro("contact.email", "obrigatorio")
     contato = {"name": nome, "organization": v.texto(c.get("organization"), "contact.organization", LIMITS["organization"]),
                "preferredChannel": canal, "phone": telefone or "", "email": email or "",
-               "contactPeriod": v.enum(c.get("contactPeriod"), "contact.contactPeriod", CONTACT_PERIODS, False) or ""}
+               "contactPeriods": v.lista(c.get("contactPeriods"), "contact.contactPeriods", tuple(CONTACT_PERIODS), False, EXCLUSIVAS["contactPeriods"])}
 
     # privacidade: ciência do aviso registrada; marketing só se marcado e sempre opcional
     p = v.objeto(topo.get("privacy"), "privacy", {"privacyNoticeVersion", "acknowledged", "marketingConsent"}, ("privacyNoticeVersion", "acknowledged"))
@@ -368,8 +378,8 @@ def validar_detalhes(corpo):
     """Complemento opcional pós-envio: três perguntas curtas, todas de lista fechada."""
     v = _V()
     c = v.objeto(corpo, "$", {"urgency", "documents", "contactPeriod"})
-    saida = {"urgency": v.enum(c.get("urgency"), "urgency", URGENCIES, False), "documents": v.enum(c.get("documents"), "documents", DOCS_AVAILABLE, False),
-             "contactPeriod": v.enum(c.get("contactPeriod"), "contactPeriod", CONTACT_PERIODS, False)}
+    saida = {"urgency": v.enum(c.get("urgency"), "urgency", tuple(URGENCIES), False), "documents": v.enum(c.get("documents"), "documents", tuple(DOCS_AVAILABLE), False),
+             "contactPeriod": v.enum(c.get("contactPeriod"), "contactPeriod", tuple(CONTACT_PERIODS), False)}
     if not any(saida.values()) and not v.erros:
         v.erro("$", "vazio")
     if v.erros:
@@ -378,16 +388,22 @@ def validar_detalhes(corpo):
 
 
 # ── pontuação e enquadramento ───────────────────────────────────────────────────────────────────
+def _melhor(tabela, codigos):
+    """Na múltipla escolha vale a opção de maior peso marcada."""
+    return max([tabela.get(c, 0) for c in codigos] or [0])
+
+
 def pontuar(lead):
     s = lead["scenario"]
-    relevancia = 3 if s["situationCode"] != "outra_nao_sei" else (2 if len(s["narrative"]) >= 200 else 1)
+    n = len(s["narrative"])
+    relevancia = 3 if any(x != "outra_nao_sei" for x in s["situationCodes"]) else (2 if n >= 200 else 1)
     papel = PONTUACAO["role"].get(s["decisionRole"], 0)
-    perfil = PONTUACAO["perfil"].get(s["audienceProfile"], 0)
-    detalhe = 2 if len(s["narrative"]) >= 200 else 1 if len(s["narrative"]) >= 80 else 0
-    tempo = PONTUACAO["urgencia"].get(s["urgency"], 0)
+    perfil = _melhor(PONTUACAO["perfil"], s["audienceProfiles"])
+    detalhe = 2 if n >= 200 else 1 if n >= 80 else 0
+    tempo = _melhor(PONTUACAO["urgencia"], s["urgencies"])
     cons = s["consequences"]
     consequencia = min(2, (1 if cons else 0) + (1 if any(c in HIGH_CONSEQUENCES for c in cons) else 0))
-    prontidao = PONTUACAO["documentos"].get(s["documents"], 0)
+    prontidao = _melhor(PONTUACAO["documentos"], s["documents"])
     parcial = {"relevanceScore": relevancia, "decisionRoleScore": papel, "audienceScore": perfil, "detailScore": detalhe,
                "timingScore": tempo, "consequenceScore": consequencia, "readinessScore": prontidao}
     total = sum(parcial.values())
@@ -397,25 +413,54 @@ def pontuar(lead):
 
 
 def produtos_candidatos(lead):
-    return list(PRODUTOS_POR_SITUACAO.get(lead["scenario"]["situationCode"], []))   # vazio = revisão humana define o enquadramento
+    """União dos produtos de cada situação marcada, sem repetir. Vazio = a revisão humana define o enquadramento."""
+    saida = []
+    for situacao in lead["scenario"]["situationCodes"]:
+        for p in PRODUTOS_POR_SITUACAO.get(situacao, []):
+            if p not in saida:
+                saida.append(p)
+    return saida
 
 
 def informacoes_ausentes(lead):
     s = lead["scenario"]
     falta = []
-    if not s["contextAnswerCode"] or s["contextAnswerCode"] == "unknown":
+    if len(s["situationCodes"]) == 1 and (not s["contextAnswerCode"] or s["contextAnswerCode"] == "unknown"):
         falta.append("context_answer")
     if len(s["narrative"]) < 80:
         falta.append("narrative_detail")
     if s["decisionRole"] in ("gathering", "referring", "other_unsure"):
         falta.append("decision_owner")
-    if not s["urgency"] or s["urgency"] == "undefined":
+    if not s["urgencies"] or set(s["urgencies"]) <= {"undefined"}:
         falta.append("decision_horizon")
-    if s["documents"] in ("", "no", "unknown"):
+    if not s["documents"] or set(s["documents"]) <= {"no", "unknown"}:
         falta.append("documents")
-    if s["estimatedRange"] in ("", "undisclosed", "unknown"):
+    if not s["estimatedRanges"] or set(s["estimatedRanges"]) <= {"undisclosed", "unknown"}:
         falta.append("estimated_range")
     return falta
+
+
+def respostas(lead):
+    """Respostas de lista fechada em formato "longo": uma linha por opção marcada (pergunta, código, rótulo, posição).
+    Alimenta a tabela/aba de respostas: contar, filtrar e cruzar sem separar texto."""
+    s, c = lead["scenario"], lead["contact"]
+    linhas = []
+
+    def add(pergunta, codigos, tabela):
+        for i, cod in enumerate(codigos, 1):
+            linhas.append((pergunta, cod, tabela.get(cod, ""), i))
+
+    add("situation", s["situationCodes"], {k: v[0] for k, v in SITUATIONS.items()})
+    if s["contextAnswerCode"]:
+        add("context_answer", [s["contextAnswerCode"]], {s["contextAnswerCode"]: s["contextAnswerLabel"]})
+    add("audience_profile", s["audienceProfiles"], AUDIENCE)
+    add("decision_role", [s["decisionRole"]], DECISION_ROLES)
+    add("urgency", s["urgencies"], URGENCIES)
+    add("consequence", s["consequences"], CONSEQUENCES)
+    add("documents", s["documents"], DOCS_AVAILABLE)
+    add("estimated_range", s["estimatedRanges"], RANGES)
+    add("contact_period", c["contactPeriods"], CONTACT_PERIODS)
+    return linhas
 
 
 def enquadrar(lead):

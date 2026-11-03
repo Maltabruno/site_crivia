@@ -1,6 +1,6 @@
 # Dicionário de dados — formulário "Apresentar meu cenário" (página única)
 
-Versão do esquema: **2** · Regra de pontuação: **score-v3** · Fonte da verdade: `servidor/regras_leads.py` e `google-apps-script/Validation.gs`
+Versão do esquema: **3** · Regra de pontuação: **score-v3** · Fonte da verdade: `servidor/regras_leads.py` e `google-apps-script/Validation.gs`
 (o navegador usa `cenario/regras.js`, com os mesmos códigos). Os códigos internos são estáveis; os textos mostrados ao visitante ficam só em `cenario/regras.js`.
 
 O formulário é **uma única página**: situação → (pergunta curta opcional) → perfil e participação → localização → relato → contato → envio.
@@ -10,27 +10,34 @@ O visitante **não escolhe produto** (P01–P12, CV01): a CRIVIA faz o enquadram
 
 | Bloco | Campo | Obrigatório | Valores / regra |
 |---|---|---|---|
-| `scenario` | `situationCode` | sim | `obra_contrato_dificuldade`, `atraso_custo_margem`, `projeto_terreno_propostas`, `planejamento_recursos_recuperacao`, `medicao_alteracao_documentacao`, `vistoria_recebimento_conferencia`, `comunicacao_ia_3d`, `outra_nao_sei` |
-| | `contextAnswerCode` | não | resposta da pergunta curta **daquela** situação (todas têm `unknown` = "Ainda não sei"); valor de outra situação é rejeitado |
-| | `audienceProfile` | sim | `company_manager`, `contractor`, `owner_investor`, `technical_team`, `other` |
+| `scenario` | `situationCodes` | sim, ao menos 1 (**múltipla escolha**) | `obra_contrato_dificuldade`, `atraso_custo_margem`, `projeto_terreno_propostas`, `planejamento_recursos_recuperacao`, `medicao_alteracao_documentacao`, `vistoria_recebimento_conferencia`, `comunicacao_ia_3d`, `outra_nao_sei` (exclusiva) |
+| | `contextAnswerCode` | não | resposta da pergunta curta daquela situação (todas têm `unknown` = "Ainda não sei"). **Só vale com uma única situação marcada**; com várias, a pergunta some e o valor é rejeitado |
+| | `audienceProfiles` | sim, ao menos 1 (**múltipla escolha**) | `company_manager`, `contractor`, `owner_investor`, `technical_team`, `other` |
 | | `decisionRole` | sim | `decides`, `recommends`, `gathering`, `referring`, `other_unsure` |
 | | `narrative` | sim | texto livre de 10 a 1.200 caracteres; sem HTML; quebras de linha preservadas |
-| `urgency` | não | `immediate`, `this_week`, `this_month`, `undefined` ("Quando essa decisão precisa avançar?") |
-| `consequences` | não | até 2 de: `penalty`, `stoppage`, `margin_cash_loss`, `technical_quality_risk`, `contract_conflict`, `decision_without_information`, `other` |
-| `documents` | não | `yes`, `partial`, `no`, `unknown` (só a indicação; não há upload) |
-| `estimatedRange` | não | `up_to_100k`, `100k_to_1m`, `1m_to_10m`, `10m_to_50m`, `above_50m`, `undisclosed`, `unknown` (faixas provisórias) |
+| | `urgencies` | não (múltipla) | `immediate`, `this_week`, `this_month`, `undefined` (exclusiva) — "Quando essa decisão precisa avançar?" |
+| | `consequences` | não (múltipla, sem limite) | `penalty`, `stoppage`, `margin_cash_loss`, `technical_quality_risk`, `contract_conflict`, `decision_without_information`, `other` |
+| | `documents` | não (múltipla) | `yes`, `partial`, `no`, `unknown` (exclusiva); só a indicação, não há upload |
+| | `estimatedRanges` | não (múltipla) | `up_to_100k`, `100k_to_1m`, `1m_to_10m`, `10m_to_50m`, `above_50m`, `undisclosed` e `unknown` (exclusivas); faixas provisórias |
 | `scenario.location` | `type` | sim | `brazil` ou `international` |
 | (Brasil) | `stateCode`, `cityCode` | sim | UF (27) e código IBGE de 7 dígitos **do município dentro da UF** (conferido contra a tabela do IBGE); `cityName` opcional e, se vier, deve ser o oficial; `countryCode` opcional e só `BR` |
 | (Exterior) | `countryCode`, `cityName` | sim | ISO 3166-1 alfa-2 (lista local; `BR` é rejeitado: usar o modo Brasil) e cidade (até 80); `foreignRegion` opcional (até 80) |
 | `contact` | `name` | sim | 2 a 120 caracteres |
 | | `organization` | não | até 120 |
-| | `contactPeriod` | não | `morning`, `afternoon`, `evening`, `any` |
+| | `contactPeriods` | não (múltipla) | `morning`, `afternoon`, `evening`, `any` (exclusiva) |
 | | `preferredChannel` | sim | `whatsapp` ou `email` |
 | | `phone` / `email` | o do canal escolhido | o segundo canal é opcional, mas, se informado, é validado. Telefone vira E.164 (brasileiro com/sem +55 ou internacional) |
 | `privacy` | `privacyNoticeVersion`, `acknowledged` | sim | `acknowledged=true` registra que o aviso foi apresentado e o visitante o conhece; **não** é a base legal |
 | | `marketingConsent` | não | **sem caixa no formulário**: o site não envia o campo e o servidor assume `false` (campo mantido só por compatibilidade) |
 | `source` | `originCta`, `productHint`, `utm*`, `referrer`, `deviceCategory` | não | só valores das listas; `referrer` = apenas o domínio |
-| topo | `idempotencyKey`, `schemaVersion=2`, `formVersion`, `elapsedMs`, `website` (armadilha) | chave e tempo: sim | `elapsedMs` < 4.000 ms é recusado (sinal contra robôs, não prova); `website` preenchido = resposta neutra, nada é gravado |
+| topo | `idempotencyKey`, `schemaVersion=3`, `formVersion`, `elapsedMs`, `website` (armadilha) | chave e tempo: sim | `elapsedMs` < 4.000 ms é recusado (sinal contra robôs, não prova); `website` preenchido = resposta neutra, nada é gravado |
+
+### Múltipla escolha
+
+Situação, perfil e as cinco perguntas opcionais aceitam **mais de uma opção** (caixas de seleção, com "Marcar todas" e "Limpar" em cada pergunta). O servidor ignora repetições, devolve os códigos na ordem da lista e rejeita:
+valor fora da lista (`valor_invalido`), lista vazia em situação ou perfil (`obrigatorio`) e uma opção **exclusiva** misturada com outras (`opcoes_incompativeis`). "Marcar todas" não marca as exclusivas.
+Opções exclusivas (não combinam com as demais): `outra_nao_sei`, `undefined` (urgência), `unknown` (documentos), `undisclosed` e `unknown` (faixa), `any` (período).
+Pontuação: vale a opção de maior peso marcada. Produtos candidatos: união dos produtos de cada situação, sem repetir.
 
 Qualquer campo fora destas listas é rejeitado (`campo_desconhecido`). Trocar Brasil ↔ Exterior não envia campos residuais do outro modo.
 Se o texto livre tiver padrão de CPF ou CNPJ, o trecho vira `[removido]` e o registro fica com `sensitiveContentSuspected=true`.
@@ -46,10 +53,17 @@ A resposta do servidor informa `confirmation` (`email`, `whatsapp` ou `none`) e 
 ## Aba `Leads` do Google Sheets (uma linha por cenário)
 
 `submission_id` (protocolo `CRV-AAAA-XXXXXX`), `created_at`, `updated_at`, `status`, `situation_code/label`, `context_question_code/answer_code/answer_label`,
-`audience_profile_code/label`, `decision_role_code/label`, `location_type`, `country_code/name`, `state_code/name`, `city_code/name`, `foreign_region`, `scenario_description`,
+`audience_profile_code/label` (nas colunas de múltipla escolha os valores vêm na mesma célula, separados por ` | `), `decision_role_code/label`, `location_type`, `country_code/name`, `state_code/name`, `city_code/name`, `foreign_region`, `scenario_description`,
 `contact_name`, `organization_name`, `preferred_channel`, `whatsapp`, `email`, `privacy_notice_version`, `privacy_notice_acknowledged_at`, `legal_basis_code` (**`[VALIDAR_BASE_LEGAL]`** até decisão jurídica),
 `marketing_consent`, `marketing_consent_at`, `source_page`, `source_cta`, `utm_*`, `referrer_domain`, `optional_urgency/documents/contact_period/consequences/estimated_range`, `assigned_to`, `internal_notes`,
 `retention_review_at` (vazio até existir prazo aprovado), `deletion_or_anonymization_at`; técnicas ao final: `priority`, `candidate_products`, `missing_information`, `idempotency_key_hash`, `notification_status`, `form_version`, `schema_version`, `sensitive_content_suspected`, `score_json`.
+
+### Aba `Respostas` (formato "longo")
+
+Uma linha por opção marcada: `submission_id`, `question`, `code`, `label`, `position`. Uma pessoa que marca 3 consequências gera 3 linhas com o mesmo `submission_id`.
+Perguntas (`question`): `situation`, `context_answer`, `audience_profile`, `decision_role`, `urgency`, `consequence`, `documents`, `estimated_range`, `contact_period`. Só códigos e rótulos fixos (nada digitado).
+Serve para contar, filtrar e cruzar (tabela dinâmica, `COUNTIF`) sem separar texto; a aba `Leads` continua com uma linha por cenário.
+No servidor de testes (SQLite) é a tabela `lead_answers` (`lead_id`, `question`, `code`, `label`, `position`), apagada junto com o lead no descarte.
 
 Status: Novo · Em análise · Aguardando informação · Contatado · Qualificado · Proposta em preparação · Proposta enviada · Não aderente · Encerrado (rótulos de acompanhamento, **não** promessa de contratação).
 Telefone, códigos de município e identificadores são gravados como **texto**; valores iniciados por `=`, `+`, `-`, `@` recebem apóstrofo (sem injeção de fórmula). `internal_notes` nunca é exposto pelo endpoint. Abas `Config` (não sigilosa) e `Audit` (evento, protocolo, ator, resultado; sem relato, telefone ou e-mail).

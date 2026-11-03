@@ -41,7 +41,8 @@
     o("technical_quality_risk", "Risco técnico ou de qualidade"), o("contract_conflict", "Conflito contratual"), o("decision_without_information", "Decisão sem informação suficiente"), o("other", "Outra")];
   var FAIXAS = [o("up_to_100k", "Até R$ 100 mil"), o("100k_to_1m", "R$ 100 mil a R$ 1 milhão"), o("1m_to_10m", "R$ 1 a 10 milhões"), o("10m_to_50m", "R$ 10 a 50 milhões"),
     o("above_50m", "Acima de R$ 50 milhões"), o("undisclosed", "Prefiro não informar"), o("unknown", "Ainda não sei")];
-  var MAX_CONSEQUENCIAS = 2;
+  // Opções que não combinam com as demais na mesma pergunta (marcar uma desmarca as outras, e vice-versa)
+  var EXCLUSIVAS = { situationCodes: ["outra_nao_sei"], urgencies: ["undefined"], documents: ["unknown"], estimatedRanges: ["undisclosed", "unknown"], contactPeriods: ["any"] };
 
   var LIMITES = { narrativa: 1200, narrativaMin: 10, nome: 120, organizacao: 120, cidadeExterior: 80, regiao: 80 };
   var ORIGENS = ["hero", "industria", "produtos", "metodo", "sobre", "header", "final", "direto"];
@@ -82,11 +83,25 @@
     return null;
   }
 
+  // lista de códigos válidos, sem repetição, e sem misturar uma opção exclusiva com outras
+  function listaOk(valores, lista, exclusivas) {
+    if (!Array.isArray(valores)) return false;
+    var vistos = {};
+    for (var i = 0; i < valores.length; i++) {
+      if (!achar(lista, valores[i]) || vistos[valores[i]]) return false;
+      vistos[valores[i]] = true;
+    }
+    if (valores.length > 1 && (exclusivas || []).some(function (x) { return vistos[x]; })) return false;
+    return true;
+  }
+
   /** Validação da página inteira. r = estado; devolve { campo: mensagem } (vazio = pode enviar). */
   function validar(r) {
     var e = {}, c = r.contact || {}, l = r.location || {};
-    if (!achar(SITUACOES, r.situationCode)) e.situationCode = "Escolha o que mais se aproxima do seu cenário.";
-    if (!achar(PERFIS, r.audienceProfile)) e.audienceProfile = "Escolha como você está falando.";
+    if (!(r.situationCodes || []).length) e.situationCodes = "Marque ao menos uma opção que se aproxime do seu cenário.";
+    else if (!listaOk(r.situationCodes, SITUACOES, EXCLUSIVAS.situationCodes)) e.situationCodes = "Confira as opções marcadas.";
+    if (!(r.audienceProfiles || []).length) e.audienceProfiles = "Marque ao menos uma opção sobre como você está falando.";
+    else if (!listaOk(r.audienceProfiles, PERFIS)) e.audienceProfiles = "Confira as opções marcadas.";
     if (!achar(PAPEIS, r.decisionRole)) e.decisionRole = "Escolha qual é a sua participação.";
     if (l.type === "brazil") {
       if (!l.stateCode) e["location.state"] = "Escolha o estado.";
@@ -106,7 +121,10 @@
     if (c.preferredChannel === "email" && !emailValido(c.email)) e["contact.email"] = "Informe um e-mail válido.";
     if (c.preferredChannel !== "whatsapp" && (c.phone || "").trim() && !normalizarTelefone(c.phone)) e["contact.phone"] = "Confira o número do WhatsApp.";
     if (c.preferredChannel !== "email" && (c.email || "").trim() && !emailValido(c.email)) e["contact.email"] = "Confira o e-mail.";
-    if ((r.consequences || []).length > MAX_CONSEQUENCIAS) e.consequences = "Escolha no máximo " + MAX_CONSEQUENCIAS + " opções.";
+    [["urgencies", URGENCIAS, r.urgencies], ["consequences", CONSEQUENCIAS, r.consequences], ["documents", DOCUMENTOS, r.documents],
+      ["estimatedRanges", FAIXAS, r.estimatedRanges], ["contactPeriods", PERIODOS, c.contactPeriods]].forEach(function (q) {
+      if (q[2] && q[2].length && !listaOk(q[2], q[1], EXCLUSIVAS[q[0]])) e[q[0]] = "Confira as opções marcadas.";
+    });
     return e;
   }
 
@@ -129,17 +147,18 @@
       ? { type: "brazil", countryCode: "BR", stateCode: l.stateCode, cityCode: l.cityCode, cityName: l.cityName }
       : { type: "international", countryCode: l.countryCode, cityName: (l.intlCity || "").trim(), foreignRegion: (l.foreignRegion || "").trim() };
     var contato = { name: (c.name || "").trim(), organization: (c.organization || "").trim(), preferredChannel: c.preferredChannel };
-    if (c.contactPeriod) contato.contactPeriod = c.contactPeriod;
-    var cenario = { situationCode: r.situationCode, contextAnswerCode: r.contextAnswerCode || null, audienceProfile: r.audienceProfile,
-      decisionRole: r.decisionRole, location: loc, narrative: (r.narrative || "").trim() };
-    if (r.urgency) cenario.urgency = r.urgency;
+    if ((c.contactPeriods || []).length) contato.contactPeriods = c.contactPeriods.slice();
+    // a pergunta curta de contexto só vale quando há uma única situação marcada
+    var cenario = { situationCodes: r.situationCodes.slice(), contextAnswerCode: r.situationCodes.length === 1 ? (r.contextAnswerCode || null) : null,
+      audienceProfiles: r.audienceProfiles.slice(), decisionRole: r.decisionRole, location: loc, narrative: (r.narrative || "").trim() };
+    if ((r.urgencies || []).length) cenario.urgencies = r.urgencies.slice();
     if ((r.consequences || []).length) cenario.consequences = r.consequences.slice();
-    if (r.documents) cenario.documents = r.documents;
-    if (r.estimatedRange) cenario.estimatedRange = r.estimatedRange;
+    if ((r.documents || []).length) cenario.documents = r.documents.slice();
+    if ((r.estimatedRanges || []).length) cenario.estimatedRanges = r.estimatedRanges.slice();
     if ((c.phone || "").trim()) contato.phone = c.phone.trim();
     if ((c.email || "").trim()) contato.email = c.email.trim();
     return {
-      idempotencyKey: extra.idempotencyKey, schemaVersion: 2, formVersion: extra.formVersion, elapsedMs: extra.elapsedMs,
+      idempotencyKey: extra.idempotencyKey, schemaVersion: 3, formVersion: extra.formVersion, elapsedMs: extra.elapsedMs,
       source: { originCta: origem.originCta, productHint: origem.productHint, utmSource: origem.utmSource, utmMedium: origem.utmMedium,
         utmCampaign: origem.utmCampaign, utmContent: origem.utmContent, utmTerm: origem.utmTerm, deviceCategory: extra.deviceCategory, referrer: extra.referrer || "" },
       scenario: cenario,
@@ -151,7 +170,7 @@
 
   global.CRIVIA_REGRAS = {
     SITUACOES: SITUACOES, PERFIS: PERFIS, PAPEIS: PAPEIS, CANAIS: CANAIS, URGENCIAS: URGENCIAS, DOCUMENTOS: DOCUMENTOS, PERIODOS: PERIODOS,
-    CONSEQUENCIAS: CONSEQUENCIAS, FAIXAS: FAIXAS, MAX_CONSEQUENCIAS: MAX_CONSEQUENCIAS,
+    CONSEQUENCIAS: CONSEQUENCIAS, FAIXAS: FAIXAS, EXCLUSIVAS: EXCLUSIVAS,
     LIMITES: LIMITES, ORIGENS: ORIGENS, PRODUTOS: PRODUTOS,
     achar: achar, normalizar: normalizar, filtrar: filtrar, validar: validar, normalizarTelefone: normalizarTelefone, emailValido: emailValido,
     lerOrigem: lerOrigem, montarPayload: montarPayload

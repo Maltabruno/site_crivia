@@ -16,13 +16,13 @@ Não existe endpoint de leitura, listagem, busca ou edição de leads.
 
 ## Arquivos
 `Code.gs` (entrada `doPost`) · `Validation.gs` (esquema v2 e localização) · `Municipios.gs` (**gerado** do IBGE por `scripts/gerar_localidades.py`; não editar) · `Classification.gs` (score-v2) ·
-`Security.gs` (token, fórmulas, limites, anti-bot opcional) · `SheetsRepository.gs` (abas `Leads`, `Config`, `Audit`) · `Notification.gs` · `Privacy.gs` · `Tests.gs` · `appsscript.json`.
+`Security.gs` (token, fórmulas, limites, anti-bot opcional) · `SheetsRepository.gs` (abas `Leads`, `Respostas`, `Config`, `Audit`) · `Notification.gs` · `Privacy.gs` · `Tests.gs` · `appsscript.json`.
 
 ## Passo a passo (manual)
 1. **Planilha:** no Drive institucional, crie "CRIVIA — Cenários recebidos pelo site". Compartilhamento **Restrito**; sem "qualquer pessoa com o link", sem publicar na web. Anote o ID (trecho entre `/d/` e `/edit` da URL).
 2. **Projeto:** na planilha, *Extensões > Apps Script*. Copie cada `.gs` (inclusive `Municipios.gs`) e o `appsscript.json` (ative *Mostrar arquivo de manifesto* em Configurações do projeto). Não usamos `clasp`.
 3. **Script Properties** (Configurações do projeto > Propriedades do script): `SPREADSHEET_ID`, `NOTIFICATION_EMAIL`, `PRIVACY_NOTICE_VERSION` (obrigatórias; sem elas o Web App recusa tudo). Opcionais: `PRIVACY_CONTACT_EMAIL`, `ALLOWED_SITE_ORIGIN`, `TURNSTILE_SECRET_KEY`, `LEAD_RETENTION_POLICY_ID`, `UNQUALIFIED_LEAD_RETENTION_DAYS`, `SECURITY_LOG_RETENTION_DAYS`, `ENVIRONMENT`. Desligada por padrão (só vale se for exatamente `true`): `CONFIRMATION_EMAIL_ENABLED`. **Não preencha valores jurídicos fictícios.** Nenhum ID, e-mail administrativo ou segredo vai para o JavaScript público ou para o repositório.
-4. **Preparar a planilha:** no editor, execute `prepararPlanilha` (cria `Leads` com filtro, linha congelada, lista de status e proteção com aviso no cabeçalho e nas colunas técnicas; `Config` e `Audit`). Autorize os escopos pedidos.
+4. **Preparar a planilha:** no editor, execute `prepararPlanilha` (cria `Leads` com filtro, linha congelada, lista de status e proteção com aviso no cabeçalho e nas colunas técnicas; `Respostas` — uma linha por opção marcada nas perguntas de múltipla escolha; `Config` e `Audit`). Autorize os escopos pedidos.
 5. **Testes (sem tocar a produção):** execute `rodarTestes` (21 testes em memória). Testes de gravação só em planilha de TESTE separada.
 6. **Implantar:** *Implantar > Nova implantação > App da Web*; executar como **você (proprietário)**; acesso **Qualquer pessoa** (necessário para o formulário público; o endpoint só aceita o JSON do formulário e nunca devolve dados). Copie a URL `.../exec`.
 7. **Ligar o site:** gere o site com `CRIVIA_LEAD_ENDPOINT` apontando para essa URL:

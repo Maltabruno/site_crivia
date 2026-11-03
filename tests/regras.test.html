@@ -22,7 +22,7 @@
   function igual(a, b, m) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error((m || "") + " esperado " + JSON.stringify(b) + " obtido " + JSON.stringify(a)); }
   function verdade(c, m) { if (!c) throw new Error(m || "condição falsa"); }
   function valido() {
-    return { situationCode: "atraso_custo_margem", contextAnswerCode: "cost", audienceProfile: "contractor", decisionRole: "decides",
+    return { situationCodes: ["atraso_custo_margem"], contextAnswerCode: "cost", audienceProfiles: ["contractor"], decisionRole: "decides",
       location: { type: "brazil", stateCode: "MG", cityCode: "3106200", cityName: "Belo Horizonte", countryCode: "", intlCity: "", foreignRegion: "" },
       narrative: "O cronograma atrasou e precisamos decidir como recuperar o prazo.", marketingConsent: false,
       contact: { name: "Ana Lima", organization: "", preferredChannel: "email", email: "ana@x.com", phone: "" } };
@@ -39,7 +39,7 @@
   t("formulário válido não tem erros", function () { igual(R.validar(valido()), {}); });
   t("pergunta contextual é opcional; perfil e participação são exigidos", function () {
     var r = valido(); r.contextAnswerCode = ""; igual(R.validar(r), {});
-    r.audienceProfile = ""; r.decisionRole = ""; igual(Object.keys(R.validar(r)).sort(), ["audienceProfile", "decisionRole"]);
+    r.audienceProfiles = []; r.decisionRole = ""; igual(Object.keys(R.validar(r)).sort(), ["audienceProfiles", "decisionRole"]);
   });
   t("Brasil exige estado e cidade da lista", function () {
     var r = valido(); r.location.stateCode = ""; r.location.cityCode = ""; igual(Object.keys(R.validar(r)).sort(), ["location.city", "location.state"]);
@@ -52,10 +52,10 @@
   });
   t("trocar Brasil ↔ Exterior não envia campos residuais", function () {
     var r = valido(); r.location.countryCode = "PT"; r.location.intlCity = "Lisboa"; r.location.foreignRegion = "Lisboa";
-    var p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
+    var p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 });
     igual(Object.keys(p.scenario.location).sort(), ["cityCode", "cityName", "countryCode", "stateCode", "type"]); igual(p.scenario.location.countryCode, "BR");
     r.location.type = "international"; r.location.stateCode = "MG";
-    p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
+    p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 });
     igual(Object.keys(p.scenario.location).sort(), ["cityName", "countryCode", "foreignRegion", "type"]); igual(p.scenario.location.cityName, "Lisboa");
   });
   t("relato: mínimo, máximo de 1200 e sem corte silencioso", function () {
@@ -85,18 +85,37 @@
     igual(R.lerOrigem("?origem=%3Cscript%3E&interesse=P99").originCta, "direto"); igual(R.lerOrigem("?origem=%3Cscript%3E&interesse=P99").productHint, null);
     igual(R.lerOrigem("?utm_source=%3Cb%3Ex").utmSource, ""); igual(R.lerOrigem("?utm_source=google").utmSource, "google"); igual(R.lerOrigem("").originCta, "direto");
   });
-  t("perguntas opcionais: só entram no payload se respondidas; máximo de 2 consequências", function () {
-    var r = valido(); var ex = { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 };
+  t("perguntas opcionais: só entram no payload se respondidas; múltipla escolha vai em listas", function () {
+    var r = valido(); var ex = { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 };
     var p = R.montarPayload(r, R.lerOrigem(""), ex);
-    verdade(!("urgency" in p.scenario) && !("consequences" in p.scenario) && !("documents" in p.scenario) && !("estimatedRange" in p.scenario) && !("contactPeriod" in p.contact));
-    r.urgency = "this_week"; r.consequences = ["penalty", "stoppage"]; r.documents = "partial"; r.estimatedRange = "1m_to_10m"; r.contact.contactPeriod = "morning";
+    verdade(!("urgencies" in p.scenario) && !("consequences" in p.scenario) && !("documents" in p.scenario) && !("estimatedRanges" in p.scenario) && !("contactPeriods" in p.contact));
+    r.urgencies = ["this_week", "immediate"]; r.consequences = R.CONSEQUENCIAS.map(function (o) { return o.v; }); r.documents = ["partial"]; r.estimatedRanges = ["1m_to_10m"]; r.contact.contactPeriods = ["morning", "evening"];
     p = R.montarPayload(r, R.lerOrigem(""), ex);
-    igual([p.scenario.urgency, p.scenario.consequences, p.scenario.documents, p.scenario.estimatedRange, p.contact.contactPeriod], ["this_week", ["penalty", "stoppage"], "partial", "1m_to_10m", "morning"]);
-    igual(R.validar(r), {}); r.consequences = ["penalty", "stoppage", "other"]; verdade(R.validar(r).consequences);
+    igual([p.scenario.urgencies, p.scenario.documents, p.scenario.estimatedRanges, p.contact.contactPeriods], [["this_week", "immediate"], ["partial"], ["1m_to_10m"], ["morning", "evening"]]);
+    igual(p.scenario.consequences.length, 7);               // "marcar todas" não tem limite
+    igual(R.validar(r), {});
+  });
+  t("múltipla escolha: situação e perfil aceitam várias opções, exigem ao menos uma", function () {
+    var r = valido(); r.situationCodes = ["obra_contrato_dificuldade", "atraso_custo_margem"]; r.audienceProfiles = ["contractor", "technical_team"]; igual(R.validar(r), {});
+    r.situationCodes = []; r.audienceProfiles = []; igual(Object.keys(R.validar(r)).sort(), ["audienceProfiles", "situationCodes"]);
+  });
+  t("a pergunta curta de contexto só vai com uma única situação", function () {
+    var r = valido(); var ex = { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 };
+    igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswerCode, "cost");
+    r.situationCodes = ["atraso_custo_margem", "obra_contrato_dificuldade"]; igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswerCode, null);
+  });
+  t("opções exclusivas não combinam com as outras ('Ainda não sei', 'Prefiro não informar', 'Indiferente', 'Sem urgência')", function () {
+    var r = valido(); r.documents = ["unknown", "yes"]; verdade(R.validar(r).documents);
+    r = valido(); r.estimatedRanges = ["undisclosed", "up_to_100k"]; verdade(R.validar(r).estimatedRanges);
+    r = valido(); r.urgencies = ["undefined", "immediate"]; verdade(R.validar(r).urgencies);
+    r = valido(); r.contact.contactPeriods = ["any", "morning"]; verdade(R.validar(r).contactPeriods);
+    r = valido(); r.situationCodes = ["outra_nao_sei", "atraso_custo_margem"]; verdade(R.validar(r).situationCodes);
+    r = valido(); r.documents = ["unknown"]; r.estimatedRanges = ["unknown"]; igual(R.validar(r), {});
+    r = valido(); r.documents = ["yes", "yes"]; verdade(R.validar(r).documents);   // repetição não é aceita
   });
   t("payload: ciência do aviso registrada, sem marketing e sem produto escolhido", function () {
-    var r = valido(); var p = R.montarPayload(r, R.lerOrigem("?origem=hero"), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
-    igual(p.privacy, { privacyNoticeVersion: "minuta-0", acknowledged: true }); igual(p.schemaVersion, 2); igual(p.source.originCta, "hero"); verdade(!("productCode" in p.scenario));
+    var r = valido(); var p = R.montarPayload(r, R.lerOrigem("?origem=hero"), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 });
+    igual(p.privacy, { privacyNoticeVersion: "minuta-0", acknowledged: true }); igual(p.schemaVersion, 3); igual(p.source.originCta, "hero"); verdade(!("productCode" in p.scenario));
   });
   document.getElementById("resumo").textContent = ok + " passaram, " + falha + " falharam";
   document.title = (falha ? "FALHOU " : "OK ") + ok + "/" + (ok + falha);

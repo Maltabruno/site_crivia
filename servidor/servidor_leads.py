@@ -71,6 +71,10 @@ def abrir_banco(caminho):
             id TEXT PRIMARY KEY, idem_key TEXT UNIQUE NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
             status TEXT NOT NULL, schema_version INTEGER NOT NULL, priority TEXT NOT NULL, total_score INTEGER NOT NULL,
             rule_version TEXT NOT NULL, data_json TEXT NOT NULL, details_json TEXT, review_json TEXT NOT NULL);
+        -- respostas de lista fechada em formato "longo": uma linha por opção marcada (múltipla escolha repete o lead_id)
+        CREATE TABLE IF NOT EXISTS lead_answers (
+            lead_id TEXT NOT NULL, question TEXT NOT NULL, code TEXT NOT NULL, label TEXT NOT NULL DEFAULT '', position INTEGER NOT NULL DEFAULT 1);
+        CREATE INDEX IF NOT EXISTS idx_lead_answers ON lead_answers(question, code);
         CREATE TABLE IF NOT EXISTS outbox (
             id INTEGER PRIMARY KEY AUTOINCREMENT, lead_id TEXT NOT NULL, created_at TEXT NOT NULL,
             categoria TEXT NOT NULL, prioridade TEXT NOT NULL, estado TEXT NOT NULL DEFAULT 'pendente');
@@ -142,9 +146,11 @@ class Estado:
                 " VALUES(?,?,?,?,?,?,?,?,?,?,?)",
                 (lead_id, lead["idempotencyKey"], ts, ts, "novo", regras.SCHEMA_VERSION, q["priority"], q["totalScore"], q["ruleVersion"],
                  json.dumps(registro, ensure_ascii=False), json.dumps(revisao)))
-            # notificação interna: sem dados pessoais (identificador, data, categoria, prioridade)
+            self.con.executemany("INSERT INTO lead_answers(lead_id, question, code, label, position) VALUES(?,?,?,?,?)",
+                                 [(lead_id, p, c, r, i) for p, c, r, i in regras.respostas(lead)])
+            # notificação interna: sem dados pessoais (identificador, data, categoria, prioridade); a categoria é a primeira situação marcada
             self.con.execute("INSERT INTO outbox(lead_id, created_at, categoria, prioridade) VALUES(?,?,?,?)",
-                             (lead_id, ts, lead["scenario"]["situationCode"], q["priority"]))
+                             (lead_id, ts, lead["scenario"]["situationCodes"][0], q["priority"]))
             # confirmação com o protocolo ao canal escolhido (só o canal; nenhum dado pessoal na fila)
             self.con.execute("INSERT INTO outbox(lead_id, created_at, categoria, prioridade) VALUES(?,?,?,?)",
                              (lead_id, ts, "confirmacao_" + lead["privacy"]["requestedContactChannel"], q["priority"]))
@@ -408,6 +414,7 @@ def cmd_expurgar():
     corte_c = (agora_dt - timedelta(days=int(cfg["retencao_c_dias"]))).strftime("%Y-%m-%dT%H:%M:%SZ")
     cur = con.execute("DELETE FROM leads WHERE created_at < ? OR (priority='C' AND created_at < ?)", (corte, corte_c))
     removidos = cur.rowcount
+    con.execute("DELETE FROM lead_answers WHERE lead_id NOT IN (SELECT id FROM leads)")
     corte_log = (agora_dt - timedelta(days=int(cfg["log_seg_dias"]))).strftime("%Y-%m-%dT%H:%M:%SZ")
     con.execute("DELETE FROM security_log WHERE ts < ?", (corte_log,))
     con.execute("INSERT INTO security_log(ts, evento, detalhe) VALUES(?,?,?)", (agora(), "descarte", "politica=%s;registros=%d" % (cfg["retencao_id"][:30], removidos)))

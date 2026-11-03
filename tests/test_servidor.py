@@ -24,13 +24,13 @@ SP_CAPITAL = "3550308"
 
 def base(situacao="obra_contrato_dificuldade"):
     """Payload mínimo válido (modo Brasil)."""
-    return {"idempotencyKey": "chave-" + situacao.replace("_", "-") + "-0001", "schemaVersion": 2, "formVersion": "form-2", "elapsedMs": 45000,
+    return {"idempotencyKey": "chave-" + situacao.replace("_", "-") + "-0001", "schemaVersion": 3, "formVersion": "form-3", "elapsedMs": 45000,
             "source": {"originCta": "produtos", "productHint": "P06", "deviceCategory": "desktop", "utmSource": "teste"},
-            "scenario": {"situationCode": situacao, "contextAnswerCode": "running" if situacao == "obra_contrato_dificuldade" else "unknown", "audienceProfile": "contractor", "decisionRole": "decides",
+            "scenario": {"situationCodes": [situacao], "contextAnswerCode": "running" if situacao == "obra_contrato_dificuldade" else "unknown", "audienceProfiles": ["contractor"], "decisionRole": "decides",
                          "location": {"type": "brazil", "countryCode": "BR", "stateCode": "MG", "cityCode": BH, "cityName": "Belo Horizonte"},
                          "narrative": "O cronograma atrasou e precisamos decidir como recuperar sem estourar a margem do contrato, que já tem multa prevista.",
-                         "urgency": "this_week", "consequences": ["penalty", "stoppage"], "documents": "partial", "estimatedRange": "1m_to_10m"},
-            "contact": {"name": "Maria Souza", "organization": "Construtora Alfa", "preferredChannel": "email", "email": "Maria@Exemplo.com.br", "contactPeriod": "morning"},
+                         "urgencies": ["this_week"], "consequences": ["penalty", "stoppage"], "documents": ["partial"], "estimatedRanges": ["1m_to_10m"]},
+            "contact": {"name": "Maria Souza", "organization": "Construtora Alfa", "preferredChannel": "email", "email": "Maria@Exemplo.com.br", "contactPeriods": ["morning"]},
             "privacy": {"privacyNoticeVersion": "minuta-0", "acknowledged": True, "marketingConsent": False}}
 
 
@@ -60,7 +60,7 @@ class TestValidacao(unittest.TestCase):
         self.assertEqual((loc["countryCode"], loc["stateCode"], loc["stateName"], loc["cityCode"], loc["cityName"]), ("BR", "MG", "Minas Gerais", BH, "Belo Horizonte"))
         self.assertEqual(lead["contact"]["email"], "maria@exemplo.com.br")
         self.assertFalse(lead["privacy"]["marketingConsent"])
-        self.assertEqual(lead["scenario"]["situationLabel"], "Obra ou contrato com dificuldade")
+        self.assertEqual(lead["scenario"]["situationLabels"], ["Obra ou contrato com dificuldade"])
         self.assertEqual(lead["scenario"]["contextAnswerLabel"], "Em execução")
 
     def test_todas_as_situacoes_validam(self):
@@ -103,7 +103,7 @@ class TestValidacao(unittest.TestCase):
         with self.assertRaises(R.ErroValidacao) as e:
             R.validar_lead(p)
         self.assertIn("scenario.extra", e.exception.campos)
-        p = base(); p["scenario"]["situationCode"] = "hack"
+        p = base(); p["scenario"]["situationCodes"] = ["hack"]
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
         p = base(); p["scenario"]["contextAnswerCode"] = "deadline"             # resposta de outra situação
@@ -150,21 +150,69 @@ class TestValidacao(unittest.TestCase):
     def test_perguntas_opcionais_do_formulario(self):
         lead = R.validar_lead(base())
         s = lead["scenario"]
-        self.assertEqual((s["urgency"], s["consequences"], s["documents"], s["estimatedRange"], lead["contact"]["contactPeriod"]),
-                         ("this_week", ["penalty", "stoppage"], "partial", "1m_to_10m", "morning"))
+        self.assertEqual((s["urgencies"], s["consequences"], s["documents"], s["estimatedRanges"], lead["contact"]["contactPeriods"]),
+                         (["this_week"], ["penalty", "stoppage"], ["partial"], ["1m_to_10m"], ["morning"]))
         p = base()
-        for campo in ("urgency", "consequences", "documents", "estimatedRange"):
+        for campo in ("urgencies", "consequences", "documents", "estimatedRanges"):
             p["scenario"].pop(campo)
-        p["contact"].pop("contactPeriod")
+        p["contact"].pop("contactPeriods")
         s = R.validar_lead(p)["scenario"]                                         # todas opcionais
-        self.assertEqual((s["urgency"], s["consequences"], s["documents"], s["estimatedRange"]), ("", [], "", ""))
-        for campo, valor in (("urgency", "ontem"), ("consequences", ["penalty", "stoppage", "other"]), ("consequences", ["xx"]), ("documents", "talvez"), ("estimatedRange", "1 bilhão")):
+        self.assertEqual((s["urgencies"], s["consequences"], s["documents"], s["estimatedRanges"]), ([], [], [], []))
+        for campo, valor in (("urgencies", ["ontem"]), ("urgencies", "this_week"), ("consequences", ["xx"]), ("documents", ["talvez"]), ("estimatedRanges", ["1 bilhão"])):
             p = base(); p["scenario"][campo] = valor
             with self.assertRaises(R.ErroValidacao):
                 R.validar_lead(p)
-        p = base(); p["contact"]["contactPeriod"] = "madrugada"
+        p = base(); p["contact"]["contactPeriods"] = ["madrugada"]
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
+
+    def test_multipla_escolha(self):
+        # várias opções em todas as perguntas; o servidor devolve na ordem da lista, sem repetição
+        p = base()
+        p["scenario"].update({"situationCodes": ["atraso_custo_margem", "obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswerCode": None,
+                              "audienceProfiles": ["technical_team", "contractor"], "urgencies": ["this_month", "immediate"],
+                              "consequences": list(R.CONSEQUENCES), "documents": ["partial", "yes"], "estimatedRanges": ["10m_to_50m", "1m_to_10m"]})
+        p["contact"]["contactPeriods"] = ["evening", "morning"]
+        lead = R.validar_lead(p)
+        s = lead["scenario"]
+        self.assertEqual(s["situationCodes"], ["obra_contrato_dificuldade", "atraso_custo_margem"])
+        self.assertEqual(s["situationLabels"], ["Obra ou contrato com dificuldade", "Atraso, custo, produtividade ou perda de margem"])
+        self.assertEqual(s["audienceProfiles"], ["contractor", "technical_team"])
+        self.assertEqual((s["urgencies"], s["documents"], s["estimatedRanges"]), (["immediate", "this_month"], ["yes", "partial"], ["1m_to_10m", "10m_to_50m"]))
+        self.assertEqual(s["consequences"], list(R.CONSEQUENCES))                  # "marcar todas" não tem limite
+        self.assertEqual(lead["contact"]["contactPeriods"], ["morning", "evening"])
+        # a pergunta curta de contexto só vale com uma única situação
+        p["scenario"]["contextAnswerCode"] = "running"
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        # situação e perfil exigem ao menos uma escolha
+        for campo in ("situationCodes", "audienceProfiles"):
+            for valor in ([], None):
+                q = base(); q["scenario"][campo] = valor
+                with self.assertRaises(R.ErroValidacao):
+                    R.validar_lead(q)
+
+    def test_opcoes_exclusivas_nao_combinam_com_outras(self):
+        for campo, exclusiva, outra in (("urgencies", "undefined", "immediate"), ("documents", "unknown", "yes"), ("estimatedRanges", "undisclosed", "up_to_100k"),
+                                        ("estimatedRanges", "unknown", "undisclosed"), ("situationCodes", "outra_nao_sei", "obra_contrato_dificuldade")):
+            p = base(); p["scenario"][campo] = [exclusiva, outra]; p["scenario"]["contextAnswerCode"] = None
+            with self.assertRaises(R.ErroValidacao) as e:
+                R.validar_lead(p)
+            self.assertEqual(e.exception.campos["scenario." + campo], "opcoes_incompativeis")
+        p = base(); p["contact"]["contactPeriods"] = ["any", "morning"]
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = base(); p["scenario"]["documents"] = ["unknown"]                      # sozinha, vale
+        self.assertEqual(R.validar_lead(p)["scenario"]["documents"], ["unknown"])
+
+    def test_respostas_em_formato_longo(self):
+        p = base()
+        p["scenario"].update({"situationCodes": ["obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswerCode": None, "audienceProfiles": ["contractor", "technical_team"]})
+        linhas = R.respostas(R.validar_lead(p))
+        self.assertIn(("situation", "atraso_custo_margem", "Atraso, custo, produtividade ou perda de margem", 2), linhas)
+        self.assertEqual([x[1] for x in linhas if x[0] == "audience_profile"], ["contractor", "technical_team"])
+        self.assertEqual([x[1] for x in linhas if x[0] == "consequence"], ["penalty", "stoppage"])
+        self.assertEqual([x[1] for x in linhas if x[0] == "decision_role"], ["decides"])
 
     def test_organizacao_e_opcional(self):
         p = base(); p["contact"].pop("organization")
@@ -211,21 +259,31 @@ class TestPontuacao(unittest.TestCase):
         alta = R.enquadrar(R.validar_lead(base()))
         self.assertEqual(alta["priority"], "A")
         p = base("outra_nao_sei")
-        p["scenario"].update({"decisionRole": "gathering", "audienceProfile": "other", "contextAnswerCode": "unknown", "narrative": "Quero entender o que vocês fazem.",
-                              "urgency": "undefined", "consequences": [], "documents": "no", "estimatedRange": "unknown"})
+        p["scenario"].update({"decisionRole": "gathering", "audienceProfiles": ["other"], "contextAnswerCode": "unknown", "narrative": "Quero entender o que vocês fazem.",
+                              "urgencies": ["undefined"], "consequences": [], "documents": ["no"], "estimatedRanges": ["unknown"]})
         baixa = R.enquadrar(R.validar_lead(p))
         self.assertEqual(baixa["priority"], "C")
         self.assertIn("context_answer", baixa["missingInformation"])
         self.assertTrue({"decision_horizon", "documents", "estimated_range"} <= set(baixa["missingInformation"]))
         self.assertEqual(alta["timingScore"], 2); self.assertEqual(alta["consequenceScore"], 2); self.assertEqual(alta["readinessScore"], 1)
-        meio = base(); meio["scenario"].update({"decisionRole": "recommends", "audienceProfile": "owner_investor", "narrative": "x" * 100,
-                                                "urgency": "undefined", "consequences": [], "documents": "unknown"})
+        meio = base(); meio["scenario"].update({"decisionRole": "recommends", "audienceProfiles": ["owner_investor"], "narrative": "x" * 100,
+                                                "urgencies": ["undefined"], "consequences": [], "documents": ["unknown"]})
         self.assertEqual(R.enquadrar(R.validar_lead(meio))["priority"], "B")
 
     def test_produtos_candidatos_sao_hipotese_interna(self):
         self.assertEqual(R.produtos_candidatos(R.validar_lead(base("projeto_terreno_propostas"))), ["P02", "P03", "P05"])
         self.assertEqual(R.produtos_candidatos(R.validar_lead(base("comunicacao_ia_3d"))), ["CV01"])
         self.assertEqual(R.produtos_candidatos(R.validar_lead(base("outra_nao_sei"))), [])
+
+    def test_pontuacao_com_multipla_escolha_usa_a_melhor_opcao(self):
+        p = base("outra_nao_sei")
+        p["scenario"].update({"audienceProfiles": ["other", "contractor"], "urgencies": ["this_month", "immediate"], "documents": ["no", "yes"], "contextAnswerCode": None})
+        q = R.enquadrar(R.validar_lead(p))
+        self.assertEqual((q["audienceScore"], q["timingScore"], q["readinessScore"]), (2, 2, 2))
+        m = base(); m["scenario"].update({"situationCodes": ["comunicacao_ia_3d", "projeto_terreno_propostas", "obra_contrato_dificuldade"], "contextAnswerCode": None})
+        qm = R.enquadrar(R.validar_lead(m))
+        self.assertEqual(qm["candidateProducts"], ["P01", "P02", "P03", "P05", "CV01"])   # união na ordem da lista, sem repetir
+        self.assertNotIn("context_answer", qm["missingInformation"])
 
     def test_faixas_vem_da_configuracao_central(self):
         self.assertEqual(R.PONTUACAO["faixas"], {"A": 10, "B": 6})
@@ -304,7 +362,7 @@ class TestHTTP(unittest.TestCase):
         self.assertEqual(self.linhas(), antes)
 
     def test_validacao_no_servidor_nao_ecoa_valores(self):
-        p = base(); p["idempotencyKey"] = "idem-invalido-0001"; p["scenario"]["situationCode"] = "SEGREDO<script>"
+        p = base(); p["idempotencyKey"] = "idem-invalido-0001"; p["scenario"]["situationCodes"] = ["SEGREDO<script>"]
         s, r, _ = self.post("/api/leads", p)
         self.assertEqual(s, 422)
         self.assertNotIn("SEGREDO", json.dumps(r))

@@ -17,24 +17,31 @@ var PRODUTOS_POR_SITUACAO_ = {
   comunicacao_ia_3d: ['CV01'], outra_nao_sei: []
 };
 
+/** Na múltipla escolha vale a opção de maior peso marcada. */
+function melhor_(tabela, codigos) { return codigos.reduce(function (m, c) { return Math.max(m, tabela[c] || 0); }, 0); }
+
 function enquadrar_(lead) {
   var s = lead.scenario, n = s.narrative.length;
-  var relevancia = s.situationCode !== 'outra_nao_sei' ? 3 : (n >= 200 ? 2 : 1);
-  var papel = PONTUACAO_.role[s.decisionRole] || 0, perfil = PONTUACAO_.perfil[s.audienceProfile] || 0;
+  var relevancia = s.situationCodes.some(function (x) { return x !== 'outra_nao_sei'; }) ? 3 : (n >= 200 ? 2 : 1);
+  var papel = PONTUACAO_.role[s.decisionRole] || 0, perfil = melhor_(PONTUACAO_.perfil, s.audienceProfiles);
   var detalhe = n >= 200 ? 2 : n >= 80 ? 1 : 0;
-  var tempo = PONTUACAO_.urgencia[s.urgency] || 0;
+  var tempo = melhor_(PONTUACAO_.urgencia, s.urgencies);
   var alta = s.consequences.some(function (c) { return PONTUACAO_.consequenciasAltas.indexOf(c) >= 0; });
   var consequencia = Math.min(2, (s.consequences.length ? 1 : 0) + (alta ? 1 : 0));
-  var prontidao = PONTUACAO_.documentos[s.documents] || 0;
+  var prontidao = melhor_(PONTUACAO_.documentos, s.documents);
   var total = relevancia + papel + perfil + detalhe + tempo + consequencia + prontidao;
+  var soContem = function (lista, ok) { return !lista.length || lista.every(function (x) { return ok.indexOf(x) >= 0; }); };
   var falta = [];
-  if (!s.contextAnswerCode || s.contextAnswerCode === 'unknown') falta.push('context_answer');
+  if (s.situationCodes.length === 1 && (!s.contextAnswerCode || s.contextAnswerCode === 'unknown')) falta.push('context_answer');
   if (n < 80) falta.push('narrative_detail');
   if (['gathering', 'referring', 'other_unsure'].indexOf(s.decisionRole) >= 0) falta.push('decision_owner');
-  if (!s.urgency || s.urgency === 'undefined') falta.push('decision_horizon');
-  if (['', 'no', 'unknown'].indexOf(s.documents) >= 0) falta.push('documents');
-  if (['', 'undisclosed', 'unknown'].indexOf(s.estimatedRange) >= 0) falta.push('estimated_range');
+  if (soContem(s.urgencies, ['undefined'])) falta.push('decision_horizon');
+  if (soContem(s.documents, ['no', 'unknown'])) falta.push('documents');
+  if (soContem(s.estimatedRanges, ['undisclosed', 'unknown'])) falta.push('estimated_range');
+  // produtos candidatos: união dos produtos de cada situação marcada, sem repetir
+  var produtos = [];
+  s.situationCodes.forEach(function (sit) { (PRODUTOS_POR_SITUACAO_[sit] || []).forEach(function (p) { if (produtos.indexOf(p) < 0) produtos.push(p); }); });
   return { relevanceScore: relevancia, decisionRoleScore: papel, audienceScore: perfil, detailScore: detalhe, timingScore: tempo, consequenceScore: consequencia,
     readinessScore: prontidao, totalScore: total, priority: total >= PONTUACAO_.faixaA ? 'A' : total >= PONTUACAO_.faixaB ? 'B' : 'C',
-    ruleVersion: CRIVIA.SCORE_RULE_VERSION, candidateProducts: (PRODUTOS_POR_SITUACAO_[s.situationCode] || []).slice(), missingInformation: falta };
+    ruleVersion: CRIVIA.SCORE_RULE_VERSION, candidateProducts: produtos, missingInformation: falta };
 }
