@@ -51497,7 +51497,8 @@ void main() {
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "© 2026 CRIVIA Engenharia Consultiva · Engenharia para Decisão" }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": true, children: "·" }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Site produzido pela CRIVIA" })
-        ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("img", { className: "crivia-fim__selo", src: "assets/images/bni/proud-member.png", width: 900, height: 526, alt: "Selo Proud BNI Member", loading: "lazy", decoding: "async" })
       ] })
     ] });
   };

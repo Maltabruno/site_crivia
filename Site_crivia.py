@@ -2851,7 +2851,8 @@ FINAL_OVERLAY_NOVO = r"""  var TreeOverlay = () => {
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "© 2026 CRIVIA Engenharia Consultiva · Engenharia para Decisão" }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { "aria-hidden": true, children: "·" }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Site produzido pela CRIVIA" })
-        ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("img", { className: "crivia-fim__selo", src: "assets/images/bni/proud-member.png", width: 900, height: 526, alt: "Selo Proud BNI Member", loading: "lazy", decoding: "async" })
       ] })
     ] });
   };
@@ -2883,7 +2884,10 @@ CSS_FINAL = r"""
 .crivia-fim__contato a { color: #0A369D; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(10,54,157,.3); transition: border-color .2s; }
 .crivia-fim__contato a:hover, .crivia-fim__contato a:focus-visible { border-bottom-color: #0A369D; outline: none; }
 .crivia-fim__credito { font-size: .75rem; color: #5B7396; }
+/* selo Proud Member: no canto inferior direito, alinhado ao mesmo gutter dos cartões laterais; arte original, só muda o tamanho */
+.crivia-fim__selo { position: absolute; right: var(--fim-gutter); bottom: 0; width: clamp(4.4rem, 5.4vw, 5.8rem); height: auto; display: block; pointer-events: none; }
 @media (max-width: 47.99rem) {
+  .crivia-fim__selo { right: 1rem; width: 3.8rem; }
   .crivia-fim__lados { top: 47.5%; flex-direction: column; gap: .55rem; left: 1rem; right: 1rem; }
   .crivia-fim__lado { width: 100%; height: 4.6rem; padding: .6rem .9rem; border-radius: .9rem; }
   .crivia-fim__texto { font-size: .8rem; line-height: 1.4; }
@@ -2934,6 +2938,11 @@ def aplicar_patches(raiz_modelo):
     destino_logo.mkdir(parents=True, exist_ok=True)
     for nome_logo in ("crivia-palavra.png",):
         shutil.copyfile(REPO / "assets" / "logo" / nome_logo, destino_logo / nome_logo)
+    selo_bni = REPO / "assets" / "bni" / "proud-member.png"
+    if selo_bni.is_file():
+        destino_bni = ov / "assets" / "images" / "bni"
+        destino_bni.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(selo_bni, destino_bni / selo_bni.name)
     img_metodo = REPO / "assets" / "metodo" / "tablet-industrial.png"
     if img_metodo.is_file():
         destino_metodo = ov / "assets" / "images" / "metodo"
