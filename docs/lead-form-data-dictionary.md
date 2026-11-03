@@ -11,7 +11,7 @@ O visitante **não escolhe produto** (P01–P12, CV01): a CRIVIA faz o enquadram
 | Bloco | Campo | Obrigatório | Valores / regra |
 |---|---|---|---|
 | `scenario` | `situationCodes` | sim, ao menos 1 (**múltipla escolha**) | `obra_contrato_dificuldade`, `atraso_custo_margem`, `projeto_terreno_propostas`, `planejamento_recursos_recuperacao`, `medicao_alteracao_documentacao`, `vistoria_recebimento_conferencia`, `comunicacao_ia_3d`, `outra_nao_sei` (exclusiva) |
-| | `contextAnswerCode` | não | resposta da pergunta curta daquela situação (todas têm `unknown` = "Ainda não sei"). **Só vale com uma única situação marcada**; com várias, a pergunta some e o valor é rejeitado |
+| | `contextAnswers` | não | objeto `{situação: resposta}`: a pergunta curta de **cada situação marcada** (todas têm `unknown` = "Ainda não sei"). Chave de situação não marcada ou resposta de outra situação é rejeitada (`valor_invalido`, sem reproduzir a chave). Desmarcar a situação remove a resposta |
 | | `audienceProfiles` | sim, ao menos 1 (**múltipla escolha**) | `company_manager`, `contractor`, `owner_investor`, `technical_team`, `other` |
 | | `decisionRole` | sim | `decides`, `recommends`, `gathering`, `referring`, `other_unsure` |
 | | `narrative` | sim | texto livre de 10 a 1.200 caracteres; sem HTML; quebras de linha preservadas |
@@ -52,7 +52,7 @@ A resposta do servidor informa `confirmation` (`email`, `whatsapp` ou `none`) e 
 
 ## Aba `Leads` do Google Sheets (uma linha por cenário)
 
-`submission_id` (protocolo `CRV-AAAA-XXXXXX`), `created_at`, `updated_at`, `status`, `situation_code/label`, `context_question_code/answer_code/answer_label`,
+`submission_id` (protocolo `CRV-AAAA-XXXXXX`), `created_at`, `updated_at`, `status`, `situation_code/label`, `context_question_code/answer_code/answer_label` (uma entrada por situação marcada respondida, na mesma ordem e separadas por ` | `),
 `audience_profile_code/label` (nas colunas de múltipla escolha os valores vêm na mesma célula, separados por ` | `), `decision_role_code/label`, `location_type`, `country_code/name`, `state_code/name`, `city_code/name`, `foreign_region`, `scenario_description`,
 `contact_name`, `organization_name`, `preferred_channel`, `whatsapp`, `email`, `privacy_notice_version`, `privacy_notice_acknowledged_at`, `legal_basis_code` (**`[VALIDAR_BASE_LEGAL]`** até decisão jurídica),
 `marketing_consent`, `marketing_consent_at`, `source_page`, `source_cta`, `utm_*`, `referrer_domain`, `optional_urgency/documents/contact_period/consequences/estimated_range`, `assigned_to`, `internal_notes`,
@@ -61,7 +61,7 @@ A resposta do servidor informa `confirmation` (`email`, `whatsapp` ou `none`) e 
 ### Aba `Respostas` (formato "longo")
 
 Uma linha por opção marcada: `submission_id`, `question`, `code`, `label`, `position`. Uma pessoa que marca 3 consequências gera 3 linhas com o mesmo `submission_id`.
-Perguntas (`question`): `situation`, `context_answer`, `audience_profile`, `decision_role`, `urgency`, `consequence`, `documents`, `estimated_range`, `contact_period`. Só códigos e rótulos fixos (nada digitado).
+Perguntas (`question`): `situation`, `context:<situação>` (uma por situação marcada que teve resposta), `audience_profile`, `decision_role`, `urgency`, `consequence`, `documents`, `estimated_range`, `contact_period`. Só códigos e rótulos fixos (nada digitado).
 Serve para contar, filtrar e cruzar (tabela dinâmica, `COUNTIF`) sem separar texto; a aba `Leads` continua com uma linha por cenário.
 No servidor de testes (SQLite) é a tabela `lead_answers` (`lead_id`, `question`, `code`, `label`, `position`), apagada junto com o lead no descarte.
 

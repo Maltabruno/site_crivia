@@ -16,7 +16,7 @@ Servidor local: `python -I servidor/servidor_leads.py` (porta 8787) e o site em 
 10. Clique duplo rápido no botão: um único registro.
 11. Perguntas opcionais ("Para adiantar a análise"): sempre visíveis (sem abrir/fechar), numeradas em sequência; podem ficar em branco; **múltipla escolha** com caixas, "Marcar todas" e "Limpar" em cada pergunta. Sucesso: **sem protocolo na tela**, com aviso de que a confirmação segue ao e-mail ou ao WhatsApp escolhido; "Voltar ao início do site" leva à Hero.
 11b. Múltipla escolha em situação, perfil e nas cinco opcionais: marcar várias; "Marcar todas" não marca as exclusivas ("Outra situação", "Sem urgência definida", "Ainda não sei", "Prefiro não informar", "Indiferente");
-marcar uma exclusiva desmarca as outras e vice-versa; "Limpar" zera só aquela pergunta; a pergunta curta de contexto só aparece com **uma** situação marcada. Enviar e conferir que cada opção marcada aparece em `lead_answers` (servidor local) ou na aba `Respostas` (Apps Script de teste).
+marcar uma exclusiva desmarca as outras e vice-versa; "Limpar" zera só aquela pergunta; cada situação marcada abre a sua pergunta curta (opcional), recuada abaixo; desmarcar a situação remove a pergunta e a resposta. Enviar e conferir que cada opção marcada aparece em `lead_answers` (servidor local) ou na aba `Respostas` (Apps Script de teste).
 12. Atualizar a página no meio do preenchimento: o rascunho volta (mesma aba); após o sucesso o rascunho some.
 13. Com `?origem=hero&utm_source=teste` na URL: aparecem no registro; sem parâmetros, ficam vazios.
 

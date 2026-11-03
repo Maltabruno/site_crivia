@@ -6,7 +6,7 @@
 function leadValido_() {
   return { idempotencyKey: 'abc12345-test', schemaVersion: 3, formVersion: 'form-3', elapsedMs: 45000,
     source: { originCta: 'hero', productHint: 'P06', deviceCategory: 'desktop' },
-    scenario: { situationCodes: ['obra_contrato_dificuldade'], contextAnswerCode: 'running', audienceProfiles: ['contractor'], decisionRole: 'decides',
+    scenario: { situationCodes: ['obra_contrato_dificuldade'], contextAnswers: { obra_contrato_dificuldade: 'running' }, audienceProfiles: ['contractor'], decisionRole: 'decides',
       location: { type: 'brazil', countryCode: 'BR', stateCode: 'MG', cityCode: '3106200', cityName: 'Belo Horizonte' },
       narrative: 'A obra está atrasada e precisamos decidir como recuperar o prazo sem perder a margem do contrato.',
       urgencies: ['this_week'], consequences: ['penalty', 'stoppage'], documents: ['partial'], estimatedRanges: ['1m_to_10m'] },
@@ -40,7 +40,8 @@ function rodarTestes() {
   });
   t('enum inválido e resposta de outra situação recusados', function () {
     var d = leadValido_(); d.scenario.situationCodes = ['xx']; afirma_(falha_(function () { validarLead_(d); })['scenario.situationCodes'], 'situação');
-    d = leadValido_(); d.scenario.contextAnswerCode = 'deadline'; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswerCode'], 'contexto');
+    d = leadValido_(); d.scenario.contextAnswers = { obra_contrato_dificuldade: 'deadline' }; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswers'], 'contexto');
+    d = leadValido_(); d.scenario.contextAnswers = { atraso_custo_margem: 'cost' }; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswers'], 'situação não marcada');
   });
   t('campo desconhecido recusado', function () { var d = leadValido_(); d.extra = 1; afirma_(falha_(function () { validarLead_(d); })['$.extra'], 'extra'); });
   t('relato: limite, HTML e quebras de linha', function () {
@@ -64,7 +65,7 @@ function rodarTestes() {
     d = leadValido_(); d.scenario.urgencies = 'this_week'; afirma_(falha_(function () { validarLead_(d); })['scenario.urgencies'], 'tipo');
   });
   t('múltipla escolha: várias opções, ordem da lista, sem repetição, sem limite em "todas"', function () {
-    var d = leadValido_(); d.scenario.situationCodes = ['atraso_custo_margem', 'obra_contrato_dificuldade', 'atraso_custo_margem']; d.scenario.contextAnswerCode = null;
+    var d = leadValido_(); d.scenario.situationCodes = ['atraso_custo_margem', 'obra_contrato_dificuldade', 'atraso_custo_margem']; d.scenario.contextAnswers = { atraso_custo_margem: 'cost', obra_contrato_dificuldade: 'stopped' };
     d.scenario.audienceProfiles = ['technical_team', 'contractor']; d.scenario.urgencies = ['this_month', 'immediate']; d.scenario.documents = ['partial', 'yes'];
     d.scenario.consequences = chaves_(CONSEQUENCIAS_); d.contact.contactPeriods = ['evening', 'morning'];
     var l = validarLead_(d), s = l.scenario;
@@ -72,7 +73,8 @@ function rodarTestes() {
     afirma_(s.audienceProfiles.join() === 'contractor,technical_team' && s.urgencies.join() === 'immediate,this_month' && s.documents.join() === 'yes,partial', 'ordem');
     afirma_(s.consequences.length === 7 && l.contact.contactPeriods.join() === 'morning,evening', 'todas');
     var q = enquadrar_(l); afirma_(q.candidateProducts.join() === 'P01,P08,P07', 'produtos ' + q.candidateProducts.join()); afirma_(q.timingScore === 2 && q.readinessScore === 2, 'melhor opção');
-    d.scenario.contextAnswerCode = 'running'; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswerCode'], 'contexto exige uma situação só');
+    afirma_(l.scenario.contextAnswers.map(function (c) { return c.situationCode + ':' + c.answerCode; }).join() === 'obra_contrato_dificuldade:stopped,atraso_custo_margem:cost', 'contexto por situação');
+    d.scenario.contextAnswers = { projeto_terreno_propostas: 'land' }; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswers'], 'contexto de situação não marcada');
     d = leadValido_(); d.scenario.situationCodes = []; afirma_(falha_(function () { validarLead_(d); })['scenario.situationCodes'] === 'obrigatorio', 'situação obrigatória');
     d = leadValido_(); d.scenario.audienceProfiles = []; afirma_(falha_(function () { validarLead_(d); })['scenario.audienceProfiles'] === 'obrigatorio', 'perfil obrigatório');
   });
@@ -102,7 +104,7 @@ function rodarTestes() {
     afirma_(validarDetalhes_({ urgency: 'immediate' }).urgency === 'immediate', 'ok'); afirma_(falha_(function () { validarDetalhes_({}); }), 'vazio'); afirma_(falha_(function () { validarDetalhes_({ urgency: 'ontem' }); }), 'inválido');
   });
   t('hash de idempotência é estável', function () { afirma_(hash_('a') === hash_('a') && hash_('a') !== hash_('b'), 'hash'); });
-  t('situação "outra" sem produtos candidatos', function () { var d = leadValido_(); d.scenario.situationCodes = ['outra_nao_sei']; d.scenario.contextAnswerCode = 'unknown';
+  t('situação "outra" sem produtos candidatos', function () { var d = leadValido_(); d.scenario.situationCodes = ['outra_nao_sei']; d.scenario.contextAnswers = { outra_nao_sei: 'unknown' };
     afirma_(enquadrar_(validarLead_(d)).candidateProducts.length === 0, 'vazio'); });
   t('cabeçalhos e colunas consistentes', function () { afirma_(CABECALHOS_LEADS[0] === 'submission_id' && CABECALHOS_LEADS.indexOf('city_code') > 0, 'cabeçalhos'); });
   t('configuração ausente falha de forma segura', function () { var antes = configuracaoCompleta_(); afirma_(typeof antes === 'boolean', 'boolean'); });

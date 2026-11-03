@@ -306,18 +306,28 @@ def validar_lead(corpo):
             v.erro(f"source.{utm}", "valor_invalido")
 
     # cenário
-    s = v.objeto(topo.get("scenario"), "scenario", {"situationCodes", "contextAnswerCode", "audienceProfiles", "decisionRole", "location", "narrative",
+    s = v.objeto(topo.get("scenario"), "scenario", {"situationCodes", "contextAnswers", "audienceProfiles", "decisionRole", "location", "narrative",
                                                 "urgencies", "consequences", "documents", "estimatedRanges"},
                  ("situationCodes", "audienceProfiles", "decisionRole", "location", "narrative"))
     situacoes = v.lista(s.get("situationCodes"), "scenario.situationCodes", tuple(SITUATIONS), True, EXCLUSIVAS["situationCodes"])
-    # a pergunta curta de contexto depende da situação: só vale quando há exatamente uma situação marcada
-    pergunta, respostas_ctx = (SITUATIONS[situacoes[0]][1], SITUATIONS[situacoes[0]][2]) if len(situacoes) == 1 else ("", {})
-    resposta = v.enum(s.get("contextAnswerCode"), "scenario.contextAnswerCode", tuple(respostas_ctx), False)
+    # pergunta curta de cada situação marcada: {situação: resposta}. Só vale para situações marcadas e respostas daquela situação.
+    # (o caminho do erro é fixo: nenhuma chave enviada pelo visitante é reproduzida na resposta)
+    contextos = []
+    bruto = s.get("contextAnswers")
+    if bruto not in (None, {}):
+        if not isinstance(bruto, dict):
+            v.erro("scenario.contextAnswers", "tipo")
+        elif any(k not in situacoes or not isinstance(x, str) or x not in SITUATIONS[k][2] for k, x in bruto.items()):
+            v.erro("scenario.contextAnswers", "valor_invalido")
+        else:
+            for sit in situacoes:
+                if sit in bruto:
+                    contextos.append({"situationCode": sit, "question": SITUATIONS[sit][1], "answerCode": bruto[sit], "answerLabel": SITUATIONS[sit][2][bruto[sit]]})
     perfis = v.lista(s.get("audienceProfiles"), "scenario.audienceProfiles", tuple(AUDIENCE), True)
     papel = v.enum(s.get("decisionRole"), "scenario.decisionRole", tuple(DECISION_ROLES))
     cenario = {
         "situationCodes": situacoes, "situationLabels": [SITUATIONS[x][0] for x in situacoes],
-        "contextQuestion": pergunta if resposta else "", "contextAnswerCode": resposta or "", "contextAnswerLabel": respostas_ctx.get(resposta, "") if resposta else "",
+        "contextAnswers": contextos,
         "audienceProfiles": perfis, "audienceProfileLabels": [AUDIENCE[x] for x in perfis],
         "decisionRole": papel, "decisionRoleLabel": DECISION_ROLES.get(papel, ""),
         "location": _localizacao(v, s.get("location")),
@@ -425,7 +435,7 @@ def produtos_candidatos(lead):
 def informacoes_ausentes(lead):
     s = lead["scenario"]
     falta = []
-    if len(s["situationCodes"]) == 1 and (not s["contextAnswerCode"] or s["contextAnswerCode"] == "unknown"):
+    if not any(c["answerCode"] != "unknown" for c in s["contextAnswers"]):
         falta.append("context_answer")
     if len(s["narrative"]) < 80:
         falta.append("narrative_detail")
@@ -451,8 +461,8 @@ def respostas(lead):
             linhas.append((pergunta, cod, tabela.get(cod, ""), i))
 
     add("situation", s["situationCodes"], {k: v[0] for k, v in SITUATIONS.items()})
-    if s["contextAnswerCode"]:
-        add("context_answer", [s["contextAnswerCode"]], {s["contextAnswerCode"]: s["contextAnswerLabel"]})
+    for c_ in s["contextAnswers"]:                  # uma pergunta por situação marcada: "context:<situação>"
+        add("context:" + c_["situationCode"], [c_["answerCode"]], {c_["answerCode"]: c_["answerLabel"]})
     add("audience_profile", s["audienceProfiles"], AUDIENCE)
     add("decision_role", [s["decisionRole"]], DECISION_ROLES)
     add("urgency", s["urgencies"], URGENCIES)

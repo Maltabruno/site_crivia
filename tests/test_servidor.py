@@ -26,7 +26,7 @@ def base(situacao="obra_contrato_dificuldade"):
     """Payload mínimo válido (modo Brasil)."""
     return {"idempotencyKey": "chave-" + situacao.replace("_", "-") + "-0001", "schemaVersion": 3, "formVersion": "form-3", "elapsedMs": 45000,
             "source": {"originCta": "produtos", "productHint": "P06", "deviceCategory": "desktop", "utmSource": "teste"},
-            "scenario": {"situationCodes": [situacao], "contextAnswerCode": "running" if situacao == "obra_contrato_dificuldade" else "unknown", "audienceProfiles": ["contractor"], "decisionRole": "decides",
+            "scenario": {"situationCodes": [situacao], "contextAnswers": {situacao: "running" if situacao == "obra_contrato_dificuldade" else "unknown"}, "audienceProfiles": ["contractor"], "decisionRole": "decides",
                          "location": {"type": "brazil", "countryCode": "BR", "stateCode": "MG", "cityCode": BH, "cityName": "Belo Horizonte"},
                          "narrative": "O cronograma atrasou e precisamos decidir como recuperar sem estourar a margem do contrato, que já tem multa prevista.",
                          "urgencies": ["this_week"], "consequences": ["penalty", "stoppage"], "documents": ["partial"], "estimatedRanges": ["1m_to_10m"]},
@@ -61,7 +61,7 @@ class TestValidacao(unittest.TestCase):
         self.assertEqual(lead["contact"]["email"], "maria@exemplo.com.br")
         self.assertFalse(lead["privacy"]["marketingConsent"])
         self.assertEqual(lead["scenario"]["situationLabels"], ["Obra ou contrato com dificuldade"])
-        self.assertEqual(lead["scenario"]["contextAnswerLabel"], "Em execução")
+        self.assertEqual(lead["scenario"]["contextAnswers"], [{"situationCode": "obra_contrato_dificuldade", "question": "Em que momento está?", "answerCode": "running", "answerLabel": "Em execução"}])
 
     def test_todas_as_situacoes_validam(self):
         for cod in R.SITUATIONS:
@@ -106,11 +106,14 @@ class TestValidacao(unittest.TestCase):
         p = base(); p["scenario"]["situationCodes"] = ["hack"]
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        p = base(); p["scenario"]["contextAnswerCode"] = "deadline"             # resposta de outra situação
+        p = base(); p["scenario"]["contextAnswers"] = {"obra_contrato_dificuldade": "deadline"}   # resposta de outra situação
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        p = base(); p["scenario"].pop("contextAnswerCode")                       # a pergunta contextual é opcional
-        self.assertEqual(R.validar_lead(p)["scenario"]["contextAnswerCode"], "")
+        p = base(); p["scenario"]["contextAnswers"] = {"atraso_custo_margem": "deadline"}          # situação não marcada
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = base(); p["scenario"].pop("contextAnswers")                          # a pergunta contextual é opcional
+        self.assertEqual(R.validar_lead(p)["scenario"]["contextAnswers"], [])
 
     def test_relato_limites_html_e_quebras_de_linha(self):
         p = base(); p["scenario"]["narrative"] = "curto"
@@ -169,7 +172,7 @@ class TestValidacao(unittest.TestCase):
     def test_multipla_escolha(self):
         # várias opções em todas as perguntas; o servidor devolve na ordem da lista, sem repetição
         p = base()
-        p["scenario"].update({"situationCodes": ["atraso_custo_margem", "obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswerCode": None,
+        p["scenario"].update({"situationCodes": ["atraso_custo_margem", "obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswers": {"atraso_custo_margem": "cost", "obra_contrato_dificuldade": "stopped"},
                               "audienceProfiles": ["technical_team", "contractor"], "urgencies": ["this_month", "immediate"],
                               "consequences": list(R.CONSEQUENCES), "documents": ["partial", "yes"], "estimatedRanges": ["10m_to_50m", "1m_to_10m"]})
         p["contact"]["contactPeriods"] = ["evening", "morning"]
@@ -181,10 +184,15 @@ class TestValidacao(unittest.TestCase):
         self.assertEqual((s["urgencies"], s["documents"], s["estimatedRanges"]), (["immediate", "this_month"], ["yes", "partial"], ["1m_to_10m", "10m_to_50m"]))
         self.assertEqual(s["consequences"], list(R.CONSEQUENCES))                  # "marcar todas" não tem limite
         self.assertEqual(lead["contact"]["contactPeriods"], ["morning", "evening"])
-        # a pergunta curta de contexto só vale com uma única situação
-        p["scenario"]["contextAnswerCode"] = "running"
+        # a pergunta curta é por situação, devolvida na ordem da lista; chave e resposta têm de ser da situação marcada
+        self.assertEqual([c["situationCode"] + ":" + c["answerCode"] for c in s["contextAnswers"]], ["obra_contrato_dificuldade:stopped", "atraso_custo_margem:cost"])
+        p["scenario"]["contextAnswers"] = {"projeto_terreno_propostas": "land"}
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
+        p["scenario"]["contextAnswers"] = {"obra_contrato_dificuldade": "cost"}
+        with self.assertRaises(R.ErroValidacao) as e:
+            R.validar_lead(p)
+        self.assertEqual(list(e.exception.campos), ["scenario.contextAnswers"])        # sem reproduzir chaves do visitante
         # situação e perfil exigem ao menos uma escolha
         for campo in ("situationCodes", "audienceProfiles"):
             for valor in ([], None):
@@ -195,7 +203,7 @@ class TestValidacao(unittest.TestCase):
     def test_opcoes_exclusivas_nao_combinam_com_outras(self):
         for campo, exclusiva, outra in (("urgencies", "undefined", "immediate"), ("documents", "unknown", "yes"), ("estimatedRanges", "undisclosed", "up_to_100k"),
                                         ("estimatedRanges", "unknown", "undisclosed"), ("situationCodes", "outra_nao_sei", "obra_contrato_dificuldade")):
-            p = base(); p["scenario"][campo] = [exclusiva, outra]; p["scenario"]["contextAnswerCode"] = None
+            p = base(); p["scenario"][campo] = [exclusiva, outra]; p["scenario"]["contextAnswers"] = {}
             with self.assertRaises(R.ErroValidacao) as e:
                 R.validar_lead(p)
             self.assertEqual(e.exception.campos["scenario." + campo], "opcoes_incompativeis")
@@ -207,8 +215,10 @@ class TestValidacao(unittest.TestCase):
 
     def test_respostas_em_formato_longo(self):
         p = base()
-        p["scenario"].update({"situationCodes": ["obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswerCode": None, "audienceProfiles": ["contractor", "technical_team"]})
+        p["scenario"].update({"situationCodes": ["obra_contrato_dificuldade", "atraso_custo_margem"], "contextAnswers": {"obra_contrato_dificuldade": "running", "atraso_custo_margem": "unknown"}, "audienceProfiles": ["contractor", "technical_team"]})
         linhas = R.respostas(R.validar_lead(p))
+        self.assertIn(("context:obra_contrato_dificuldade", "running", "Em execução", 1), linhas)
+        self.assertIn(("context:atraso_custo_margem", "unknown", "Ainda não sei", 1), linhas)
         self.assertIn(("situation", "atraso_custo_margem", "Atraso, custo, produtividade ou perda de margem", 2), linhas)
         self.assertEqual([x[1] for x in linhas if x[0] == "audience_profile"], ["contractor", "technical_team"])
         self.assertEqual([x[1] for x in linhas if x[0] == "consequence"], ["penalty", "stoppage"])
@@ -259,7 +269,7 @@ class TestPontuacao(unittest.TestCase):
         alta = R.enquadrar(R.validar_lead(base()))
         self.assertEqual(alta["priority"], "A")
         p = base("outra_nao_sei")
-        p["scenario"].update({"decisionRole": "gathering", "audienceProfiles": ["other"], "contextAnswerCode": "unknown", "narrative": "Quero entender o que vocês fazem.",
+        p["scenario"].update({"decisionRole": "gathering", "audienceProfiles": ["other"], "contextAnswers": {"outra_nao_sei": "unknown"}, "narrative": "Quero entender o que vocês fazem.",
                               "urgencies": ["undefined"], "consequences": [], "documents": ["no"], "estimatedRanges": ["unknown"]})
         baixa = R.enquadrar(R.validar_lead(p))
         self.assertEqual(baixa["priority"], "C")
@@ -277,13 +287,13 @@ class TestPontuacao(unittest.TestCase):
 
     def test_pontuacao_com_multipla_escolha_usa_a_melhor_opcao(self):
         p = base("outra_nao_sei")
-        p["scenario"].update({"audienceProfiles": ["other", "contractor"], "urgencies": ["this_month", "immediate"], "documents": ["no", "yes"], "contextAnswerCode": None})
+        p["scenario"].update({"audienceProfiles": ["other", "contractor"], "urgencies": ["this_month", "immediate"], "documents": ["no", "yes"], "contextAnswers": {}})
         q = R.enquadrar(R.validar_lead(p))
         self.assertEqual((q["audienceScore"], q["timingScore"], q["readinessScore"]), (2, 2, 2))
-        m = base(); m["scenario"].update({"situationCodes": ["comunicacao_ia_3d", "projeto_terreno_propostas", "obra_contrato_dificuldade"], "contextAnswerCode": None})
+        m = base(); m["scenario"].update({"situationCodes": ["comunicacao_ia_3d", "projeto_terreno_propostas", "obra_contrato_dificuldade"], "contextAnswers": {"obra_contrato_dificuldade": "running"}})
         qm = R.enquadrar(R.validar_lead(m))
         self.assertEqual(qm["candidateProducts"], ["P01", "P02", "P03", "P05", "CV01"])   # união na ordem da lista, sem repetir
-        self.assertNotIn("context_answer", qm["missingInformation"])
+        self.assertNotIn("context_answer", qm["missingInformation"])          # ao menos uma resposta útil
 
     def test_faixas_vem_da_configuracao_central(self):
         self.assertEqual(R.PONTUACAO["faixas"], {"A": 10, "B": 6})

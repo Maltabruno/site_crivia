@@ -32,7 +32,7 @@ function enquadrar_(lead) {
   var total = relevancia + papel + perfil + detalhe + tempo + consequencia + prontidao;
   var soContem = function (lista, ok) { return !lista.length || lista.every(function (x) { return ok.indexOf(x) >= 0; }); };
   var falta = [];
-  if (s.situationCodes.length === 1 && (!s.contextAnswerCode || s.contextAnswerCode === 'unknown')) falta.push('context_answer');
+  if (!s.contextAnswers.some(function (c) { return c.answerCode !== 'unknown'; })) falta.push('context_answer');
   if (n < 80) falta.push('narrative_detail');
   if (['gathering', 'referring', 'other_unsure'].indexOf(s.decisionRole) >= 0) falta.push('decision_owner');
   if (soContem(s.urgencies, ['undefined'])) falta.push('decision_horizon');

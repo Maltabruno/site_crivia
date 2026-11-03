@@ -148,9 +148,15 @@
       : { type: "international", countryCode: l.countryCode, cityName: (l.intlCity || "").trim(), foreignRegion: (l.foreignRegion || "").trim() };
     var contato = { name: (c.name || "").trim(), organization: (c.organization || "").trim(), preferredChannel: c.preferredChannel };
     if ((c.contactPeriods || []).length) contato.contactPeriods = c.contactPeriods.slice();
-    // a pergunta curta de contexto só vale quando há uma única situação marcada
-    var cenario = { situationCodes: r.situationCodes.slice(), contextAnswerCode: r.situationCodes.length === 1 ? (r.contextAnswerCode || null) : null,
+    var cenario = { situationCodes: r.situationCodes.slice(),
       audienceProfiles: r.audienceProfiles.slice(), decisionRole: r.decisionRole, location: loc, narrative: (r.narrative || "").trim() };
+    // pergunta curta de cada situação marcada: só entram respostas de situações ainda marcadas e que existam na lista
+    var ctx = {};
+    r.situationCodes.forEach(function (sit) {
+      var def = achar(SITUACOES, sit), resp = (r.contextAnswers || {})[sit];
+      if (def && resp && achar(def.opcoes, resp)) ctx[sit] = resp;
+    });
+    if (Object.keys(ctx).length) cenario.contextAnswers = ctx;
     if ((r.urgencies || []).length) cenario.urgencies = r.urgencies.slice();
     if ((r.consequences || []).length) cenario.consequences = r.consequences.slice();
     if ((r.documents || []).length) cenario.documents = r.documents.slice();

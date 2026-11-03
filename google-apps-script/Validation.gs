@@ -174,17 +174,22 @@ function validarLead_(corpo) {
     else v.erro('source.' + k, 'valor_invalido');
   });
 
-  var s = v.obj(topo.scenario, 'scenario', ['situationCodes', 'contextAnswerCode', 'audienceProfiles', 'decisionRole', 'location', 'narrative', 'urgencies', 'consequences', 'documents', 'estimatedRanges'],
+  var s = v.obj(topo.scenario, 'scenario', ['situationCodes', 'contextAnswers', 'audienceProfiles', 'decisionRole', 'location', 'narrative', 'urgencies', 'consequences', 'documents', 'estimatedRanges'],
     ['situationCodes', 'audienceProfiles', 'decisionRole', 'location', 'narrative']);
   var situacoes = v.lista(s.situationCodes, 'scenario.situationCodes', chaves_(SITUACOES_), true, EXCLUSIVAS_.situationCodes);
-  // a pergunta curta de contexto depende da situação: só vale quando há exatamente uma situação marcada
-  var respostasCtx = situacoes.length === 1 ? SITUACOES_[situacoes[0]][1] : {};
-  var resposta = v.enm(s.contextAnswerCode, 'scenario.contextAnswerCode', chaves_(respostasCtx), false);
+  // pergunta curta de cada situação marcada: { situação: resposta }. Só vale para situações marcadas e respostas daquela situação.
+  // (o caminho do erro é fixo: nenhuma chave enviada pelo visitante é reproduzida na resposta)
+  var contextos = [], bruto = s.contextAnswers;
+  if (bruto !== undefined && bruto !== null && !(typeof bruto === 'object' && !Array.isArray(bruto) && !Object.keys(bruto).length)) {
+    if (typeof bruto !== 'object' || Array.isArray(bruto)) v.erro('scenario.contextAnswers', 'tipo');
+    else if (Object.keys(bruto).some(function (k) { return situacoes.indexOf(k) < 0 || typeof bruto[k] !== 'string' || !SITUACOES_[k][1].hasOwnProperty(bruto[k]); })) v.erro('scenario.contextAnswers', 'valor_invalido');
+    else situacoes.forEach(function (sit) { if (bruto.hasOwnProperty(sit)) contextos.push({ situationCode: sit, answerCode: bruto[sit], answerLabel: SITUACOES_[sit][1][bruto[sit]] }); });
+  }
   var perfis = v.lista(s.audienceProfiles, 'scenario.audienceProfiles', chaves_(AUDIENCIA_), true);
   var papel = v.enm(s.decisionRole, 'scenario.decisionRole', chaves_(PAPEIS_), true);
   var cenario = {
     situationCodes: situacoes, situationLabels: situacoes.map(function (x) { return SITUACOES_[x][0]; }),
-    contextAnswerCode: resposta || '', contextAnswerLabel: resposta ? respostasCtx[resposta] : '',
+    contextAnswers: contextos,
     audienceProfiles: perfis, audienceProfileLabels: perfis.map(function (x) { return AUDIENCIA_[x]; }), decisionRole: papel, decisionRoleLabel: papel ? PAPEIS_[papel] : '',
     location: localizacao_(v, s.location),
     urgencies: v.lista(s.urgencies, 'scenario.urgencies', chaves_(URGENCIAS_), false, EXCLUSIVAS_.urgencies),

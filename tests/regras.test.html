@@ -22,7 +22,7 @@
   function igual(a, b, m) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error((m || "") + " esperado " + JSON.stringify(b) + " obtido " + JSON.stringify(a)); }
   function verdade(c, m) { if (!c) throw new Error(m || "condição falsa"); }
   function valido() {
-    return { situationCodes: ["atraso_custo_margem"], contextAnswerCode: "cost", audienceProfiles: ["contractor"], decisionRole: "decides",
+    return { situationCodes: ["atraso_custo_margem"], contextAnswers: { atraso_custo_margem: "cost" }, audienceProfiles: ["contractor"], decisionRole: "decides",
       location: { type: "brazil", stateCode: "MG", cityCode: "3106200", cityName: "Belo Horizonte", countryCode: "", intlCity: "", foreignRegion: "" },
       narrative: "O cronograma atrasou e precisamos decidir como recuperar o prazo.", marketingConsent: false,
       contact: { name: "Ana Lima", organization: "", preferredChannel: "email", email: "ana@x.com", phone: "" } };
@@ -38,7 +38,7 @@
   });
   t("formulário válido não tem erros", function () { igual(R.validar(valido()), {}); });
   t("pergunta contextual é opcional; perfil e participação são exigidos", function () {
-    var r = valido(); r.contextAnswerCode = ""; igual(R.validar(r), {});
+    var r = valido(); r.contextAnswers = {}; igual(R.validar(r), {});
     r.audienceProfiles = []; r.decisionRole = ""; igual(Object.keys(R.validar(r)).sort(), ["audienceProfiles", "decisionRole"]);
   });
   t("Brasil exige estado e cidade da lista", function () {
@@ -99,10 +99,13 @@
     var r = valido(); r.situationCodes = ["obra_contrato_dificuldade", "atraso_custo_margem"]; r.audienceProfiles = ["contractor", "technical_team"]; igual(R.validar(r), {});
     r.situationCodes = []; r.audienceProfiles = []; igual(Object.keys(R.validar(r)).sort(), ["audienceProfiles", "situationCodes"]);
   });
-  t("a pergunta curta de contexto só vai com uma única situação", function () {
+  t("a pergunta curta vai por situação marcada; resposta de situação desmarcada ou inválida é descartada", function () {
     var r = valido(); var ex = { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-3", elapsedMs: 9000 };
-    igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswerCode, "cost");
-    r.situationCodes = ["atraso_custo_margem", "obra_contrato_dificuldade"]; igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswerCode, null);
+    igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswers, { atraso_custo_margem: "cost" });
+    r.situationCodes = ["atraso_custo_margem", "obra_contrato_dificuldade"]; r.contextAnswers = { atraso_custo_margem: "cost", obra_contrato_dificuldade: "running" };
+    igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswers, { atraso_custo_margem: "cost", obra_contrato_dificuldade: "running" });
+    r.situationCodes = ["obra_contrato_dificuldade"]; igual(R.montarPayload(r, R.lerOrigem(""), ex).scenario.contextAnswers, { obra_contrato_dificuldade: "running" });   // a de "atraso" saiu
+    r.contextAnswers = { obra_contrato_dificuldade: "cost" }; verdade(!("contextAnswers" in R.montarPayload(r, R.lerOrigem(""), ex).scenario));                    // resposta de outra situação
   });
   t("opções exclusivas não combinam com as outras ('Ainda não sei', 'Prefiro não informar', 'Indiferente', 'Sem urgência')", function () {
     var r = valido(); r.documents = ["unknown", "yes"]; verdade(R.validar(r).documents);

@@ -12,8 +12,8 @@
   var inicio = Date.now();
   var FORM_VERSION = "form-3";
 
-  // Perguntas de múltipla escolha guardam listas de códigos; a pergunta de contexto e a participação na decisão continuam de escolha única.
-  var estado = { situationCodes: [], contextAnswerCode: "", audienceProfiles: [], decisionRole: "", narrative: "",
+  // Perguntas de múltipla escolha guardam listas de códigos; a participação na decisão é de escolha única; a pergunta curta de cada situação marcada guarda {situação: resposta}.
+  var estado = { situationCodes: [], contextAnswers: {}, audienceProfiles: [], decisionRole: "", narrative: "",
     urgencies: [], consequences: [], documents: [], estimatedRanges: [],
     location: { type: "brazil", stateCode: "", cityCode: "", cityName: "", countryCode: "", countryName: "", intlCity: "", foreignRegion: "" },
     contact: { name: "", organization: "", preferredChannel: "", phone: "", email: "", contactPeriods: [] } };
@@ -62,7 +62,7 @@
   function salvar() {
     clearTimeout(tSalvar);
     tSalvar = setTimeout(function () {
-      try { sessionStorage.setItem(STORE, JSON.stringify({ v: 3, e: { situationCodes: estado.situationCodes, contextAnswerCode: estado.contextAnswerCode, audienceProfiles: estado.audienceProfiles,
+      try { sessionStorage.setItem(STORE, JSON.stringify({ v: 3, e: { situationCodes: estado.situationCodes, contextAnswers: estado.contextAnswers, audienceProfiles: estado.audienceProfiles,
         decisionRole: estado.decisionRole, narrative: estado.narrative, urgencies: estado.urgencies, consequences: estado.consequences, documents: estado.documents,
         estimatedRanges: estado.estimatedRanges, location: estado.location, contact: estado.contact } })); } catch (e) { /* armazenamento indisponível: segue sem salvar */ }
     }, 300);
@@ -71,7 +71,10 @@
     try {
       var d = JSON.parse(sessionStorage.getItem(STORE) || "null");
       if (!d || d.v !== 3 || !d.e) return;
-      ["contextAnswerCode", "decisionRole", "narrative"].forEach(function (k) { if (typeof d.e[k] === "string") estado[k] = d.e[k]; });
+      ["decisionRole", "narrative"].forEach(function (k) { if (typeof d.e[k] === "string") estado[k] = d.e[k]; });
+      if (d.e.contextAnswers && typeof d.e.contextAnswers === "object") {
+        R.SITUACOES.forEach(function (s) { var x = d.e.contextAnswers[s.v]; if (typeof x === "string" && R.achar(s.opcoes, x)) estado.contextAnswers[s.v] = x; });
+      }
       LISTAS_MULTI.forEach(function (k) { if (Array.isArray(d.e[k])) estado[k] = d.e[k].filter(function (x) { return typeof x === "string"; }); });
       Object.keys(estado.location).forEach(function (k) { if (d.e.location && typeof d.e.location[k] === "string") estado.location[k] = d.e.location[k]; });
       ["name", "organization", "preferredChannel", "phone", "email"].forEach(function (k) { if (d.e.contact && typeof d.e.contact[k] === "string") estado.contact[k] = d.e.contact[k]; });
@@ -151,7 +154,7 @@
       h("button", { type: "button", class: "grupo__acao", "aria-label": "Limpar a seleção de: " + rotulo, texto: "Limpar", onclick: m.nenhuma }));
     // div com role="group" (e não fieldset): o botão fica ao lado do título, e o título nomeia o grupo para leitores de tela
     var lid = "lb-" + chave.replace(/\W/g, "-");
-    var fs = h("div", { class: "grupo grupo--multi", role: "group", "aria-labelledby": lid, "aria-describedby": erId },
+    var fs = h("div", { class: "grupo grupo--multi grupo--num", role: "group", "aria-labelledby": lid, "aria-describedby": erId },
       h("div", { class: "grupo__rotulo", id: lid }, rotulo, opcional ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null), botoes, m.cx, msg);
     registrar(chave, fs, null, msg);
     return fs;
@@ -160,7 +163,8 @@
   function grupo(chave, rotulo, conteudo, opcional) {
     var erId = "er-" + chave.replace(/\W/g, "-");
     var msg = h("p", { class: "campo__erro", id: erId, role: "alert" });
-    var fs = h("fieldset", { class: "grupo", "aria-describedby": erId }, h("legend", { class: "grupo__rotulo" }, rotulo, opcional ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null), conteudo, msg);
+    var lid = "lb-" + chave.replace(/\W/g, "-");
+    var fs = h("div", { class: "grupo grupo--num", role: "group", "aria-labelledby": lid, "aria-describedby": erId }, h("div", { class: "grupo__rotulo", id: lid }, rotulo, opcional ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null), conteudo, msg);
     registrar(chave, fs, null, msg);
     return fs;
   }
@@ -271,14 +275,22 @@
     // 1. situação + pergunta curta que depende dela
     var sitMulti = multi("sit", R.SITUACOES.map(function (s) { return { v: s.v, l: s.l }; }), function (sel) {
       var antes = e.situationCodes.length;
-      e.situationCodes = sel; e.contextAnswerCode = ""; limpar("situationCodes"); desenharContexto(); salvar();
+      e.situationCodes = sel; limpar("situationCodes"); desenharContexto(); salvar();
       if (sel.length && sel.length > antes) rastrear("scenario_branch_selected", { branch: sel[0] });
     }, { exclusivas: R.EXCLUSIVAS.situationCodes });
     refs.situacao = sitMulti.cx;
-    refs.contextoChips = h("div");
-    refs.contextoLegenda = h("legend", { class: "grupo__rotulo grupo__rotulo--sub" });   // pergunta condicional: sem número
-    refs.contexto = h("fieldset", { class: "grupo sub", hidden: "hidden" }, refs.contextoLegenda, refs.contextoChips);
-    var b1 = h("div", { class: "bloco" }, grupoMulti("situationCodes", "O que mais se aproxima do seu cenário hoje?", sitMulti), refs.contexto);
+    // pergunta curta de CADA situação marcada: aparece logo abaixo, só para as marcadas (opcional; sai junto se a situação for desmarcada)
+    refs.ctxBlocos = {};
+    refs.contextos = h("div", { class: "ctx", hidden: "hidden" });
+    R.SITUACOES.forEach(function (s) {
+      var cx = chips("ctx", s.opcoes, function (v) { e.contextAnswers[s.v] = v; salvar(); });
+      var lid = "lb-ctx-" + s.v;
+      var el = h("div", { class: "grupo grupo--ctx", role: "group", "aria-labelledby": lid, hidden: "hidden" },
+        h("div", { class: "ctx__rotulo", id: lid }, h("span", { class: "ctx__sit", texto: s.l }), h("span", { class: "ctx__perg", texto: s.q }), h("span", { class: "grupo__opcional", texto: " (opcional)" })), cx);
+      refs.ctxBlocos[s.v] = { el: el, cx: cx };
+      refs.contextos.appendChild(el);
+    });
+    var b1 = h("div", { class: "bloco" }, grupoMulti("situationCodes", "O que mais se aproxima do seu cenário hoje?", sitMulti), refs.contextos);
 
     // 2. perfil e participação
     var perfMulti = multi("perfil", R.PERFIS, function (sel) { e.audienceProfiles = sel; limpar("audienceProfiles"); sincronizar(); salvar(); });
@@ -382,17 +394,14 @@
   }
 
   function desenharContexto() {
-    // a pergunta curta depende da situação: só aparece quando há exatamente uma situação marcada
-    var s = estado.situationCodes.length === 1 ? R.achar(R.SITUACOES, estado.situationCodes[0]) : null;
-    refs.contextoChips.textContent = "";
-    if (!s) { refs.contexto.hidden = true; estado.contextAnswerCode = ""; return; }
-    refs.contextoLegenda.textContent = "";
-    refs.contextoLegenda.appendChild(document.createTextNode(s.q));
-    refs.contextoLegenda.appendChild(h("span", { class: "grupo__opcional", texto: " (opcional)" }));
-    var cx = chips("ctx", s.opcoes, function (v) { estado.contextAnswerCode = v; salvar(); });
-    marcar(cx, estado.contextAnswerCode);
-    refs.contextoChips.appendChild(cx);
-    refs.contexto.hidden = false;
+    var marcadas = estado.situationCodes, algum = false;
+    R.SITUACOES.forEach(function (s) {
+      var bl = refs.ctxBlocos[s.v], ligado = marcadas.indexOf(s.v) >= 0;
+      bl.el.hidden = !ligado;
+      if (ligado) algum = true;
+      else if (estado.contextAnswers[s.v]) { delete estado.contextAnswers[s.v]; marcar(bl.cx, ""); }   // situação desmarcada: a resposta sai junto
+    });
+    refs.contextos.hidden = !algum;
   }
 
   /** Mostra/oculta o que depende das respostas, sem recriar controles (o foco e o texto digitado ficam intactos). */
@@ -455,6 +464,7 @@
   function aplicarEstado() {
     var e = estado, l = e.location, c = e.contact;
     marcar(refs.situacao, e.situationCodes); desenharContexto();
+    R.SITUACOES.forEach(function (s) { marcar(refs.ctxBlocos[s.v].cx, e.contextAnswers[s.v] || ""); });
     marcar(refs.perfil, e.audienceProfiles); marcar(refs.papel, e.decisionRole);
     marcar(refs.canal, c.preferredChannel);
     marcar(refs.urgencia, e.urgencies); marcar(refs.consequencias, e.consequences); marcar(refs.documentos, e.documents); marcar(refs.faixa, e.estimatedRanges); marcar(refs.periodo, c.contactPeriods);

@@ -48,12 +48,23 @@ body { margin: 0; min-height: 100vh; font-family: "Geist", system-ui, sans-serif
 .grupo { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: .45rem; align-content: start; }
 /* perguntas: título mais leve e editorial, com um traço dourado de abertura (em vez do negrito genérico) */
 .grupo__rotulo { padding: 0; margin: 0 0 .15rem; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 600; font-size: 1rem; line-height: 1.3; letter-spacing: -.012em; color: #0B2A5B; }
-/* numeração de sequência (1, 2, 3…): conta só as perguntas visíveis; a pergunta condicional de cada situação não recebe número */
+/* numeração de sequência: algarismos de contorno (o mesmo contraste cheio × vazado da frase da Hero), numa coluna à esquerda do título.
+   Conta só as perguntas visíveis; as perguntas curtas de cada situação ficam recuadas, sem número */
 #form-cenario { counter-reset: q; }
-.grupo__rotulo:not(.grupo__rotulo--sub), .campo > label.rotulo-num { counter-increment: q; padding-left: 1.9rem; text-indent: -1.9rem; }
-.grupo__rotulo:not(.grupo__rotulo--sub)::before, .campo > label.rotulo-num::before { content: counter(q); display: inline-block; width: 1.9rem; text-indent: 0;
-  font-family: "Geist", system-ui, sans-serif; font-weight: 600; font-size: .86rem; color: var(--royal); font-variant-numeric: tabular-nums; }
-.grupo__rotulo--sub { padding-left: 1.9rem; font-weight: 500; font-size: .95rem; }
+.grupo--num > .grupo__rotulo, .campo > label.rotulo-num { counter-increment: q; position: relative; display: block; min-height: 1.5rem; padding-left: 3rem; }
+.grupo--num > .grupo__rotulo::before, .campo > label.rotulo-num::before { content: counter(q, decimal-leading-zero); position: absolute; left: 0; top: -.28rem;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 1.65rem; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+  color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px var(--royal); }
+@media (max-width: 40rem) {
+  .grupo--num > .grupo__rotulo, .campo > label.rotulo-num { padding-left: 2.5rem; }
+  .grupo--num > .grupo__rotulo::before, .campo > label.rotulo-num::before { font-size: 1.3rem; top: -.18rem; }
+}
+/* pergunta curta de cada situação marcada: recuada sob o título da pergunta 1, com um fio vertical */
+.ctx { display: grid; gap: 1rem; margin: .15rem 0 0 3rem; padding: .2rem 0 .1rem 1.1rem; border-left: 1px solid var(--linha); }
+.ctx__rotulo { display: block; margin-bottom: .4rem; line-height: 1.3; }
+.ctx__sit { display: block; margin-bottom: .1rem; font-family: "Geist", system-ui, sans-serif; font-weight: 600; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); }
+.ctx__perg { font-family: "Plus Jakarta Sans", sans-serif; font-weight: 600; font-size: .95rem; letter-spacing: -.01em; color: #0B2A5B; }
+@media (max-width: 40rem) { .ctx { margin-left: 2.5rem; padding-left: .9rem; } }
 .grupo__opcional { font-family: "Geist", sans-serif; font-weight: 400; font-size: .76rem; color: var(--suave); letter-spacing: .01em; }
 .sub { margin-top: .15rem; }
 
@@ -91,7 +102,7 @@ body { margin: 0; min-height: 100vh; font-family: "Geist", system-ui, sans-serif
 .grupo__acao { padding: .1rem .15rem; border: 0; background: none; font: inherit; font-weight: 600; color: var(--royal); cursor: pointer; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: .22em; transition: text-decoration-color .2s ease, color .2s ease; }
 .grupo__acao:hover { color: var(--vivo); text-decoration-color: currentColor; }
 .grupo__sep { color: var(--suave); opacity: .55; }
-@media (max-width: 30rem) { .grupo--multi > .grupo__rotulo { max-width: none; } .grupo__acoes { position: static; justify-self: start; margin: -.1rem 0 .1rem 1.9rem; font-size: .74rem; } }
+@media (max-width: 30rem) { .grupo--multi > .grupo__rotulo { max-width: none; } .grupo__acoes { position: static; justify-self: start; margin: -.1rem 0 .1rem 2.5rem; font-size: .74rem; } }
 .segmento { display: inline-flex; width: fit-content; max-width: 100%; padding: .2rem; gap: .2rem; border-radius: .9rem; background: rgba(10, 54, 157, .08); border: 1px solid var(--linha); }
 .segmento .chip { min-height: 2.2rem; padding: .3rem 1rem; border-color: transparent; background: transparent; justify-content: center; }
 .segmento .chip:has(input:checked) { background: #fff; border-color: var(--vivo); box-shadow: 0 .4rem .8rem -.6rem rgba(47, 107, 255, .8); }

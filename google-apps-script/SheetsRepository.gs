@@ -80,8 +80,8 @@ function gravarCenario_(lead, q, hashChave) {
   var dias = Number(prop_('UNQUALIFIED_LEAD_RETENTION_DAYS'));
   var revisao = dias > 0 ? Utilities.formatDate(new Date(Date.now() + dias * 86400000), CRIVIA.TIMEZONE, 'yyyy-MM-dd') : '';   // sem prazo aprovado, fica vazio
   var junta = function (lista) { return lista.join(' | '); };   // múltipla escolha: códigos/rótulos na mesma célula; a aba Respostas traz uma linha por opção
-  var linha = [codigo, agora, agora, 'Novo', junta(s.situationCodes), junta(s.situationLabels), s.situationCodes.length === 1 ? 'ctx_' + s.situationCodes[0] : '',
-    s.contextAnswerCode, s.contextAnswerLabel, junta(s.audienceProfiles), junta(s.audienceProfileLabels), s.decisionRole, s.decisionRoleLabel,
+  var linha = [codigo, agora, agora, 'Novo', junta(s.situationCodes), junta(s.situationLabels),
+    junta(s.contextAnswers.map(function (c) { return 'ctx_' + c.situationCode; })), junta(s.contextAnswers.map(function (c) { return c.answerCode; })), junta(s.contextAnswers.map(function (c) { return c.answerLabel; })), junta(s.audienceProfiles), junta(s.audienceProfileLabels), s.decisionRole, s.decisionRoleLabel,
     loc.type, loc.countryCode, texto(loc.countryName), loc.stateCode, texto(loc.stateName), loc.cityCode, texto(loc.cityName), texto(loc.foreignRegion), texto(s.narrative),
     texto(c.name), texto(c.organization), c.preferredChannel, telefoneParaPlanilha_(c.phone), texto(c.email), prop_('PRIVACY_NOTICE_VERSION'), agora,
     CRIVIA.LEGAL_BASIS_PLACEHOLDER, p.marketingConsent ? 'true' : 'false', p.marketingConsent ? agora : '',
@@ -101,7 +101,7 @@ function respostas_(lead) {
   var s = lead.scenario, c = lead.contact, linhas = [];
   var add = function (pergunta, codigos, rotulo) { codigos.forEach(function (cod, i) { linhas.push([pergunta, cod, rotulo(cod), i + 1]); }); };
   add('situation', s.situationCodes, function (x) { return SITUACOES_[x][0]; });
-  if (s.contextAnswerCode) add('context_answer', [s.contextAnswerCode], function () { return s.contextAnswerLabel; });
+  s.contextAnswers.forEach(function (c) { add('context:' + c.situationCode, [c.answerCode], function () { return c.answerLabel; }); });   // uma pergunta por situação marcada
   add('audience_profile', s.audienceProfiles, function (x) { return AUDIENCIA_[x]; });
   add('decision_role', [s.decisionRole], function (x) { return PAPEIS_[x]; });
   add('urgency', s.urgencies, function (x) { return URGENCIAS_[x]; });
