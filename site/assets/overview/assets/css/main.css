@@ -2900,3 +2900,6 @@ header.fixed nav a.crivia-nav-fale { font-size: clamp(.58rem, .8vw, .72rem) !imp
   .crivia-fim__acoes { flex-direction: column; width: min(15rem, 100%); }
   .crivia-fim__acoes .crivia-cta { width: 100%; height: 2.2rem; justify-content: center; }
 }
+/* menu do celular: todos os itens centralizados; o último (CTA do modelo) não pode encostar na borda nem quebrar */
+nav[aria-label="Mobile"] a { text-align: center; }
+nav[aria-label="Mobile"] a.underline { width: auto; max-width: 100%; font-size: 1.05rem; letter-spacing: .16em; white-space: nowrap; }

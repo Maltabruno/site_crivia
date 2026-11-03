@@ -1,12 +1,10 @@
-"""Testes do servidor de leads e das regras. Execução (na pasta site_crivia):
+"""Testes do servidor de leads e das regras (esquema v2, página única). Execução (na pasta site_crivia):
     python -I -m unittest discover -s tests -v
 Sem dependências externas.
 """
-import copy
 import io
 import json
 import os
-import sqlite3
 import sys
 import tempfile
 import threading
@@ -20,78 +18,117 @@ sys.path.insert(0, os.path.join(os.path.dirname(AQUI), "servidor"))
 import regras_leads as R  # noqa: E402
 import servidor_leads as S  # noqa: E402
 
+BH = "3106200"   # Belo Horizonte (MG)
+SP_CAPITAL = "3550308"
 
-def base(entrada="underperforming"):
-    """Payload mínimo válido para cada rota."""
-    sc = {"entryPath": entrada, "audienceContext": "contractor", "decisionRole": "decides", "stage": "execution",
-          "issues": ["schedule"], "consequences": ["penalty"], "decisionHorizon": "up_to_7_days", "city": "Belo Horizonte", "state": "MG",
-          "estimatedRange": "undisclosed", "availableDocuments": ["contract", "schedule", "projects"],
-          "narrative": "O cronograma atrasou e precisamos decidir como recuperar sem estourar a margem do contrato.", "branchSpecificData": {}}
-    if entrada == "decision_support":
-        sc.update({"issues": [], "branchSpecificData": {"evaluate": ["land", "budget_costs"]}})
-    elif entrada == "visual_communication":
-        sc.update({"issues": [], "stage": None, "consequences": [], "branchSpecificData": {
-            "deliverable": "image_or_3d", "purpose": "present_project", "audience": "investor", "referenceLevel": "plans_projects"}})
-    elif entrada == "ai_decision_engineering":
-        sc.update({"issues": [], "stage": None, "branchSpecificData": {
-            "aiSituation": "already_using", "difficulties": ["rework"], "areas": ["operations"], "peopleRange": "11_to_50", "affectedProcess": "planning"}})
-    elif entrada == "other_or_unsure":
-        sc.update({"issues": [], "stage": None, "branchSpecificData": {"decisionNeeded": "Definir se contratamos uma revisão do projeto."}})
-    return {"idempotencyKey": "chave-" + entrada.replace("_", "-") + "-0001", "schemaVersion": 1,
+
+def base(situacao="obra_contrato_dificuldade"):
+    """Payload mínimo válido (modo Brasil)."""
+    return {"idempotencyKey": "chave-" + situacao.replace("_", "-") + "-0001", "schemaVersion": 2, "formVersion": "form-2", "elapsedMs": 45000,
             "source": {"originCta": "produtos", "productHint": "P06", "deviceCategory": "desktop", "utmSource": "teste"},
-            "scenario": sc,
-            "contact": {"name": "Maria Souza", "organization": "Construtora Alfa", "roleTitle": "Diretora", "preferredChannel": "email",
-                        "email": "Maria@Exemplo.com.br", "preferredContactPeriod": "morning"},
+            "scenario": {"situationCode": situacao, "contextAnswerCode": "running" if situacao == "obra_contrato_dificuldade" else "unknown", "audienceProfile": "contractor", "decisionRole": "decides",
+                         "location": {"type": "brazil", "countryCode": "BR", "stateCode": "MG", "cityCode": BH, "cityName": "Belo Horizonte"},
+                         "narrative": "O cronograma atrasou e precisamos decidir como recuperar sem estourar a margem do contrato, que já tem multa prevista.",
+                         "urgency": "this_week", "consequences": ["penalty", "stoppage"], "documents": "partial", "estimatedRange": "1m_to_10m"},
+            "contact": {"name": "Maria Souza", "organization": "Construtora Alfa", "preferredChannel": "email", "email": "Maria@Exemplo.com.br", "contactPeriod": "morning"},
             "privacy": {"privacyNoticeVersion": "minuta-0", "acknowledged": True, "marketingConsent": False}}
 
 
-class TestValidacao(unittest.TestCase):
-    def test_todas_as_rotas_validam(self):
-        for rota in R.ENTRY_PATHS:
-            lead = R.validar_lead(base(rota))
-            self.assertEqual(lead["scenario"]["entryPath"], rota)
-            self.assertFalse(lead["privacy"]["marketingConsent"])
-            self.assertEqual(lead["contact"]["email"], "maria@exemplo.com.br")
+def exterior():
+    p = base()
+    p["idempotencyKey"] = "chave-exterior-0001"
+    p["scenario"]["location"] = {"type": "international", "countryCode": "PT", "cityName": "Lisboa", "foreignRegion": "Lisboa"}
+    return p
 
-    def test_campo_desconhecido_e_enum_invalido(self):
+
+class TestLocalidades(unittest.TestCase):
+    def test_tabelas_oficiais(self):
+        self.assertEqual(len(R.estados()), 27)
+        self.assertIn("DF", R.estados())
+        self.assertEqual(R.municipios("MG")[BH], "Belo Horizonte")
+        self.assertEqual(R.municipios("DF"), {"5300108": "Brasília"})
+        self.assertGreater(sum(len(R.municipios(u)) for u in R.estados()), 5500)
+        self.assertEqual(R.paises()["BR"], "Brasil")
+        for uf, (_n, cod) in R.estados().items():            # o código do município começa com o código da UF
+            self.assertTrue(all(c.startswith(cod) for c in R.municipios(uf)), uf)
+
+
+class TestValidacao(unittest.TestCase):
+    def test_brasil_valido_e_normalizado(self):
+        lead = R.validar_lead(base())
+        loc = lead["scenario"]["location"]
+        self.assertEqual((loc["countryCode"], loc["stateCode"], loc["stateName"], loc["cityCode"], loc["cityName"]), ("BR", "MG", "Minas Gerais", BH, "Belo Horizonte"))
+        self.assertEqual(lead["contact"]["email"], "maria@exemplo.com.br")
+        self.assertFalse(lead["privacy"]["marketingConsent"])
+        self.assertEqual(lead["scenario"]["situationLabel"], "Obra ou contrato com dificuldade")
+        self.assertEqual(lead["scenario"]["contextAnswerLabel"], "Em execução")
+
+    def test_todas_as_situacoes_validam(self):
+        for cod in R.SITUATIONS:
+            R.validar_lead(base(cod))
+
+    def test_exterior_valido_e_sem_campos_do_brasil(self):
+        loc = R.validar_lead(exterior())["scenario"]["location"]
+        self.assertEqual((loc["type"], loc["countryCode"], loc["countryName"], loc["cityName"], loc["stateCode"], loc["cityCode"]), ("international", "PT", "Portugal", "Lisboa", "", ""))
+        p = exterior(); p["scenario"]["location"]["stateCode"] = "SP"       # resíduo inconsistente do modo Brasil
+        with self.assertRaises(R.ErroValidacao) as e:
+            R.validar_lead(p)
+        self.assertEqual(e.exception.campos["scenario.location.stateCode"], "campo_desconhecido")
+
+    def test_cidade_de_outra_uf_ou_adulterada_e_rejeitada(self):
+        p = base(); p["scenario"]["location"].update({"stateCode": "SP"})            # BH não pertence a SP
+        with self.assertRaises(R.ErroValidacao) as e:
+            R.validar_lead(p)
+        self.assertEqual(e.exception.campos["scenario.location.cityCode"], "valor_invalido")
+        p = base(); p["scenario"]["location"]["cityCode"] = "9999999"
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = base(); p["scenario"]["location"]["cityName"] = "Cidade Inventada"
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = base(); p["scenario"]["location"].update({"stateCode": "SP", "cityCode": SP_CAPITAL, "cityName": "São Paulo"})
+        R.validar_lead(p)
+
+    def test_pais_invalido_e_brasil_no_modo_exterior(self):
+        p = exterior(); p["scenario"]["location"]["countryCode"] = "ZZ"
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = exterior(); p["scenario"]["location"]["countryCode"] = "BR"
+        with self.assertRaises(R.ErroValidacao) as e:
+            R.validar_lead(p)
+        self.assertEqual(e.exception.campos["scenario.location.countryCode"], "use_modo_brasil")
+
+    def test_campo_desconhecido_enum_e_resposta_de_outra_situacao(self):
         p = base(); p["scenario"]["extra"] = 1
         with self.assertRaises(R.ErroValidacao) as e:
             R.validar_lead(p)
         self.assertIn("scenario.extra", e.exception.campos)
-        p = base(); p["scenario"]["entryPath"] = "hack"
+        p = base(); p["scenario"]["situationCode"] = "hack"
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
+        p = base(); p["scenario"]["contextAnswerCode"] = "deadline"             # resposta de outra situação
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+        p = base(); p["scenario"].pop("contextAnswerCode")                       # a pergunta contextual é opcional
+        self.assertEqual(R.validar_lead(p)["scenario"]["contextAnswerCode"], "")
 
-    def test_limites_de_selecao_e_tamanho(self):
-        p = base(); p["scenario"]["issues"] = ["schedule", "quality", "supplier", "scope_change"]
-        with self.assertRaises(R.ErroValidacao) as e:
-            R.validar_lead(p)
-        self.assertEqual(e.exception.campos["scenario.issues"], "limite_de_selecoes")
-        p = base(); p["scenario"]["consequences"] = ["penalty", "stoppage", "other"]
+    def test_relato_limites_html_e_quebras_de_linha(self):
+        p = base(); p["scenario"]["narrative"] = "curto"
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        p = base(); p["scenario"]["narrative"] = "x" * 701
+        p = base(); p["scenario"]["narrative"] = "x" * 1201
         with self.assertRaises(R.ErroValidacao) as e:
             R.validar_lead(p)
         self.assertEqual(e.exception.campos["scenario.narrative"], "tamanho")
-
-    def test_branch_exige_campos_da_rota(self):
-        p = base("decision_support"); p["scenario"]["branchSpecificData"] = {}
-        with self.assertRaises(R.ErroValidacao):
+        p = base(); p["scenario"]["narrative"] = "<img src=x onerror=alert(1)> texto suficiente"
+        with self.assertRaises(R.ErroValidacao) as e:
             R.validar_lead(p)
-        p = base("visual_communication"); p["scenario"]["branchSpecificData"]["extra"] = "x"
-        with self.assertRaises(R.ErroValidacao):
-            R.validar_lead(p)
-        p = base("ai_decision_engineering"); p["scenario"]["branchSpecificData"]["difficulties"] = []
-        with self.assertRaises(R.ErroValidacao):   # "já utiliza" exige ao menos uma dificuldade
-            R.validar_lead(p)
-        p = base("ai_decision_engineering"); p["scenario"]["branchSpecificData"].update({"aiSituation": "evaluating", "difficulties": ["rework"]})
-        self.assertEqual(R.validar_lead(p)["scenario"]["branchSpecificData"]["difficulties"], [])
+        self.assertEqual(e.exception.campos["scenario.narrative"], "html_nao_permitido")
+        p = base(); p["scenario"]["narrative"] = "Primeira linha com acentuação e ção.\n\nSegunda linha continua aqui."
+        self.assertIn("\n\n", R.validar_lead(p)["scenario"]["narrative"])
 
     def test_telefone_email_e_canal(self):
         self.assertEqual(R.normalizar_telefone("(31) 98888-7777"), "+5531988887777")
-        self.assertEqual(R.normalizar_telefone("+55 31 3333-4444"), "+553133334444")
-        self.assertEqual(R.normalizar_telefone("5531988887777"), "+5531988887777")
         self.assertEqual(R.normalizar_telefone("+351 912 345 678"), "+351912345678")
         for ruim in ("123", "abc", "(00) 98888-7777", "31 8888-77"):
             self.assertIsNone(R.normalizar_telefone(ruim))
@@ -99,25 +136,49 @@ class TestValidacao(unittest.TestCase):
         with self.assertRaises(R.ErroValidacao) as e:
             R.validar_lead(p)
         self.assertEqual(e.exception.campos["contact.phone"], "obrigatorio")
+        p["contact"]["phone"] = "+351 912 345 678"
+        self.assertEqual(R.validar_lead(p)["contact"]["phone"], "+351912345678")
+        p = base(); p["contact"]["phone"] = "(31) 98888-7777"                    # segundo canal opcional
+        self.assertEqual(R.validar_lead(p)["contact"]["phone"], "+5531988887777")
         p = base(); p["contact"]["email"] = "sem-arroba"
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-
-    def test_organizacao_so_obrigatoria_em_contexto_empresarial(self):
-        p = base(); p["contact"].pop("organization")
+        p = base(); p["contact"]["preferredChannel"] = "phone_call"
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        p["scenario"]["audienceContext"] = "owner_investor"
-        R.validar_lead(p)
+
+    def test_perguntas_opcionais_do_formulario(self):
+        lead = R.validar_lead(base())
+        s = lead["scenario"]
+        self.assertEqual((s["urgency"], s["consequences"], s["documents"], s["estimatedRange"], lead["contact"]["contactPeriod"]),
+                         ("this_week", ["penalty", "stoppage"], "partial", "1m_to_10m", "morning"))
+        p = base()
+        for campo in ("urgency", "consequences", "documents", "estimatedRange"):
+            p["scenario"].pop(campo)
+        p["contact"].pop("contactPeriod")
+        s = R.validar_lead(p)["scenario"]                                         # todas opcionais
+        self.assertEqual((s["urgency"], s["consequences"], s["documents"], s["estimatedRange"]), ("", [], "", ""))
+        for campo, valor in (("urgency", "ontem"), ("consequences", ["penalty", "stoppage", "other"]), ("consequences", ["xx"]), ("documents", "talvez"), ("estimatedRange", "1 bilhão")):
+            p = base(); p["scenario"][campo] = valor
+            with self.assertRaises(R.ErroValidacao):
+                R.validar_lead(p)
+        p = base(); p["contact"]["contactPeriod"] = "madrugada"
+        with self.assertRaises(R.ErroValidacao):
+            R.validar_lead(p)
+
+    def test_organizacao_e_opcional(self):
+        p = base(); p["contact"].pop("organization")
+        self.assertEqual(R.validar_lead(p)["contact"]["organization"], "")
 
     def test_privacidade_e_marketing(self):
         p = base(); p["privacy"]["acknowledged"] = False
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
         p = base(); p["privacy"]["marketingConsent"] = True
-        with self.assertRaises(R.ErroValidacao) as e:
+        self.assertTrue(R.validar_lead(p)["privacy"]["marketingConsent"])
+        p = base(); p["privacy"]["marketingConsent"] = "sim"
+        with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        self.assertEqual(e.exception.campos["privacy.marketingConsent"], "nao_oferecido")
 
     def test_dado_pessoal_no_texto_livre_e_mascarado_e_sinalizado(self):
         p = base(); p["scenario"]["narrative"] = "Meu CPF é 123.456.789-09 e o contrato está atrasado há semanas."
@@ -126,44 +187,49 @@ class TestValidacao(unittest.TestCase):
         self.assertTrue(lead["sensitiveContentSuspected"])
 
     def test_parametros_de_origem_so_na_lista(self):
-        p = base(); p["source"]["originCta"] = "<script>"
+        for campo, valor in (("originCta", "<script>"), ("productHint", "P99"), ("utmSource", "<b>x</b>")):
+            p = base(); p["source"][campo] = valor
+            with self.assertRaises(R.ErroValidacao):
+                R.validar_lead(p)
+
+    def test_tempo_minimo_e_obrigatoriedade(self):
+        self.assertTrue(R.envio_rapido_demais({"elapsedMs": 800}))
+        self.assertFalse(R.envio_rapido_demais({"elapsedMs": 45000}))
+        p = base(); p.pop("elapsedMs")
         with self.assertRaises(R.ErroValidacao):
             R.validar_lead(p)
-        p = base(); p["source"]["productHint"] = "P99"
-        with self.assertRaises(R.ErroValidacao):
-            R.validar_lead(p)
-        p = base(); p["source"]["utmSource"] = "<b>x</b>"
-        with self.assertRaises(R.ErroValidacao):
-            R.validar_lead(p)
+
+    def test_complemento_opcional(self):
+        self.assertEqual(R.validar_detalhes({"urgency": "this_week", "documents": "partial"}), {"urgency": "this_week", "documents": "partial"})
+        for ruim in ({}, {"urgency": "ontem"}, {"urgency": "immediate", "extra": 1}):
+            with self.assertRaises(R.ErroValidacao):
+                R.validar_detalhes(ruim)
 
 
 class TestPontuacao(unittest.TestCase):
     def test_prioridade_a_b_c_e_nunca_rejeita(self):
         alta = R.enquadrar(R.validar_lead(base()))
         self.assertEqual(alta["priority"], "A")
-        self.assertGreaterEqual(alta["totalScore"], 10)
-        p = base("other_or_unsure")
-        p["scenario"].update({"decisionRole": "early_research", "decisionHorizon": "undefined", "availableDocuments": ["none_organized"],
-                              "consequences": ["other"], "narrative": "Quero entender o que vocês fazem."})
+        p = base("outra_nao_sei")
+        p["scenario"].update({"decisionRole": "gathering", "audienceProfile": "other", "contextAnswerCode": "unknown", "narrative": "Quero entender o que vocês fazem.",
+                              "urgency": "undefined", "consequences": [], "documents": "no", "estimatedRange": "unknown"})
         baixa = R.enquadrar(R.validar_lead(p))
         self.assertEqual(baixa["priority"], "C")
-        self.assertIn("organized_documents", baixa["missingInformation"])
-        meio = base(); meio["scenario"].update({"decisionRole": "technical_participant", "decisionHorizon": "after_90_days", "consequences": ["other"],
-                                                "availableDocuments": ["contract"]})
+        self.assertIn("context_answer", baixa["missingInformation"])
+        self.assertTrue({"decision_horizon", "documents", "estimated_range"} <= set(baixa["missingInformation"]))
+        self.assertEqual(alta["timingScore"], 2); self.assertEqual(alta["consequenceScore"], 2); self.assertEqual(alta["readinessScore"], 1)
+        meio = base(); meio["scenario"].update({"decisionRole": "recommends", "audienceProfile": "owner_investor", "narrative": "x" * 100,
+                                                "urgency": "undefined", "consequences": [], "documents": "unknown"})
         self.assertEqual(R.enquadrar(R.validar_lead(meio))["priority"], "B")
 
-    def test_produtos_candidatos_por_rota(self):
-        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("decision_support"))), ["P03", "P04"])
-        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("visual_communication"))), ["CV01"])
-        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("ai_decision_engineering"))), ["IA"])
-        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("other_or_unsure"))), [])
-        p = base(); p["scenario"]["issues"] = ["undefined_responsibilities", "measurement_receipt"]
-        cand = R.produtos_candidatos(R.validar_lead(p))
-        self.assertIn("P01", cand); self.assertIn("P09", cand)
+    def test_produtos_candidatos_sao_hipotese_interna(self):
+        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("projeto_terreno_propostas"))), ["P02", "P03", "P05"])
+        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("comunicacao_ia_3d"))), ["CV01"])
+        self.assertEqual(R.produtos_candidatos(R.validar_lead(base("outra_nao_sei"))), [])
 
     def test_faixas_vem_da_configuracao_central(self):
         self.assertEqual(R.PONTUACAO["faixas"], {"A": 10, "B": 6})
-        self.assertEqual(R.SCORE_RULE_VERSION, "score-v1")
+        self.assertEqual(R.SCORE_RULE_VERSION, "score-v3")
 
 
 class TestHTTP(unittest.TestCase):
@@ -193,6 +259,9 @@ class TestHTTP(unittest.TestCase):
         except urllib.error.HTTPError as e:
             return e.code, json.loads(e.read() or b"{}"), dict(e.headers)
 
+    def envelope(self, acao, dados):
+        return self.post("/", {"action": acao, "data": dados}, {"Content-Type": "text/plain;charset=utf-8"})[1]
+
     def linhas(self):
         return self.srv.estado.con.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
 
@@ -209,22 +278,40 @@ class TestHTTP(unittest.TestCase):
         data = json.loads(con.execute("SELECT data_json FROM leads WHERE id=?", (r1["id"],)).fetchone()[0])
         self.assertEqual(data["qualification"]["priority"], "A")
         self.assertFalse(data["privacy"]["marketingConsent"])
-        self.assertEqual(data["privacy"]["privacyNoticeVersion"], "minuta-0")
+        self.assertIsNone(data["privacy"]["marketingConsentAt"])
+        self.assertEqual(data["scenario"]["location"]["cityCode"], BH)
         self.assertNotIn("ip", json.dumps(data).lower().replace("zip", ""))   # IP bruto nunca no registro
         fila = con.execute("SELECT lead_id, categoria, prioridade FROM outbox WHERE lead_id=?", (r1["id"],)).fetchone()
         self.assertIsNotNone(fila)
         self.assertNotIn("Maria", json.dumps(fila))                            # notificação sem dados pessoais
 
+    def test_envelope_do_site_exterior_e_complemento(self):
+        p = exterior(); p["idempotencyKey"] = "idem-envelope-001"
+        r = self.envelope("submit", p)
+        self.assertTrue(r["ok"]); self.assertTrue(r["publicCode"]); self.assertTrue(r["detailsToken"])
+        self.assertEqual(r["confirmation"], "email")
+        ruim = self.envelope("details", {"leadRef": r["id"], "token": "falso", "urgency": "immediate"})
+        self.assertEqual(ruim["error"], "unauthorized")
+        bom = self.envelope("details", {"leadRef": r["id"], "token": r["detailsToken"], "urgency": "immediate", "documents": "partial", "contactPeriod": "any"})
+        self.assertTrue(bom["ok"])
+        det = json.loads(self.srv.estado.con.execute("SELECT details_json FROM leads WHERE id=?", (r["id"],)).fetchone()[0])
+        self.assertEqual(det, {"urgency": "immediate", "documents": "partial", "contactPeriod": "any"})
+
+    def test_envio_rapido_demais_nao_grava(self):
+        p = base(); p["idempotencyKey"] = "idem-rapido-0001"; p["elapsedMs"] = 500
+        antes = self.linhas()
+        self.assertEqual(self.envelope("submit", p)["error"], "too_fast")
+        self.assertEqual(self.linhas(), antes)
+
     def test_validacao_no_servidor_nao_ecoa_valores(self):
-        p = base(); p["idempotencyKey"] = "idem-invalido-0001"; p["scenario"]["entryPath"] = "SEGREDO<script>"
+        p = base(); p["idempotencyKey"] = "idem-invalido-0001"; p["scenario"]["situationCode"] = "SEGREDO<script>"
         s, r, _ = self.post("/api/leads", p)
         self.assertEqual(s, 422)
         self.assertNotIn("SEGREDO", json.dumps(r))
 
     def test_xss_e_sql_injection_sao_apenas_texto(self):
         p = base(); p["idempotencyKey"] = "idem-xss-sql-0001"
-        p["scenario"]["narrative"] = "<img src=x onerror=alert(1)> ');DROP TABLE leads;-- fim"
-        p["contact"]["name"] = "Ana Maria"
+        p["scenario"]["narrative"] = "Texto com aspas e ');DROP TABLE leads;-- fim da frase longa o bastante"
         s, r, _ = self.post("/api/leads", p)
         self.assertEqual(s, 201)
         existe = self.srv.estado.con.execute("SELECT name FROM sqlite_master WHERE name='leads'").fetchone()
@@ -248,21 +335,20 @@ class TestHTTP(unittest.TestCase):
         self.assertEqual(s, 415)
         s, _, _ = self.post("/api/leads", base(), cabecalhos={"Origin": "http://malicioso.example"})
         self.assertEqual(s, 403)
-        p = base(); p["scenario"]["availableDocuments"] = ["contract"] * 50
-        p["idempotencyKey"] = "idem-array-0001"
+        p = base(); p["idempotencyKey"] = "idem-array-0001"; p["scenario"]["narrative"] = ["a"] * 50
         s, _, _ = self.post("/api/leads", p)
         self.assertEqual(s, 422)
 
     def test_detalhes_exigem_token(self):
         p = base(); p["idempotencyKey"] = "idem-detalhes-001"
         _, r, _ = self.post("/api/leads", p)
-        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"additionalInfo": "Mais contexto sobre o contrato."}, {"X-Lead-Token": "falso"})
+        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"urgency": "immediate"}, {"X-Lead-Token": "falso"})
         self.assertEqual(s, 403)
-        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"additionalInfo": "Mais contexto sobre o contrato."}, {"X-Lead-Token": r["detailsToken"]})
+        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"urgency": "immediate"}, {"X-Lead-Token": r["detailsToken"]})
         self.assertEqual(s, 200)
         det = self.srv.estado.con.execute("SELECT details_json FROM leads WHERE id=?", (r["id"],)).fetchone()[0]
-        self.assertIn("Mais contexto", det)
-        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"additionalInfo": "ok", "x": 1}, {"X-Lead-Token": r["detailsToken"]})
+        self.assertIn("immediate", det)
+        s, _, _ = self.post("/api/leads/%s/detalhes" % r["id"], {"urgency": "immediate", "x": 1}, {"X-Lead-Token": r["detailsToken"]})
         self.assertEqual(s, 422)
 
     def test_logs_nao_contem_o_formulario(self):

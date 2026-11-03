@@ -1,85 +1,87 @@
-# Dicionário de dados — formulário "Apresentar meu cenário"
+# Dicionário de dados — formulário "Apresentar meu cenário" (página única)
 
-Versão do esquema: **1** · Regra de pontuação: **score-v1** · Fonte da verdade: `servidor/regras_leads.py` (o navegador usa `cenario/regras.js`, com os mesmos valores).
+Versão do esquema: **2** · Regra de pontuação: **score-v3** · Fonte da verdade: `servidor/regras_leads.py` e `google-apps-script/Validation.gs`
+(o navegador usa `cenario/regras.js`, com os mesmos códigos). Os códigos internos são estáveis; os textos mostrados ao visitante ficam só em `cenario/regras.js`.
 
-Os valores internos são estáveis e em inglês; os textos mostrados ao visitante ficam só em `cenario/regras.js`.
+O formulário é **uma única página**: situação → (pergunta curta opcional) → perfil e participação → localização → relato → contato → envio.
+O visitante **não escolhe produto** (P01–P12, CV01): a CRIVIA faz o enquadramento depois, como hipótese de triagem.
 
-## Estrutura do registro (`LeadScenario`)
+## Campos enviados
 
-| Bloco | Conteúdo |
-|---|---|
-| `id`, `schemaVersion`, `createdAt`, `status` | Identificador aleatório (20 caracteres), versão do esquema, data (UTC) e estado (`novo`). |
-| `source` | `landingPage`, `referrer` (somente o domínio), `originCta`, `productHint`, `utmSource/Medium/Campaign/Content/Term`, `deviceCategory`. |
-| `scenario` | Respostas das etapas 1 a 3 (abaixo). |
-| `contact` | Nome, organização, cargo, canal preferido, telefone (E.164), e-mail, segundo canal, período preferido. |
-| `privacy` | `privacyNoticeVersion`, `privacyAcknowledgedAt`, `requestedContactChannel`, `marketingConsent` (sempre `false` nesta versão). |
-| `qualification` | Pontuações, `priority`, `ruleVersion`, `candidateProducts[]`, `missingInformation[]`. |
-| `internalReview` (coluna própria) | `reviewStatus`, `reviewedBy`, `reviewedAt`, `nextAction`, `notes`. |
+| Bloco | Campo | Obrigatório | Valores / regra |
+|---|---|---|---|
+| `scenario` | `situationCode` | sim | `obra_contrato_dificuldade`, `atraso_custo_margem`, `projeto_terreno_propostas`, `planejamento_recursos_recuperacao`, `medicao_alteracao_documentacao`, `vistoria_recebimento_conferencia`, `comunicacao_ia_3d`, `outra_nao_sei` |
+| | `contextAnswerCode` | não | resposta da pergunta curta **daquela** situação (todas têm `unknown` = "Ainda não sei"); valor de outra situação é rejeitado |
+| | `audienceProfile` | sim | `company_manager`, `contractor`, `owner_investor`, `technical_team`, `other` |
+| | `decisionRole` | sim | `decides`, `recommends`, `gathering`, `referring`, `other_unsure` |
+| | `narrative` | sim | texto livre de 10 a 1.200 caracteres; sem HTML; quebras de linha preservadas |
+| `urgency` | não | `immediate`, `this_week`, `this_month`, `undefined` ("Quando essa decisão precisa avançar?") |
+| `consequences` | não | até 2 de: `penalty`, `stoppage`, `margin_cash_loss`, `technical_quality_risk`, `contract_conflict`, `decision_without_information`, `other` |
+| `documents` | não | `yes`, `partial`, `no`, `unknown` (só a indicação; não há upload) |
+| `estimatedRange` | não | `up_to_100k`, `100k_to_1m`, `1m_to_10m`, `10m_to_50m`, `above_50m`, `undisclosed`, `unknown` (faixas provisórias) |
+| `scenario.location` | `type` | sim | `brazil` ou `international` |
+| (Brasil) | `stateCode`, `cityCode` | sim | UF (27) e código IBGE de 7 dígitos **do município dentro da UF** (conferido contra a tabela do IBGE); `cityName` opcional e, se vier, deve ser o oficial; `countryCode` opcional e só `BR` |
+| (Exterior) | `countryCode`, `cityName` | sim | ISO 3166-1 alfa-2 (lista local; `BR` é rejeitado: usar o modo Brasil) e cidade (até 80); `foreignRegion` opcional (até 80) |
+| `contact` | `name` | sim | 2 a 120 caracteres |
+| | `organization` | não | até 120 |
+| | `contactPeriod` | não | `morning`, `afternoon`, `evening`, `any` |
+| | `preferredChannel` | sim | `whatsapp` ou `email` |
+| | `phone` / `email` | o do canal escolhido | o segundo canal é opcional, mas, se informado, é validado. Telefone vira E.164 (brasileiro com/sem +55 ou internacional) |
+| `privacy` | `privacyNoticeVersion`, `acknowledged` | sim | `acknowledged=true` registra que o aviso foi apresentado e o visitante o conhece; **não** é a base legal |
+| | `marketingConsent` | não | **sem caixa no formulário**: o site não envia o campo e o servidor assume `false` (campo mantido só por compatibilidade) |
+| `source` | `originCta`, `productHint`, `utm*`, `referrer`, `deviceCategory` | não | só valores das listas; `referrer` = apenas o domínio |
+| topo | `idempotencyKey`, `schemaVersion=2`, `formVersion`, `elapsedMs`, `website` (armadilha) | chave e tempo: sim | `elapsedMs` < 4.000 ms é recusado (sinal contra robôs, não prova); `website` preenchido = resposta neutra, nada é gravado |
 
-Não são gravados: IP, User-Agent completo, fingerprint, localização precisa, endereço completo, CPF, RG, documentos, dados bancários.
-O IP existe apenas como hash com sal aleatório, em memória, para o limite de requisições; some quando o processo reinicia.
+Qualquer campo fora destas listas é rejeitado (`campo_desconhecido`). Trocar Brasil ↔ Exterior não envia campos residuais do outro modo.
+Se o texto livre tiver padrão de CPF ou CNPJ, o trecho vira `[removido]` e o registro fica com `sensitiveContentSuspected=true`.
 
-## Campos de `scenario`
+Não são gravados: IP, User-Agent completo, fingerprint, GPS, CEP, endereço completo, CPF, RG, documentos, dados bancários. A localização é a **do cenário**, não a residência.
 
-| Campo | Obrigatório | Valores internos |
-|---|---|---|
-| `entryPath` | sim | `underperforming`, `decision_support`, `visual_communication`, `ai_decision_engineering`, `other_or_unsure` |
-| `audienceContext` | sim | `contractor`, `large_company`, `owner_investor`, `technical_partner`, `other` |
-| `decisionRole` | sim | `decides`, `leads_evaluation`, `technical_participant`, `early_research`, `other` |
-| `stage` | rotas A e B | `planning`, `execution`, `delay_or_critical`, `near_completion`, `operation`, `unsure` |
-| `issues` (máx. 3) | rota A | `schedule`, `margin_cost`, `measurement_receipt`, `scope_change`, `team_equipment_material`, `project_info`, `quality`, `supplier`, `undefined_responsibilities`, `other` |
-| `consequences` (máx. 2) | rotas A, B, D, E | `penalty`, `stoppage`, `margin_cash_loss`, `technical_quality_risk`, `contract_conflict`, `operation_impact`, `decision_without_information`, `other` |
-| `decisionHorizon` | sim | `up_to_7_days`, `8_to_30_days`, `31_to_90_days`, `after_90_days`, `undefined` |
-| `city` / `state` | sim | texto de 2 a 80 caracteres / uma das 27 UFs |
-| `estimatedRange` | não | `up_to_100k`, `100k_to_1m`, `1m_to_10m`, `10m_to_50m`, `above_50m`, `undisclosed`, `unknown` (faixas provisórias e configuráveis) |
-| `availableDocuments` | sim | `contract`, `projects`, `schedule`, `budget`, `measurements`, `photos_records`, `process_data`, `none_organized`, `other` |
-| `narrative` | sim | texto livre, 10 a 700 caracteres |
+## Perguntas opcionais e protocolo
 
-### `branchSpecificData` por rota
+As perguntas opcionais ("Para adiantar a análise") ficam **na mesma página**, em bloco recolhível, e vão no envio principal. Não existe mais passo extra depois do envio.
+O **protocolo não aparece na tela**: a confirmação com o protocolo segue ao canal escolhido. E-mail: automática (Apps Script, só com `CONFIRMATION_EMAIL_ENABLED=true` e remetente autorizado). WhatsApp: **enviada pela equipe** (o alerta interno traz a ação e o número); não há envio automático por WhatsApp sem um provedor/API contratado.
+A resposta do servidor informa `confirmation` (`email`, `whatsapp` ou `none`) e a página só promete o que de fato vai acontecer. A ação `details` (complemento por token) continua no backend, mas a página atual não a usa.
 
-- **B** `decision_support`: `evaluate[]` (máx. 3): `land`, `projects`, `budget_costs`, `supplier_proposals`, `planning_resources`, `measurement_change`, `handover`, `documentation_databook`, `other`.
-- **C** `visual_communication`: `deliverable`, `purpose`, `audience`, `referenceLevel`.
-- **D** `ai_decision_engineering`: `aiSituation`, `difficulties[]` (só se `already_using`), `areas[]`, `peopleRange`, `affectedProcess`.
-- **E** `other_or_unsure`: `decisionNeeded` (texto, 10 a 500 caracteres).
-- **A** `underperforming`: sem campos extras.
+## Aba `Leads` do Google Sheets (uma linha por cenário)
 
-Qualquer campo fora destas listas é rejeitado (HTTP 422, `campo_desconhecido`).
+`submission_id` (protocolo `CRV-AAAA-XXXXXX`), `created_at`, `updated_at`, `status`, `situation_code/label`, `context_question_code/answer_code/answer_label`,
+`audience_profile_code/label`, `decision_role_code/label`, `location_type`, `country_code/name`, `state_code/name`, `city_code/name`, `foreign_region`, `scenario_description`,
+`contact_name`, `organization_name`, `preferred_channel`, `whatsapp`, `email`, `privacy_notice_version`, `privacy_notice_acknowledged_at`, `legal_basis_code` (**`[VALIDAR_BASE_LEGAL]`** até decisão jurídica),
+`marketing_consent`, `marketing_consent_at`, `source_page`, `source_cta`, `utm_*`, `referrer_domain`, `optional_urgency/documents/contact_period/consequences/estimated_range`, `assigned_to`, `internal_notes`,
+`retention_review_at` (vazio até existir prazo aprovado), `deletion_or_anonymization_at`; técnicas ao final: `priority`, `candidate_products`, `missing_information`, `idempotency_key_hash`, `notification_status`, `form_version`, `schema_version`, `sensitive_content_suspected`, `score_json`.
 
-## Regras de validação (servidor)
+Status: Novo · Em análise · Aguardando informação · Contatado · Qualificado · Proposta em preparação · Proposta enviada · Não aderente · Encerrado (rótulos de acompanhamento, **não** promessa de contratação).
+Telefone, códigos de município e identificadores são gravados como **texto**; valores iniciados por `=`, `+`, `-`, `@` recebem apóstrofo (sem injeção de fórmula). `internal_notes` nunca é exposto pelo endpoint. Abas `Config` (não sigilosa) e `Audit` (evento, protocolo, ator, resultado; sem relato, telefone ou e-mail).
 
-Esquema estrito, listas permitidas, limites de arrays e de tamanho, normalização Unicode (NFC), remoção de caracteres de controle,
-organização obrigatória só em contexto empresarial (`contractor`, `large_company`, `technical_partner`), telefone obrigatório para WhatsApp e ligação,
-e-mail obrigatório para o canal e-mail (sintaxe apenas; não prova que o endereço é do visitante). Telefone brasileiro (com ou sem +55) e internacional (+ e 8 a 15 dígitos) são aceitos.
-Se o texto livre tiver padrão de CPF ou CNPJ, o trecho é substituído por `[removido]` e o registro fica com `sensitiveContentSuspected=true`.
+## Localidades (IBGE)
 
-## Pontuação (`score-v1`) — só prioridade e encaminhamento
+Arquivos locais em `cenario/data/locations/` (`states.json`, `municipalities/{UF}.json`, `countries.json`), carregados **por UF, sob demanda**; a página nunca chama o IBGE.
+Regenerar: `python scripts/gerar_localidades.py` (ver `cenario/data/locations/README.md`). A mesma tabela alimenta `google-apps-script/Municipios.gs` (arquivo gerado) e o servidor de testes.
+Em relatórios agregados, preferir país e UF; não expor a cidade ligada ao contato sem necessidade operacional.
+
+## Pontuação (`score-v3`) — só prioridade e encaminhamento
 
 | Critério | Faixa | Regra provisória |
 |---|---|---|
-| Aderência ao portfólio | 0–3 | 3 nas rotas A–D; na rota E, 2 se o texto tiver 80 caracteres ou mais, senão 1 |
-| Relação com a decisão | 0–3 | decide 3 · lidera 2 · participa tecnicamente 1 · pesquisa inicial 0 · outro 0 |
-| Consequência | 0–3 | 1 se houver alguma + 1 se houver consequência alta (multa, paralisação, perda de caixa, conflito contratual) + 1 se houver duas |
-| Horizonte | 0–2 | até 30 dias 2 · 31 a 90 dias 1 · depois ou indefinido 0 |
-| Prontidão | 0–2 | 3 ou mais tipos de documento 2 · 1 a 2 tipos 1 · nenhum 0 |
+| Aderência | 0–3 | 3 nas situações com tema definido; em "outra / não sei": 2 se o relato tiver 200+ caracteres, senão 1 |
+| Participação na decisão | 0–3 | decide 3 · recomenda 2 · levantando informações 1 · indicando 0 · outro 0 |
+| Perfil | 0–2 | empreiteira/prestador 2 · empresa/gestor 2 · proprietário/investidor 1 · equipe técnica 1 · outro 0 |
+| Detalhe do relato | 0–2 | 200+ caracteres 2 · 80+ caracteres 1 |
+| Prazo da decisão | 0–2 | imediata ou nesta semana 2 · neste mês 1 · indefinido/não informado 0 |
+| Consequência | 0–2 | alguma escolhida 1 + consequência alta (multa, paralisação, perda de caixa, conflito contratual) 1 |
+| Prontidão | 0–2 | documentos: sim 2 · parcialmente 1 · não/não sei 0 |
 
-Prioridade: total 10–13 = **A**, 6–9 = **B**, 0–5 = **C**. Valores e faixas ficam em `PONTUACAO` (`regras_leads.py`) e a versão da regra é gravada em cada registro.
-A pontuação **nunca** rejeita, bloqueia ou descarta um contato e não usa porte, valor, capacidade financeira ou dado sensível. A correção manual é feita na revisão interna.
-Esta regra é provisória e precisa de aprovação do responsável comercial e revisão jurídica (ver `legal-review-checklist.md`).
+Prioridade (máx. 16): total ≥ 10 = **A**, ≥ 6 = **B**, abaixo = **C**. Valores em `PONTUACAO` (`regras_leads.py`) e `PONTUACAO_` (`Classification.gs`); a versão da regra é gravada em cada registro.
+A pontuação **nunca** rejeita, bloqueia ou descarta um contato e não usa porte, valor, localização ou dado sensível. A faixa do empreendimento **não** entra na pontuação (só no registro). Regra provisória: precisa de aprovação do responsável comercial e revisão jurídica (ver `legal-review-checklist.md`; avaliar se configura decisão automatizada).
 
-## Produtos candidatos (hipótese de encaminhamento, sempre com revisão humana)
+## Produtos candidatos (hipótese interna, sempre com revisão humana; o visitante não os vê)
 
-| Entrada | Candidatos |
-|---|---|
-| Rota A, problema | prazo→P06 · margem/custo→P07 · medição/recebimento→P09 · escopo/alteração→P09 · equipe/equipamento/material→P08 · projeto/informação técnica→P02 · qualidade→P10 · fornecedor→P05 · responsabilidades indefinidas→P01 |
-| Rota A, fase | atraso/crítica→P07 · execução→P10 · próximo da conclusão→P11 · planejamento→P06 · "não sei" ou nenhum candidato→P01 |
-| Rota B | terreno→P03 · projetos→P02 · orçamento→P04 · propostas→P05 · planejamento→P06 · medição/alteração→P09 · recebimento→P11 · documentação→P12 |
-| Rota C | CV01 |
-| Rota D | IA (Engenharia de Decisão com IA) |
-| Rota E | nenhum (a revisão humana define) |
-
-O visitante não vê estes códigos. O interesse que vem do botão (`interesse=P06`) é só uma pista guardada em `source.productHint`: não define a rota nem o enquadramento.
+obra/contrato com dificuldade→P01 · atraso/custo/margem→P08, P07 · projeto/terreno/propostas→P02, P03, P05 · planejamento/recuperação→P06, P07 ·
+medição/alteração/documentação→P09, P12 · vistoria/recebimento→P11 · comunicação IA/3D→CV01 · outra/não sei→nenhum (a revisão humana define).
+O interesse que vem do botão (`interesse=P06`) é só uma pista em `source.productHint`: não define a situação.
 
 ## Notificação interna e confirmação
 
-A fila `outbox` guarda apenas: identificador do lead, data, categoria (rota) e prioridade. Nenhum dado pessoal vai para a notificação.
-O envio de e-mail/WhatsApp de confirmação **não está implementado** (depende de fornecedor e domínio autenticado; ver `vendor-privacy-inventory.md`).
+Alerta interno (Apps Script): protocolo, nome, canal e contato, categoria, país/UF/cidade, prioridade e link privado da planilha. **O relato completo não vai no e-mail.**
+Confirmação com o protocolo: ver a seção "Perguntas opcionais e protocolo".

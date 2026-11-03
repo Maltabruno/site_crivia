@@ -6,7 +6,7 @@
 <style>body{font:14px/1.5 system-ui;margin:2rem}li.ok{color:#0a6b2b}li.falha{color:#b3261e;font-weight:700}</style>
 </head>
 <body>
-<h1>Regras do formulário "Apresentar meu cenário"</h1>
+<h1>Regras do formulário "Apresentar meu cenário" (página única)</h1>
 <p>Abra este arquivo por um servidor local (por exemplo, a pasta <code>site_crivia</code> servida na porta 8080: <code>/tests/regras.test.html</code>). Resultado em <code id="resumo"></code>.</p>
 <ul id="lista"></ul>
 <script src="../cenario/regras.js"></script>
@@ -21,83 +21,82 @@
   }
   function igual(a, b, m) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error((m || "") + " esperado " + JSON.stringify(b) + " obtido " + JSON.stringify(a)); }
   function verdade(c, m) { if (!c) throw new Error(m || "condição falsa"); }
-  var ids = function (r) { return R.perguntasEtapa3(r).map(function (p) { return p.id; }); };
+  function valido() {
+    return { situationCode: "atraso_custo_margem", contextAnswerCode: "cost", audienceProfile: "contractor", decisionRole: "decides",
+      location: { type: "brazil", stateCode: "MG", cityCode: "3106200", cityName: "Belo Horizonte", countryCode: "", intlCity: "", foreignRegion: "" },
+      narrative: "O cronograma atrasou e precisamos decidir como recuperar o prazo.", marketingConsent: false,
+      contact: { name: "Ana Lima", organization: "", preferredChannel: "email", email: "ana@x.com", phone: "" } };
+  }
 
-  t("cinco rotas existem com os valores internos esperados", function () {
-    igual(R.ENTRADAS.map(function (e) { return e.v; }), ["underperforming", "decision_support", "visual_communication", "ai_decision_engineering", "other_or_unsure"]);
+  t("oito situações com códigos estáveis e pergunta contextual com 'Ainda não sei'", function () {
+    igual(R.SITUACOES.map(function (s) { return s.v; }), ["obra_contrato_dificuldade", "atraso_custo_margem", "projeto_terreno_propostas", "planejamento_recursos_recuperacao",
+      "medicao_alteracao_documentacao", "vistoria_recebimento_conferencia", "comunicacao_ia_3d", "outra_nao_sei"]);
+    R.SITUACOES.forEach(function (s) { verdade(s.q && s.opcoes.some(function (o) { return o.v === "unknown" && o.l === "Ainda não sei"; }), s.v); });
   });
-  t("rota A: perguntas e limites", function () {
-    var p = R.perguntasEtapa3({ entryPath: "underperforming", branch: {} });
-    igual(ids({ entryPath: "underperforming" }).slice(0, 5), ["stage", "issues", "consequences", "decisionHorizon", "narrative"]);
-    igual(p.filter(function (x) { return x.id === "issues"; })[0].max, 3);
-    igual(p.filter(function (x) { return x.id === "consequences"; })[0].max, 2);
-    igual(p.filter(function (x) { return x.id === "narrative"; })[0].max, 700);
+  t("texto exibido usa 'Inteligência Artificial' por extenso", function () {
+    verdade(R.achar(R.SITUACOES, "comunicacao_ia_3d").l.indexOf("Inteligência Artificial") >= 0);
   });
-  t("rota B: avaliar (até 3), fase, prazo, consequência, decisão", function () {
-    igual(ids({ entryPath: "decision_support" }).slice(0, 5), ["branch.evaluate", "stage", "decisionHorizon", "consequences", "narrative"]);
+  t("formulário válido não tem erros", function () { igual(R.validar(valido()), {}); });
+  t("pergunta contextual é opcional; perfil e participação são exigidos", function () {
+    var r = valido(); r.contextAnswerCode = ""; igual(R.validar(r), {});
+    r.audienceProfile = ""; r.decisionRole = ""; igual(Object.keys(R.validar(r)).sort(), ["audienceProfile", "decisionRole"]);
   });
-  t("rota C: entrega, aviso, finalidade, público, referência, prazo, texto", function () {
-    igual(ids({ entryPath: "visual_communication" }).slice(0, 7), ["branch.deliverable", "note", "branch.purpose", "branch.audience", "branch.referenceLevel", "decisionHorizon", "narrative"]);
+  t("Brasil exige estado e cidade da lista", function () {
+    var r = valido(); r.location.stateCode = ""; r.location.cityCode = ""; igual(Object.keys(R.validar(r)).sort(), ["location.city", "location.state"]);
+    r.location.stateCode = "SP"; igual(R.validar(r)["location.city"], "Escolha uma cidade da lista.");
   });
-  t("rota D: dificuldades só aparecem quando já usa IA", function () {
-    verdade(ids({ entryPath: "ai_decision_engineering", branch: { aiSituation: "evaluating" } }).indexOf("branch.difficulties") < 0);
-    verdade(ids({ entryPath: "ai_decision_engineering", branch: { aiSituation: "already_using" } }).indexOf("branch.difficulties") >= 0);
+  t("Exterior exige país e cidade; região é opcional", function () {
+    var r = valido(); r.location = { type: "international", countryCode: "", intlCity: "", foreignRegion: "" };
+    igual(Object.keys(R.validar(r)).sort(), ["location.cityName", "location.country"]);
+    r.location.countryCode = "PT"; r.location.intlCity = "Lisboa"; igual(R.validar(r), {});
   });
-  t("rota E: nota, o que acontece, decisão, consequência, prazo", function () {
-    igual(ids({ entryPath: "other_or_unsure" }).slice(0, 5), ["note", "narrative", "branch.decisionNeeded", "consequences", "decisionHorizon"]);
+  t("trocar Brasil ↔ Exterior não envia campos residuais", function () {
+    var r = valido(); r.location.countryCode = "PT"; r.location.intlCity = "Lisboa"; r.location.foreignRegion = "Lisboa";
+    var p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
+    igual(Object.keys(p.scenario.location).sort(), ["cityCode", "cityName", "countryCode", "stateCode", "type"]); igual(p.scenario.location.countryCode, "BR");
+    r.location.type = "international"; r.location.stateCode = "MG";
+    p = R.montarPayload(r, R.lerOrigem(""), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
+    igual(Object.keys(p.scenario.location).sort(), ["cityName", "countryCode", "foreignRegion", "type"]); igual(p.scenario.location.cityName, "Lisboa");
   });
-  t("campos comuns ao final da etapa 3 em todas as rotas", function () {
-    R.ENTRADAS.forEach(function (e) {
-      var l = ids({ entryPath: e.v }); igual(l.slice(-4), ["city", "state", "availableDocuments", "estimatedRange"], e.v);
-    });
+  t("relato: mínimo, máximo de 1200 e sem corte silencioso", function () {
+    var r = valido(); r.narrative = "curto"; verdade(R.validar(r).narrative);
+    r.narrative = "x".repeat(1201); verdade(R.validar(r).narrative); r.narrative = "x".repeat(1200); igual(R.validar(r), {});
   });
-  t("faixa do empreendimento é opcional e inclui 'Prefiro não informar' e 'Ainda não sei'", function () {
-    var p = R.perguntasEtapa3({ entryPath: "underperforming" }).filter(function (x) { return x.id === "estimatedRange"; })[0];
-    igual(p.obrigatorio, false);
-    verdade(p.opcoes.some(function (o) { return o.v === "undisclosed"; }) && p.opcoes.some(function (o) { return o.v === "unknown"; }));
+  t("canal escolhido exige o contato correspondente; o segundo canal é opcional mas validado", function () {
+    var r = valido(); r.contact.preferredChannel = "whatsapp"; verdade(R.validar(r)["contact.phone"]);
+    r.contact.phone = "+351 912 345 678"; igual(R.validar(r), {}); r.contact.email = "sem-arroba"; verdade(R.validar(r)["contact.email"]);
+    r = valido(); r.contact.email = "sem-arroba"; verdade(R.validar(r)["contact.email"]); r.contact.email = "a@b.co"; r.contact.phone = "12"; verdade(R.validar(r)["contact.phone"]);
   });
-  t("etapa 1 exige escolha; etapa 2 exige contexto e papel", function () {
-    verdade(R.validarEtapa(1, {}).entryPath); igual(Object.keys(R.validarEtapa(2, {})).sort(), ["audienceContext", "decisionRole"]);
-    igual(R.validarEtapa(2, { audienceContext: "other", decisionRole: "other" }), {});
-  });
-  t("etapa 3 exige campos e respeita limites", function () {
-    var e = R.validarEtapa(3, { entryPath: "underperforming", branch: {} });
-    verdade(e.stage && e.issues && e.narrative && e.city && e.state && e.availableDocuments, "faltou exigir algum campo");
-    var r = { entryPath: "underperforming", stage: "execution", issues: ["schedule", "quality", "supplier", "scope_change"], consequences: ["penalty"], decisionHorizon: "undefined",
-      narrative: "x".repeat(701), city: "BH", state: "MG", availableDocuments: ["contract"], branch: {} };
-    var e2 = R.validarEtapa(3, r); verdade(e2.issues && e2.narrative, "limites não aplicados");
-    r.issues = ["schedule"]; r.narrative = "Descrição suficiente do cenário."; igual(R.validarEtapa(3, r), {});
-  });
-  t("etapa 4: organização só obrigatória em contexto empresarial", function () {
-    var base = { audienceContext: "contractor", contact: { name: "Ana Lima", preferredChannel: "email", email: "ana@x.com" } };
-    verdade(R.validarEtapa(4, base)["contact.organization"]);
-    base.audienceContext = "owner_investor"; igual(R.validarEtapa(4, base), {});
-  });
-  t("etapa 4: mostra só o campo do canal e valida telefone/e-mail", function () {
-    var r = { audienceContext: "owner_investor", contact: { name: "Ana", preferredChannel: "whatsapp", phone: "123" } };
-    verdade(R.validarEtapa(4, r)["contact.phone"]); r.contact.phone = "(31) 98888-7777"; igual(R.validarEtapa(4, r), {});
-    r.contact = { name: "Ana", preferredChannel: "email", email: "sem-arroba" }; verdade(R.validarEtapa(4, r)["contact.email"]);
+  t("organização é opcional; nome é obrigatório", function () {
+    var r = valido(); igual(R.validar(r), {}); r.contact.name = " "; verdade(R.validar(r)["contact.name"]);
   });
   t("normalização de telefone igual à do servidor", function () {
     igual(R.normalizarTelefone("(31) 98888-7777"), "+5531988887777"); igual(R.normalizarTelefone("+351 912 345 678"), "+351912345678");
     igual(R.normalizarTelefone("5531988887777"), "+5531988887777"); igual(R.normalizarTelefone("abc"), null); igual(R.normalizarTelefone("(00) 98888-7777"), null);
+  });
+  t("busca de cidade/país ignora acento e maiúsculas, começa-com antes de contém", function () {
+    var itens = [["1", "São Paulo"], ["2", "Santa Paulina"], ["3", "Paulo Afonso"], ["4", "Brasília"]];
+    igual(R.filtrar(itens, "sao paulo", 10).map(function (x) { return x[1]; }), ["São Paulo"]);
+    igual(R.filtrar(itens, "PAULO", 10).map(function (x) { return x[1]; }), ["Paulo Afonso", "São Paulo"]);
+    igual(R.filtrar(itens, "brasilia", 10).length, 1); igual(R.filtrar(itens, "", 2).length, 2);
   });
   t("parâmetros de origem: só valores permitidos; o resto é descartado", function () {
     igual(R.lerOrigem("?origem=produtos&interesse=P06").originCta, "produtos"); igual(R.lerOrigem("?origem=produtos&interesse=P06").productHint, "P06");
     igual(R.lerOrigem("?origem=%3Cscript%3E&interesse=P99").originCta, "direto"); igual(R.lerOrigem("?origem=%3Cscript%3E&interesse=P99").productHint, null);
     igual(R.lerOrigem("?utm_source=%3Cb%3Ex").utmSource, ""); igual(R.lerOrigem("?utm_source=google").utmSource, "google"); igual(R.lerOrigem("").originCta, "direto");
   });
-  t("o produto de origem não vira escolha: não altera a rota", function () {
-    var r = {}; R.lerOrigem("?interesse=P06"); verdade(r.entryPath === undefined);
+  t("perguntas opcionais: só entram no payload se respondidas; máximo de 2 consequências", function () {
+    var r = valido(); var ex = { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 };
+    var p = R.montarPayload(r, R.lerOrigem(""), ex);
+    verdade(!("urgency" in p.scenario) && !("consequences" in p.scenario) && !("documents" in p.scenario) && !("estimatedRange" in p.scenario) && !("contactPeriod" in p.contact));
+    r.urgency = "this_week"; r.consequences = ["penalty", "stoppage"]; r.documents = "partial"; r.estimatedRange = "1m_to_10m"; r.contact.contactPeriod = "morning";
+    p = R.montarPayload(r, R.lerOrigem(""), ex);
+    igual([p.scenario.urgency, p.scenario.consequences, p.scenario.documents, p.scenario.estimatedRange, p.contact.contactPeriod], ["this_week", ["penalty", "stoppage"], "partial", "1m_to_10m", "morning"]);
+    igual(R.validar(r), {}); r.consequences = ["penalty", "stoppage", "other"]; verdade(R.validar(r).consequences);
   });
-  t("payload: marketing nunca verdadeiro, aviso registrado e rota limpa dados de outras rotas", function () {
-    var r = { entryPath: "decision_support", audienceContext: "contractor", decisionRole: "decides", stage: "execution", issues: ["schedule"], consequences: ["other"], decisionHorizon: "undefined",
-      city: "BH", state: "MG", availableDocuments: ["contract"], narrative: " texto de teste ok ", branch: { evaluate: ["land"], deliverable: "image_or_3d" },
-      contact: { name: "Ana", organization: "X", preferredChannel: "email", email: "a@b.co" } };
-    var p = R.montarPayload(r, R.lerOrigem("?origem=hero"), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0" });
-    igual(p.privacy, { privacyNoticeVersion: "minuta-0", acknowledged: true, marketingConsent: false });
-    igual(p.scenario.branchSpecificData, { evaluate: ["land"] }); igual(p.scenario.issues, []); igual(p.scenario.narrative, "texto de teste ok");
-    igual(p.source.originCta, "hero");
+  t("payload: ciência do aviso registrada, sem marketing e sem produto escolhido", function () {
+    var r = valido(); var p = R.montarPayload(r, R.lerOrigem("?origem=hero"), { idempotencyKey: "abcdefgh-1", deviceCategory: "desktop", privacyNoticeVersion: "minuta-0", formVersion: "form-2", elapsedMs: 9000 });
+    igual(p.privacy, { privacyNoticeVersion: "minuta-0", acknowledged: true }); igual(p.schemaVersion, 2); igual(p.source.originCta, "hero"); verdade(!("productCode" in p.scenario));
   });
   document.getElementById("resumo").textContent = ok + " passaram, " + falha + " falharam";
   document.title = (falha ? "FALHOU " : "OK ") + ok + "/" + (ok + falha);

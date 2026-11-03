@@ -134,6 +134,7 @@ class Estado:
             registro = {k: v for k, v in lead.items() if k != "idempotencyKey"}
             registro.update({"id": lead_id, "createdAt": ts, "status": "novo"})
             registro["privacy"]["privacyAcknowledgedAt"] = ts
+            registro["privacy"]["marketingConsentAt"] = ts if registro["privacy"]["marketingConsent"] else None
             registro["qualification"] = q
             revisao = {"reviewStatus": "pending", "reviewedBy": None, "reviewedAt": None, "nextAction": None, "notes": ""}
             self.con.execute(
@@ -143,7 +144,10 @@ class Estado:
                  json.dumps(registro, ensure_ascii=False), json.dumps(revisao)))
             # notificação interna: sem dados pessoais (identificador, data, categoria, prioridade)
             self.con.execute("INSERT INTO outbox(lead_id, created_at, categoria, prioridade) VALUES(?,?,?,?)",
-                             (lead_id, ts, lead["scenario"]["entryPath"], q["priority"]))
+                             (lead_id, ts, lead["scenario"]["situationCode"], q["priority"]))
+            # confirmação com o protocolo ao canal escolhido (só o canal; nenhum dado pessoal na fila)
+            self.con.execute("INSERT INTO outbox(lead_id, created_at, categoria, prioridade) VALUES(?,?,?,?)",
+                             (lead_id, ts, "confirmacao_" + lead["privacy"]["requestedContactChannel"], q["priority"]))
             self.con.commit()
             return lead_id, True
 
@@ -281,6 +285,9 @@ def fabricar_handler(estado):
                 if dados.get("website"):
                     estado.registrar_seguranca("armadilha_de_robo")
                     return self._responder(200, {"ok": True, "publicCode": "CRV-0000-000000", "detailsToken": ""})
+                if regras.envio_rapido_demais(dados):
+                    estado.registrar_seguranca("envio_rapido_demais")
+                    return self._responder(200, {"ok": False, "error": "too_fast"})
                 try:
                     lead = regras.validar_lead({k: v for k, v in dados.items() if k not in ("website", "turnstileToken")})
                 except regras.ErroValidacao as e:
@@ -291,14 +298,17 @@ def fabricar_handler(estado):
                 except sqlite3.Error:
                     estado.registrar_seguranca("falha_de_gravacao")
                     return self._responder(200, {"ok": False, "error": "unavailable"})
-                return self._responder(200, {"ok": True, "id": lead_id, "publicCode": lead_id, "detailsToken": estado.token_do_lead(lead_id)})
+                # Servidor de TESTE: não envia e-mail nem WhatsApp. Só informa por qual canal a confirmação com o protocolo seguiria
+                # (no Apps Script: e-mail automático; WhatsApp enviado pela equipe).
+                return self._responder(200, {"ok": True, "id": lead_id, "publicCode": lead_id, "detailsToken": estado.token_do_lead(lead_id),
+                                             "confirmation": lead["privacy"]["requestedContactChannel"]})
             if env.get("action") == "details":
                 lead_id = str(dados.get("leadRef", ""))
                 if not hmac.compare_digest(str(dados.get("token", "")), estado.token_do_lead(lead_id)):
                     estado.registrar_seguranca("token_invalido")
                     return self._responder(200, {"ok": False, "error": "unauthorized"})
                 try:
-                    detalhes = regras.validar_detalhes({"additionalInfo": dados.get("additionalInfo")})
+                    detalhes = regras.validar_detalhes({k: v for k, v in dados.items() if k not in ("leadRef", "token")})
                 except regras.ErroValidacao as e:
                     return self._responder(200, {"ok": False, "error": "validation", "fields": e.campos})
                 if not estado.adicionar_detalhes(lead_id, detalhes):
@@ -317,6 +327,9 @@ def fabricar_handler(estado):
             if segredo and not verificar_turnstile(segredo, corpo.get("turnstileToken") if isinstance(corpo, dict) else None, self.client_address[0]):
                 estado.registrar_seguranca("antiabuso_reprovado")
                 return self._responder(403, {"erro": "antiabuso"})
+            if regras.envio_rapido_demais(corpo):
+                estado.registrar_seguranca("envio_rapido_demais")
+                return self._responder(429, {"erro": "muito_rapido"})
             if isinstance(corpo, dict):
                 corpo = {k: v for k, v in corpo.items() if k not in ("website", "turnstileToken")}
             try:

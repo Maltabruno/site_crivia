@@ -3,6 +3,14 @@
 Nenhum item abaixo está concluído. Só marque `[x]` com evidência anexada (documento, contrato, e-mail de aprovação, print).
 Esta implementação traz **controles técnicos e documentação preparada para validação jurídica**; ela não afirma conformidade com a LGPD.
 
+## Bloqueadores de publicação (placeholders — não inventar)
+Enquanto estes itens não forem definidos/validados pela CRIVIA, **não publicar**:
+`[DEFINIR_CNPJ]` · `[DEFINIR_ENDERECO]` (a CRIVIA usa os mesmos dados cadastrais da BM Serviços; falta informar CNPJ e endereço) ·
+E-mail de privacidade: **definido pelo responsável como `contato@criviaengenharia.com.br`** (o mesmo canal comercial; tratar na rotina de direitos dos titulares) ·
+`[VALIDAR_BASE_LEGAL]` (a coluna `legal_basis_code` grava este marcador) · `[DEFINIR_PRAZO_DE_RETENCAO]` · `[APROVAR_AVISO_DE_PRIVACIDADE]` (a versão começa com "minuta").
+Também antes de publicar: responsável interno por pedidos de titulares; operadores (Google e ferramentas); transferência internacional no ambiente Google; processo de revogação do marketing;
+regras de acesso, exportação, correção e exclusão; política para arquivos futuros (upload desligado).
+
 ## Controlador e responsáveis
 - [ ] Dados completos do controlador (razão social, CNPJ, endereço) — preencher em `cenario/aviso-privacidade.html`.
 - [ ] Contato de privacidade e canal para solicitações de titulares — preencher `canalPrivacidade` em `cenario/config.js` e no Aviso.
@@ -12,7 +20,8 @@ Esta implementação traz **controles técnicos e documentação preparada para 
 - [ ] Base legal por finalidade (resposta ao contato, triagem, pontuação, segurança). Hipóteses candidatas: procedimentos preliminares relacionados a contrato, a pedido do titular; legítimo interesse; consentimento (marketing, se existir).
 - [ ] Se legítimo interesse: teste de balanceamento documentado (finalidade, necessidade, legítima expectativa, impacto, salvaguardas, oposição, conclusão).
 - [ ] Finalidade por campo (confirmar que cada campo do `lead-form-data-dictionary.md` é necessário).
-- [ ] Revisão do texto de ciência: "Ao enviar, confirmo que li o Aviso de Privacidade e solicito que a CRIVIA entre em contato…" (registra ciência e pedido de contato; **não** é rotulado como consentimento).
+- [ ] Revisão do aviso curto junto ao botão: "Usaremos seus dados para analisar o cenário, responder ao contato e avaliar uma possível contratação. Consulte o Aviso de Privacidade." (registra a **ciência**, separada da base legal; **não** é consentimento obrigatório genérico).
+- [ ] Localização do cenário (país, UF, cidade): finalidade documentada (atendimento, deslocamento, contexto local); em relatórios, país e UF.
 - [ ] Avaliar se a pontuação interna configura decisão automatizada e qual o dever de informação/revisão.
 
 ## Aviso de Privacidade
@@ -33,7 +42,7 @@ Esta implementação traz **controles técnicos e documentação preparada para 
 
 ## Cookies, analytics e marketing
 - [ ] Confirmar que o site não usa cookies não essenciais (estado atual: nenhum). Antes de qualquer analytics, pixel, chat ou gravação de sessão: gerenciador de consentimento com "Aceitar", "Rejeitar" e "Gerenciar" de mesmo destaque e link permanente de preferências no rodapé.
-- [ ] Decidir se haverá marketing; se sim: processo real, descadastramento, registro de consentimento, caixa separada, opcional e desmarcada (`marketingOptInEnabled`).
+- [x] Marketing: a caixa de opt-in foi **retirada** do formulário (decisão do responsável); ninguém entra em lista de marketing. Se voltar, exige caixa separada, opcional, desmarcada, registro de consentimento e descadastramento.
 - [ ] Aprovar o plano de métricas (`lead-form-analytics.md`).
 
 ## Integrações e canais

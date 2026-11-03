@@ -1,63 +1,40 @@
 /**
- * Classificação interna PROVISÓRIA (determinística, versão score-v1). Serve só para prioridade e encaminhamento:
+ * Enquadramento interno (porta de servidor/regras_leads.py), versão score-v3. Serve só para PRIORIDADE e ENCAMINHAMENTO:
  * não rejeita contatos, não infere capacidade financeira, não é mostrada ao visitante e admite correção humana.
- * Pesos máximos: aderência 3, papel 3, consequência 3, horizonte 2, prontidão 2 (total 13). A >= 10, B >= 6, C abaixo.
+ * Os produtos são HIPÓTESE de triagem; o enquadramento final é humano. Máximo 16 pontos; faixas provisórias: A >= 10, B >= 6, C abaixo.
  */
-var PONTUACAO = {
-  role: { decides: 3, leads_evaluation: 2, technical_participant: 1, early_research: 0, other: 0 },
-  horizonte: { up_to_7_days: 2, '8_to_30_days': 2, '31_to_90_days': 1, after_90_days: 0, undefined: 0 },
+var PONTUACAO_ = {
+  role: { decides: 3, recommends: 2, gathering: 1, referring: 0, other_unsure: 0 },
+  perfil: { contractor: 2, company_manager: 2, owner_investor: 1, technical_team: 1, other: 0 },
+  urgencia: { immediate: 2, this_week: 2, this_month: 1, undefined: 0 },
+  documentos: { yes: 2, partial: 1, no: 0, unknown: 0 },
+  consequenciasAltas: ['penalty', 'stoppage', 'margin_cash_loss', 'contract_conflict'],
   faixaA: 10, faixaB: 6
 };
-var PRODUTOS_POR_PROBLEMA = { schedule: 'P06', margin_cost: 'P07', measurement_receipt: 'P09', scope_change: 'P09', team_equipment_material: 'P08',
-  project_info: 'P02', quality: 'P10', supplier: 'P05', undefined_responsibilities: 'P01' };
-var PRODUTOS_POR_AVALIACAO = { land: 'P03', projects: 'P02', budget_costs: 'P04', supplier_proposals: 'P05', planning_resources: 'P06',
-  measurement_change: 'P09', handover: 'P11', documentation_databook: 'P12' };
-var PRODUTO_POR_ETAPA = { delay_or_critical: 'P07', execution: 'P10', near_completion: 'P11', planning: 'P06' };
-
-function pontuar_(lead) {
-  var s = lead.scenario, cons = s.consequences;
-  var relevancia = s.entryPath !== 'other_or_unsure' ? 3 : (s.narrative.length >= 80 ? 2 : 1);
-  var papel = PONTUACAO.role[s.decisionRole] || 0;
-  var consequencia = 0;
-  if (cons.length) {
-    var alta = cons.some(function (c) { return LISTAS.HIGH_CONSEQUENCES.indexOf(c) >= 0; });
-    consequencia = Math.min(3, 1 + (alta ? 1 : 0) + (cons.length >= 2 ? 1 : 0));
-  }
-  var tempo = PONTUACAO.horizonte[s.decisionHorizon] || 0;
-  var docs = s.availableDocuments.filter(function (d) { return d !== 'none_organized'; });
-  var prontidao = docs.length >= 3 ? 2 : (docs.length ? 1 : 0);
-  var total = relevancia + papel + consequencia + tempo + prontidao;
-  return { relevanceScore: relevancia, decisionRoleScore: papel, consequenceScore: consequencia, timingScore: tempo, readinessScore: prontidao,
-    totalScore: total, priority: total >= PONTUACAO.faixaA ? 'A' : (total >= PONTUACAO.faixaB ? 'B' : 'C'), ruleVersion: CRIVIA.SCORE_RULE_VERSION };
-}
-
-function produtosCandidatos_(lead) {
-  var s = lead.scenario, saida = [];
-  var somar = function (c) { if (c && saida.indexOf(c) < 0) saida.push(c); };
-  if (s.entryPath === 'underperforming') {
-    s.issues.forEach(function (i) { somar(PRODUTOS_POR_PROBLEMA[i]); });
-    somar(PRODUTO_POR_ETAPA[s.stage]);
-    if (!saida.length || s.issues.indexOf('undefined_responsibilities') >= 0 || s.stage === 'unsure') somar('P01');
-  } else if (s.entryPath === 'decision_support') {
-    (s.branchSpecificData.evaluate || []).forEach(function (i) { somar(PRODUTOS_POR_AVALIACAO[i]); });
-  } else if (s.entryPath === 'visual_communication') somar('CV01');
-  else if (s.entryPath === 'ai_decision_engineering') somar('IA');
-  return saida;   // rota "outro/ainda não sei": vazio = a revisão humana define o enquadramento
-}
-
-function informacoesAusentes_(lead) {
-  var s = lead.scenario, f = [];
-  if (!s.decisionHorizon || s.decisionHorizon === 'undefined') f.push('decision_horizon');
-  if (!s.availableDocuments.length || (s.availableDocuments.length === 1 && s.availableDocuments[0] === 'none_organized')) f.push('organized_documents');
-  if (!s.estimatedRange || s.estimatedRange === 'undisclosed' || s.estimatedRange === 'unknown') f.push('estimated_range');
-  if (s.narrative.length < 80) f.push('narrative_detail');
-  if (s.decisionRole === 'early_research') f.push('decision_owner');
-  return f;
-}
+var PRODUTOS_POR_SITUACAO_ = {
+  obra_contrato_dificuldade: ['P01'], atraso_custo_margem: ['P08', 'P07'], projeto_terreno_propostas: ['P02', 'P03', 'P05'],
+  planejamento_recursos_recuperacao: ['P06', 'P07'], medicao_alteracao_documentacao: ['P09', 'P12'], vistoria_recebimento_conferencia: ['P11'],
+  comunicacao_ia_3d: ['CV01'], outra_nao_sei: []
+};
 
 function enquadrar_(lead) {
-  var q = pontuar_(lead);
-  q.candidateProducts = produtosCandidatos_(lead);
-  q.missingInformation = informacoesAusentes_(lead);
-  return q;
+  var s = lead.scenario, n = s.narrative.length;
+  var relevancia = s.situationCode !== 'outra_nao_sei' ? 3 : (n >= 200 ? 2 : 1);
+  var papel = PONTUACAO_.role[s.decisionRole] || 0, perfil = PONTUACAO_.perfil[s.audienceProfile] || 0;
+  var detalhe = n >= 200 ? 2 : n >= 80 ? 1 : 0;
+  var tempo = PONTUACAO_.urgencia[s.urgency] || 0;
+  var alta = s.consequences.some(function (c) { return PONTUACAO_.consequenciasAltas.indexOf(c) >= 0; });
+  var consequencia = Math.min(2, (s.consequences.length ? 1 : 0) + (alta ? 1 : 0));
+  var prontidao = PONTUACAO_.documentos[s.documents] || 0;
+  var total = relevancia + papel + perfil + detalhe + tempo + consequencia + prontidao;
+  var falta = [];
+  if (!s.contextAnswerCode || s.contextAnswerCode === 'unknown') falta.push('context_answer');
+  if (n < 80) falta.push('narrative_detail');
+  if (['gathering', 'referring', 'other_unsure'].indexOf(s.decisionRole) >= 0) falta.push('decision_owner');
+  if (!s.urgency || s.urgency === 'undefined') falta.push('decision_horizon');
+  if (['', 'no', 'unknown'].indexOf(s.documents) >= 0) falta.push('documents');
+  if (['', 'undisclosed', 'unknown'].indexOf(s.estimatedRange) >= 0) falta.push('estimated_range');
+  return { relevanceScore: relevancia, decisionRoleScore: papel, audienceScore: perfil, detailScore: detalhe, timingScore: tempo, consequenceScore: consequencia,
+    readinessScore: prontidao, totalScore: total, priority: total >= PONTUACAO_.faixaA ? 'A' : total >= PONTUACAO_.faixaB ? 'B' : 'C',
+    ruleVersion: CRIVIA.SCORE_RULE_VERSION, candidateProducts: (PRODUTOS_POR_SITUACAO_[s.situationCode] || []).slice(), missingInformation: falta };
 }

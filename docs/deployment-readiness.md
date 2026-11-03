@@ -44,7 +44,7 @@ Abrir por `file://` não funciona para o envio (CORS exige origem http/https).
 | `AI_LEAD_SUMMARY_ENABLED` | `false` | Sem implementação nesta versão |
 
 ## Itens bloqueados por feature flag (`cenario/config.js`)
-`secureUploadEnabled=false` · `agendaUrl=""` · `marketingOptInEnabled=false` · `analyticsEnabled=false` · `turnstileSiteKey=""` · `aiLeadSummaryEnabled=false` · `canalPrivacidade=""`.
+`secureUploadEnabled=false` · `agendaUrl=""` · `analyticsEnabled=false` · `turnstileSiteKey=""` · `aiLeadSummaryEnabled=false` · `canalPrivacidade="contato@criviaengenharia.com.br"`.
 
 ## Testes executados (esta sessão)
 - Python: 22 testes passaram (validação, todas as rotas, limites, telefone/e-mail, pontuação A/B/C, produtos, idempotência, armadilha de robô, XSS e SQL, 413/415/403/429, token de detalhes, logs sem PII, retenção recusada sem política e respeitando suspensão).

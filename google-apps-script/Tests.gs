@@ -4,11 +4,13 @@
  * (configure SPREADSHEET_ID dela em um projeto de teste; nunca rode contra a planilha de produção).
  */
 function leadValido_() {
-  return { idempotencyKey: 'abc12345-test', schemaVersion: 1, source: { originCta: 'hero', productHint: 'P06', deviceCategory: 'desktop' },
-    scenario: { entryPath: 'underperforming', audienceContext: 'contractor', decisionRole: 'decides', stage: 'execution', issues: ['schedule'],
-      consequences: ['penalty'], decisionHorizon: 'up_to_7_days', city: 'Belo Horizonte', state: 'MG', availableDocuments: ['contract', 'schedule', 'budget'],
-      narrative: 'A obra está atrasada e precisamos decidir como recuperar o prazo.', branchSpecificData: {} },
-    contact: { name: 'Maria Souza', organization: 'Construtora X', preferredChannel: 'email', email: 'maria@exemplo.com.br' },
+  return { idempotencyKey: 'abc12345-test', schemaVersion: 2, formVersion: 'form-2', elapsedMs: 45000,
+    source: { originCta: 'hero', productHint: 'P06', deviceCategory: 'desktop' },
+    scenario: { situationCode: 'obra_contrato_dificuldade', contextAnswerCode: 'running', audienceProfile: 'contractor', decisionRole: 'decides',
+      location: { type: 'brazil', countryCode: 'BR', stateCode: 'MG', cityCode: '3106200', cityName: 'Belo Horizonte' },
+      narrative: 'A obra está atrasada e precisamos decidir como recuperar o prazo sem perder a margem do contrato.',
+      urgency: 'this_week', consequences: ['penalty', 'stoppage'], documents: 'partial', estimatedRange: '1m_to_10m' },
+    contact: { name: 'Maria Souza', organization: 'Construtora X', preferredChannel: 'email', email: 'maria@exemplo.com.br', contactPeriod: 'morning' },
     privacy: { privacyNoticeVersion: 'minuta-0', acknowledged: true, marketingConsent: false }, website: '' };
 }
 function afirma_(cond, msg) { if (!cond) throw new Error('FALHOU: ' + msg); }
@@ -17,28 +19,67 @@ function falha_(fn) { try { fn(); } catch (e) { return e instanceof ErroValidaca
 function rodarTestes() {
   var r = [];
   var t = function (nome, fn) { try { fn(); r.push('ok   ' + nome); } catch (e) { r.push('ERRO ' + nome + ' — ' + e.message); } };
-  t('lead válido normaliza e classifica', function () {
+  t('lead válido (Brasil) normaliza e classifica', function () {
     var l = validarLead_(leadValido_()), q = enquadrar_(l);
-    afirma_(l.contact.email === 'maria@exemplo.com.br', 'email'); afirma_(q.priority === 'A', 'prioridade ' + q.priority); afirma_(q.candidateProducts.indexOf('P06') >= 0, 'P06');
+    afirma_(l.contact.email === 'maria@exemplo.com.br', 'email'); afirma_(q.priority === 'A', 'prioridade ' + q.priority); afirma_(q.candidateProducts.indexOf('P01') >= 0, 'P01');
+    afirma_(l.scenario.location.stateName === 'Minas Gerais' && l.scenario.location.cityName === 'Belo Horizonte', 'local oficial');
   });
-  t('enum inválido recusado', function () { var d = leadValido_(); d.scenario.entryPath = 'xx'; afirma_(falha_(function () { validarLead_(d); })['scenario.entryPath'], 'entryPath'); });
+  t('exterior válido não carrega campos do Brasil', function () {
+    var d = leadValido_(); d.scenario.location = { type: 'international', countryCode: 'PT', cityName: 'Lisboa', foreignRegion: 'Lisboa' };
+    var l = validarLead_(d); afirma_(l.scenario.location.countryName === 'Portugal' && l.scenario.location.stateCode === '' && l.scenario.location.cityCode === '', 'exterior');
+    d.scenario.location.stateCode = 'SP'; afirma_(falha_(function () { validarLead_(d); })['scenario.location.stateCode'], 'resíduo recusado');
+  });
+  t('cidade de outra UF ou adulterada é recusada', function () {
+    var d = leadValido_(); d.scenario.location.stateCode = 'SP'; afirma_(falha_(function () { validarLead_(d); })['scenario.location.cityCode'], 'outra UF');
+    d = leadValido_(); d.scenario.location.cityCode = '9999999'; afirma_(falha_(function () { validarLead_(d); })['scenario.location.cityCode'], 'inexistente');
+    d = leadValido_(); d.scenario.location.cityName = 'Cidade Inventada'; afirma_(falha_(function () { validarLead_(d); })['scenario.location.cityName'], 'nome');
+  });
+  t('país inválido e Brasil no modo exterior', function () {
+    var d = leadValido_(); d.scenario.location = { type: 'international', countryCode: 'ZZ', cityName: 'X' }; afirma_(falha_(function () { validarLead_(d); })['scenario.location.countryCode'], 'ZZ');
+    d.scenario.location.countryCode = 'BR'; afirma_(falha_(function () { validarLead_(d); })['scenario.location.countryCode'] === 'use_modo_brasil', 'BR');
+  });
+  t('enum inválido e resposta de outra situação recusados', function () {
+    var d = leadValido_(); d.scenario.situationCode = 'xx'; afirma_(falha_(function () { validarLead_(d); })['scenario.situationCode'], 'situação');
+    d = leadValido_(); d.scenario.contextAnswerCode = 'deadline'; afirma_(falha_(function () { validarLead_(d); })['scenario.contextAnswerCode'], 'contexto');
+  });
   t('campo desconhecido recusado', function () { var d = leadValido_(); d.extra = 1; afirma_(falha_(function () { validarLead_(d); })['$.extra'], 'extra'); });
-  t('arrays excessivos recusados', function () { var d = leadValido_(); d.scenario.issues = ['schedule', 'quality', 'supplier', 'other']; afirma_(falha_(function () { validarLead_(d); })['scenario.issues'], 'issues'); });
-  t('narrativa grande recusada', function () { var d = leadValido_(); d.scenario.narrative = new Array(702).join('a'); afirma_(falha_(function () { validarLead_(d); })['scenario.narrative'], 'narrativa'); });
-  t('privacidade exige ciência', function () { var d = leadValido_(); d.privacy.acknowledged = false; afirma_(falha_(function () { validarLead_(d); })['privacy.acknowledged'], 'ack'); });
-  t('marketing não é aceito', function () { var d = leadValido_(); d.privacy.marketingConsent = true; afirma_(falha_(function () { validarLead_(d); })['privacy.marketingConsent'], 'mkt'); });
-  t('telefone E.164', function () { afirma_(normalizarTelefone_('(31) 99999-1234') === '+5531999991234', 'br'); afirma_(normalizarTelefone_('+351912345678') === '+351912345678', 'intl'); afirma_(normalizarTelefone_('123') === null, 'curto'); });
-  t('empresa obrigatória em contexto empresarial', function () { var d = leadValido_(); d.contact.organization = ''; afirma_(falha_(function () { validarLead_(d); })['contact.organization'], 'org'); });
+  t('relato: limite, HTML e quebras de linha', function () {
+    var d = leadValido_(); d.scenario.narrative = new Array(1202).join('a'); afirma_(falha_(function () { validarLead_(d); })['scenario.narrative'], 'tamanho');
+    d = leadValido_(); d.scenario.narrative = '<script>alert(1)</script> atraso de obra'; afirma_(falha_(function () { validarLead_(d); })['scenario.narrative'] === 'html_nao_permitido', 'html');
+    d = leadValido_(); d.scenario.narrative = 'Linha um com texto suficiente.\n\nLinha dois continua aqui.'; afirma_(validarLead_(d).scenario.narrative.indexOf('\n\n') > 0, 'quebras');
+  });
+  t('privacidade exige ciência; marketing é opcional', function () {
+    var d = leadValido_(); d.privacy.acknowledged = false; afirma_(falha_(function () { validarLead_(d); })['privacy.acknowledged'], 'ack');
+    d = leadValido_(); d.privacy.marketingConsent = true; afirma_(validarLead_(d).privacy.marketingConsent === true, 'mkt');
+  });
+  t('telefone E.164 e canal preferencial', function () {
+    afirma_(normalizarTelefone_('(31) 99999-1234') === '+5531999991234', 'br'); afirma_(normalizarTelefone_('+351912345678') === '+351912345678', 'intl'); afirma_(normalizarTelefone_('123') === null, 'curto');
+    var d = leadValido_(); d.contact.preferredChannel = 'whatsapp'; delete d.contact.email; afirma_(falha_(function () { validarLead_(d); })['contact.phone'], 'whatsapp exige telefone');
+  });
+  t('perguntas opcionais: listas fechadas, máximo de 2 consequências, todas opcionais', function () {
+    var l = validarLead_(leadValido_()); afirma_(l.scenario.urgency === 'this_week' && l.scenario.consequences.length === 2 && l.contact.contactPeriod === 'morning', 'lidas');
+    var d = leadValido_(); delete d.scenario.urgency; delete d.scenario.consequences; delete d.scenario.documents; delete d.scenario.estimatedRange; delete d.contact.contactPeriod;
+    var s = validarLead_(d).scenario; afirma_(s.urgency === '' && s.consequences.length === 0 && s.documents === '' && s.estimatedRange === '', 'opcionais');
+    d = leadValido_(); d.scenario.consequences = ['penalty', 'stoppage', 'other']; afirma_(falha_(function () { validarLead_(d); })['scenario.consequences'], 'máx 2');
+    d = leadValido_(); d.scenario.urgency = 'ontem'; afirma_(falha_(function () { validarLead_(d); })['scenario.urgency'], 'urgência');
+  });
+  t('confirmação segue o canal escolhido', function () {
+    afirma_(confirmacaoPorCanal_('email', true) === 'email' && confirmacaoPorCanal_('email', false) === 'none' && confirmacaoPorCanal_('whatsapp', false) === 'whatsapp', 'canais');
+  });
+  t('tempo mínimo', function () { afirma_(envioRapidoDemais_({ elapsedMs: 800 }) && !envioRapidoDemais_({ elapsedMs: 45000 }), 'tempo'); });
   t('CPF no texto é mascarado e marcado', function () { var d = leadValido_(); d.scenario.narrative = 'Meu CPF é 123.456.789-09 e preciso de ajuda com a obra.'; var l = validarLead_(d);
     afirma_(l.scenario.narrative.indexOf('123.456') < 0, 'mascara'); afirma_(l.sensitiveContentSuspected, 'marca'); });
   t('fórmula neutralizada', function () { afirma_(seguroParaPlanilha_('=IMPORTXML("x")') === "'=IMPORTXML(\"x\")", 'igual'); afirma_(seguroParaPlanilha_('+1+1') === "'+1+1", 'mais');
-    afirma_(seguroParaPlanilha_('@SUM(A1)') === "'@SUM(A1)", 'arroba'); afirma_(seguroParaPlanilha_('texto') === 'texto', 'normal'); });
-  t('HTML/XSS não é executável (é só texto)', function () { var d = leadValido_(); d.scenario.narrative = '<script>alert(1)</script> atraso de obra'; var l = validarLead_(d); afirma_(typeof l.scenario.narrative === 'string', 'tipo'); });
+    afirma_(seguroParaPlanilha_('-2+3') === "'-2+3", 'menos'); afirma_(seguroParaPlanilha_('@SUM(A1)') === "'@SUM(A1)", 'arroba'); afirma_(seguroParaPlanilha_('texto') === 'texto', 'normal'); });
   t('código público tem formato e não é sequencial', function () { var a = gerarCodigoPublico_(), b = gerarCodigoPublico_(); afirma_(/^CRV-\d{4}-[A-Z2-9]{6}$/.test(a), 'formato ' + a); afirma_(a !== b, 'repetido'); });
   t('token de complemento confere só para o próprio código', function () { var tk = tokenDoLead_('CRV-2026-AAAAAA'); afirma_(tokenConfere_('CRV-2026-AAAAAA', tk), 'certo'); afirma_(!tokenConfere_('CRV-2026-BBBBBB', tk), 'outro'); afirma_(!tokenConfere_('CRV-2026-AAAAAA', 'x'), 'curto'); });
+  t('complemento aceita só listas fechadas', function () {
+    afirma_(validarDetalhes_({ urgency: 'immediate' }).urgency === 'immediate', 'ok'); afirma_(falha_(function () { validarDetalhes_({}); }), 'vazio'); afirma_(falha_(function () { validarDetalhes_({ urgency: 'ontem' }); }), 'inválido');
+  });
   t('hash de idempotência é estável', function () { afirma_(hash_('a') === hash_('a') && hash_('a') !== hash_('b'), 'hash'); });
-  t('rota E sem produtos candidatos', function () { var d = leadValido_(); d.scenario.entryPath = 'other_or_unsure'; d.scenario.stage = null; d.scenario.issues = []; d.scenario.branchSpecificData = { decisionNeeded: 'Preciso decidir o rumo do projeto.' };
-    afirma_(produtosCandidatos_(validarLead_(d)).length === 0, 'vazio'); });
+  t('situação "outra" sem produtos candidatos', function () { var d = leadValido_(); d.scenario.situationCode = 'outra_nao_sei'; d.scenario.contextAnswerCode = 'unknown';
+    afirma_(enquadrar_(validarLead_(d)).candidateProducts.length === 0, 'vazio'); });
+  t('cabeçalhos e colunas consistentes', function () { afirma_(CABECALHOS_LEADS[0] === 'submission_id' && CABECALHOS_LEADS.indexOf('city_code') > 0, 'cabeçalhos'); });
   t('configuração ausente falha de forma segura', function () { var antes = configuracaoCompleta_(); afirma_(typeof antes === 'boolean', 'boolean'); });
   console.log(r.join('\n'));
   if (r.some(function (x) { return x.indexOf('ERRO') === 0; })) throw new Error('Há testes com erro:\n' + r.join('\n'));

@@ -51715,7 +51715,7 @@ var CRIVIA_IR_CENARIO = () => {
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
   var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
-  var CRIVIA_CTA_MICRO = "Leva cerca de 2 minutos. Você não precisa saber qual serviço escolher.";
+  var CRIVIA_CTA_MICRO = "Leva cerca de 1 minuto. Você não precisa saber qual serviço escolher.";
   var CRIVIA_ABRIR_CENARIO = (origem, interesse) => {
     const q = "?origem=" + encodeURIComponent(origem || "direto") + (interesse ? "&interesse=" + encodeURIComponent(interesse) : "");
     window.location.assign("apresentar-cenario.html" + q);

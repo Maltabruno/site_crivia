@@ -15,15 +15,14 @@ window.CRIVIA_CENARIO_CONFIG = {
   voltarAoSiteUrl: "index.html",
 
   // Texto do microtexto do botão do site (configurável; o tempo é uma hipótese a validar com testes de uso).
-  microtexto: "Leva cerca de 2 minutos. Você não precisa saber qual serviço escolher.",
+  microtexto: "Leva cerca de 1 minuto. Você não precisa saber qual serviço escolher.",
 
   // Canal de solicitações de titulares: PENDENTE (não inventar). Ainda não é exibido na interface: entra no Aviso quando for definido.
-  canalPrivacidade: "",
+  canalPrivacidade: "contato@criviaengenharia.com.br",   // definido pelo responsável: o mesmo e-mail atende privacidade
 
   // Recursos desligados até existir arquitetura/validação (ver docs):
   secureUploadEnabled: false,          // upload seguro de documentos
   agendaUrl: "",                       // link do provedor de agenda; vazio = botão não aparece. Só é aberto após clique.
-  marketingOptInEnabled: false,        // caixa de marketing separada; nesta versão não é oferecida
   analyticsEnabled: false,             // eventos do funil; só disparam com consentimento aplicável (ver docs/lead-form-analytics.md)
   turnstileSiteKey: "",                // Cloudflare Turnstile: o servidor já valida o token se TURNSTILE_SECRET existir; o componente no cliente ainda NÃO foi implementado (pendência)
   aiLeadSummaryEnabled: false          // resumo interno por IA: sem implementação nesta versão

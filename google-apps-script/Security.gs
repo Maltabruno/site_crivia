@@ -56,6 +56,19 @@ function dentroDoLimite_() {
   return n <= CRIVIA.RATE_MAX;
 }
 
+/**
+ * Repetição do mesmo contato (e-mail ou WhatsApp normalizado) na janela: guarda apenas o HASH, no cache, por tempo curto.
+ * Não é impressão digital do dispositivo. Devolve false quando o limite foi excedido.
+ */
+function contatoDentroDoLimite_(contato) {
+  var id = (contato.email || contato.phone || '').toLowerCase();
+  if (!id) return true;
+  var cache = CacheService.getScriptCache(), chave = 'ct:' + hash_(id);
+  var n = Number(cache.get(chave) || 0) + 1;
+  cache.put(chave, String(n), CRIVIA.RATE_WINDOW_SEC);
+  return n <= CRIVIA.CONTACT_RATE_MAX;
+}
+
 /** Anti-bot opcional (Cloudflare Turnstile, modo gerenciado). Só exigido se TURNSTILE_SECRET_KEY existir. Nunca confia apenas no token recebido. */
 function antibotAprovado_(token) {
   var segredo = prop_('TURNSTILE_SECRET_KEY');

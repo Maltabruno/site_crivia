@@ -4,25 +4,25 @@
  * (Configurações do projeto > Propriedades do script) e nunca no repositório nem no navegador.
  */
 var CRIVIA = {
-  SCHEMA_VERSION: 1,
-  SCORE_RULE_VERSION: 'score-v1',
+  SCHEMA_VERSION: 2,
+  SCORE_RULE_VERSION: 'score-v3',
   TIMEZONE: 'America/Sao_Paulo',
   // Canal público de contato comercial. NÃO é o e-mail de privacidade nem o destinatário dos alertas internos.
   CONTACT_REPLY_EMAIL: 'contato@criviaengenharia.com.br',
   SENDER_NAME: 'CRIVIA Engenharia Consultiva',
   MAX_BODY_CHARS: 20000,
+  MIN_ELAPSED_MS: 4000,    // tempo mínimo plausível entre abrir a página e enviar (sinal contra robôs, não prova)
   RATE_MAX: 30,            // envios aceitos por janela (contador global; o Apps Script não informa o IP do visitante)
   RATE_WINDOW_SEC: 600,
-  SHEETS: { CENARIOS: 'Cenarios', HISTORICO: 'Historico', CONSENTIMENTOS: 'Consentimentos', LISTAS: 'Listas',
-            INDICADORES: 'Indicadores', CONFIGURACAO: 'Configuracao', ERROS: 'Erros_Operacionais' }
+  CONTACT_RATE_MAX: 3,     // envios por contato normalizado na mesma janela (guardado só como hash, no cache)
+  SHEETS: { LEADS: 'Leads', CONFIG: 'Config', AUDIT: 'Audit' },
+  LEGAL_BASIS_PLACEHOLDER: '[VALIDAR_BASE_LEGAL]'   // a base legal NÃO é definida em código: depende de validação jurídica
 };
 
 /** Propriedades de script esperadas. Obrigatórias: SPREADSHEET_ID, NOTIFICATION_EMAIL, PRIVACY_NOTICE_VERSION. */
 var PROPS_OBRIGATORIAS = ['SPREADSHEET_ID', 'NOTIFICATION_EMAIL', 'PRIVACY_NOTICE_VERSION'];
-var PROPS_OPCIONAIS = ['PRIVACY_CONTACT_EMAIL', 'DRIVE_ROOT_FOLDER_ID', 'SECURE_UPLOAD_FOLDER_ID', 'TURNSTILE_SECRET_KEY',
-  'ALLOWED_SITE_ORIGIN', 'LEAD_RETENTION_POLICY_ID', 'UNQUALIFIED_LEAD_RETENTION_DAYS', 'SECURITY_LOG_RETENTION_DAYS',
-  'UPLOAD_RETENTION_DAYS', 'SECURE_UPLOAD_ENABLED', 'AI_LEAD_SUMMARY_ENABLED', 'CALENDAR_ENABLED', 'CONFIRMATION_EMAIL_ENABLED',
-  'ENVIRONMENT', 'TOKEN_SECRET'];
+var PROPS_OPCIONAIS = ['PRIVACY_CONTACT_EMAIL', 'TURNSTILE_SECRET_KEY', 'ALLOWED_SITE_ORIGIN', 'LEAD_RETENTION_POLICY_ID',
+  'UNQUALIFIED_LEAD_RETENTION_DAYS', 'SECURITY_LOG_RETENTION_DAYS', 'CONFIRMATION_EMAIL_ENABLED', 'ENVIRONMENT', 'TOKEN_SECRET'];
 
 function prop_(nome) {
   var v = PropertiesService.getScriptProperties().getProperty(nome);
@@ -38,17 +38,20 @@ function configuracaoCompleta_() {
   return true;
 }
 
-/** Cabeçalhos estáveis da aba Cenarios (os 5 últimos são técnicos). */
-var CABECALHOS_CENARIOS = ['lead_id', 'public_code', 'schema_version', 'created_at', 'updated_at', 'status', 'priority', 'review_status',
-  'source_page', 'referrer', 'origin_cta', 'product_hint', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
-  'device_category', 'entry_path', 'audience_context', 'decision_role', 'stage', 'issues', 'consequences', 'decision_horizon', 'city',
-  'state', 'estimated_range', 'available_documents', 'narrative', 'branch_data_json', 'contact_name', 'organization', 'role_title',
-  'preferred_channel', 'phone', 'email', 'preferred_contact_period', 'candidate_products', 'missing_information',
-  'privacy_notice_version', 'privacy_acknowledged_at', 'marketing_consent', 'marketing_consent_at', 'marketing_consent_text_version',
-  'next_action', 'reviewed_by', 'reviewed_at', 'internal_notes',
-  'idempotency_key_hash', 'additional_info', 'notification_status', 'score_json', 'sensitive_content_suspected'];
+/** Cabeçalhos estáveis da aba Leads: uma linha por cenário. Os últimos são técnicos. */
+var CABECALHOS_LEADS = ['submission_id', 'created_at', 'updated_at', 'status', 'situation_code', 'situation_label', 'context_question_code',
+  'context_answer_code', 'context_answer_label', 'audience_profile_code', 'audience_profile_label', 'decision_role_code', 'decision_role_label',
+  'location_type', 'country_code', 'country_name', 'state_code', 'state_name', 'city_code', 'city_name', 'foreign_region', 'scenario_description',
+  'contact_name', 'organization_name', 'preferred_channel', 'whatsapp', 'email', 'privacy_notice_version', 'privacy_notice_acknowledged_at',
+  'legal_basis_code', 'marketing_consent', 'marketing_consent_at', 'source_page', 'source_cta', 'utm_source', 'utm_medium', 'utm_campaign',
+  'utm_content', 'utm_term', 'referrer_domain', 'optional_urgency', 'optional_documents', 'optional_contact_period', 'optional_consequences',
+  'optional_estimated_range', 'assigned_to',
+  'internal_notes', 'retention_review_at', 'deletion_or_anonymization_at',
+  // técnicas (protegidas contra edição acidental)
+  'priority', 'candidate_products', 'missing_information', 'idempotency_key_hash', 'notification_status', 'form_version', 'schema_version',
+  'sensitive_content_suspected', 'score_json'];
 
-var CABECALHOS_HISTORICO = ['at', 'public_code', 'event', 'detail'];
-var CABECALHOS_CONSENTIMENTOS = ['at', 'public_code', 'privacy_notice_version', 'acknowledged', 'requested_channel', 'marketing_consent',
-  'marketing_consent_text_version'];
-var CABECALHOS_ERROS = ['at', 'stage', 'error_code'];
+var STATUS_INICIAIS = ['Novo', 'Em análise', 'Aguardando informação', 'Contatado', 'Qualificado', 'Proposta em preparação', 'Proposta enviada', 'Não aderente', 'Encerrado'];
+
+/** Audit: eventos mínimos, sem relato, telefone ou e-mail. */
+var CABECALHOS_AUDIT = ['at', 'submission_id', 'event', 'actor', 'result'];

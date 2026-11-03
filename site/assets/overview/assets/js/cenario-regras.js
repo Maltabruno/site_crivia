@@ -1,246 +1,68 @@
-/* Regras do formulário "Apresentar meu cenário": perguntas, ramificações e validação do lado do navegador.
-   Dados puros (sem DOM): podem ser testados em tests/regras.test.html. O servidor revalida tudo (servidor/regras_leads.py);
-   os valores internos abaixo são os mesmos do servidor e NÃO devem ser traduzidos. */
+/* Regras do formulário "Apresentar meu cenário" (uma única página): listas, perguntas condicionais, validação e payload.
+   Dados puros (sem DOM): testáveis em tests/regras.test.html. O servidor revalida tudo (servidor/regras_leads.py e
+   google-apps-script/Validation.gs); os códigos internos abaixo são estáveis e NÃO devem ser traduzidos. */
 (function (global) {
   "use strict";
 
-  var o = function (v, l, d) { return d ? { v: v, l: l, d: d } : { v: v, l: l }; };
+  var o = function (v, l) { return { v: v, l: l }; };
+  var NAO_SEI = o("unknown", "Ainda não sei");
 
-  var ENTRADAS = [
-    o("underperforming", "Algo não está entregando como deveria", "Obra, contrato, prazo, custo, medição, produtividade ou recursos."),
-    o("decision_support", "Preciso avaliar antes de decidir", "Terreno, projeto, proposta, orçamento, planejamento, contratação ou recebimento."),
-    o("visual_communication", "Preciso tornar uma solução técnica mais clara", "Imagens, 3D, apresentações, vídeos ou proposta técnico-comercial."),
-    o("ai_decision_engineering", "Quero preparar ou corrigir o uso de IA", "Integração de pessoas, áreas e inteligência artificial."),
-    o("other_or_unsure", "Ainda não sei ou meu caso é diferente", "Conte o essencial e a CRIVIA avaliará o melhor enquadramento para a conversa.")
-  ];
-
-  var CONTEXTOS = [
-    o("contractor", "Empreiteira ou prestadora de serviços"),
-    o("large_company", "Grande empresa, indústria ou contratante"),
-    o("owner_investor", "Proprietário, investidor ou condomínio"),
-    o("technical_partner", "Escritório, projetista ou parceiro técnico"),
-    o("other", "Outro contexto")
-  ];
-  var CONTEXTOS_EMPRESARIAIS = ["contractor", "large_company", "technical_partner"];
-
-  var PAPEIS = [
-    o("decides", "Decido ou autorizo a contratação"),
-    o("leads_evaluation", "Lidero a avaliação e apresento a decisão"),
-    o("technical_participant", "Participo tecnicamente do processo"),
-    o("early_research", "Estou fazendo uma pesquisa inicial"),
-    o("other", "Outro papel")
+  // Situação principal + pergunta curta que depende dela (toda com "Ainda não sei"; nenhuma é obrigatória)
+  var SITUACOES = [
+    { v: "obra_contrato_dificuldade", l: "Obra ou contrato com dificuldade", q: "Em que momento está?",
+      opcoes: [o("before_start", "Antes de iniciar"), o("running", "Em execução"), o("stopped", "Paralisado"), o("closing", "Encerramento"), NAO_SEI] },
+    { v: "atraso_custo_margem", l: "Atraso, custo, produtividade ou perda de margem", q: "Qual efeito preocupa mais?",
+      opcoes: [o("deadline", "Prazo"), o("cost", "Custo"), o("margin", "Margem"), o("penalty", "Multa"), o("production", "Produção"), o("measurement", "Medição"), o("combination", "Combinação"), NAO_SEI] },
+    { v: "projeto_terreno_propostas", l: "Projeto, terreno ou propostas para comparar", q: "O que precisa ser decidido?",
+      opcoes: [o("feasibility", "Viabilidade"), o("project", "Projeto"), o("land", "Terreno"), o("contracting", "Contratação"), o("comparison", "Comparação"), NAO_SEI] },
+    { v: "planejamento_recursos_recuperacao", l: "Planejamento, recursos ou recuperação", q: "Qual é a prioridade?",
+      opcoes: [o("plan", "Planejar"), o("recover_deadline", "Recuperar prazo"), o("organize_resources", "Organizar recursos"), o("integrate_fronts", "Integrar frentes"), NAO_SEI] },
+    { v: "medicao_alteracao_documentacao", l: "Medição, alteração contratual ou documentação", q: "Onde está o impasse?",
+      opcoes: [o("measurement", "Medição"), o("scope", "Escopo"), o("change", "Alteração"), o("approval", "Aprovação"), o("databook", "Data book"), NAO_SEI] },
+    { v: "vistoria_recebimento_conferencia", l: "Vistoria, recebimento ou conferência final", q: "O que será verificado?",
+      opcoes: [o("property", "Imóvel"), o("service", "Serviço"), o("work", "Obra"), o("documentation", "Documentação"), o("handover", "Entrega"), NAO_SEI] },
+    { v: "comunicacao_ia_3d", l: "Comunicação técnica com Inteligência Artificial, vídeo ou 3D", q: "Qual é o objetivo?",
+      opcoes: [o("explain", "Explicar"), o("present", "Apresentar"), o("sell", "Vender"), o("train", "Treinar"), o("compare", "Comparar"), NAO_SEI] },
+    { v: "outra_nao_sei", l: "Outra situação / ainda não sei", q: "O que você busca agora?",
+      opcoes: [o("understand", "Entender"), o("compare", "Comparar"), o("plan", "Planejar"), o("verify", "Verificar"), o("decide", "Decidir"), NAO_SEI] }
   ];
 
-  var FASES = [
-    o("planning", "Em planejamento"), o("execution", "Em execução"), o("delay_or_critical", "Em atraso ou situação crítica"),
-    o("near_completion", "Próximo da conclusão"), o("operation", "Em operação"), o("unsure", "Não tenho certeza")
-  ];
-  var PROBLEMAS = [
-    o("schedule", "Prazo"), o("margin_cost", "Margem ou custo"), o("measurement_receipt", "Medição ou recebimento"),
-    o("scope_change", "Escopo ou alteração contratual"), o("team_equipment_material", "Equipe, equipamento ou material"),
-    o("project_info", "Projeto ou informação técnica"), o("quality", "Qualidade"), o("supplier", "Fornecedor"),
-    o("undefined_responsibilities", "Responsabilidades indefinidas"), o("other", "Outro")
-  ];
-  var CONSEQUENCIAS = [
-    o("penalty", "Multa ou penalidade"), o("stoppage", "Paralisação ou atraso"), o("margin_cash_loss", "Perda de margem ou caixa"),
-    o("technical_quality_risk", "Risco técnico ou de qualidade"), o("contract_conflict", "Conflito contratual"),
-    o("operation_impact", "Impacto na operação"), o("decision_without_information", "Decisão sem informação suficiente"),
-    o("other", "Outra consequência")
-  ];
-  var HORIZONTES = [
-    o("up_to_7_days", "Até 7 dias"), o("8_to_30_days", "Entre 8 e 30 dias"), o("31_to_90_days", "Entre 31 e 90 dias"),
-    o("after_90_days", "Depois de 90 dias"), o("undefined", "Ainda não definido")
-  ];
-  var AVALIAR = [
-    o("land", "Terreno"), o("projects", "Projetos"), o("budget_costs", "Orçamento ou custos"),
-    o("supplier_proposals", "Propostas de fornecedores"), o("planning_resources", "Planejamento e recursos"),
-    o("measurement_change", "Medição ou alteração contratual"), o("handover", "Recebimento da obra"),
-    o("documentation_databook", "Documentação ou data book"), o("other", "Outro")
-  ];
-  var ENTREGAS = [
-    o("explainer_video", "Vídeo explicativo"), o("image_or_3d", "Imagem ou representação 3D"), o("technical_presentation", "Apresentação técnica"),
-    o("visual_proposal", "Proposta técnico-comercial visual"), o("combination", "Combinação dessas entregas"), o("undefined", "Ainda não definido")
-  ];
-  var FINALIDADES = [
-    o("explain_solution", "Explicar uma solução"), o("present_project", "Apresentar um projeto"), o("compare_alternatives", "Comparar alternativas"),
-    o("present_proposal", "Apresentar uma proposta"), o("show_process", "Demonstrar etapas ou processo"), o("other", "Outra")
-  ];
-  var PUBLICOS_VISUAIS = [
-    o("client", "Cliente"), o("board", "Diretoria"), o("technical_team", "Equipe técnica"), o("investor", "Investidor"),
-    o("general_public", "Público geral"), o("other", "Outro")
-  ];
-  var REFERENCIAS = [
-    o("idea_only", "Apenas ideia ou conceito"), o("photos_info", "Fotografias e informações"), o("plans_projects", "Plantas ou projetos"),
-    o("existing_3d_model", "Modelo 3D existente"), o("not_organized", "Ainda não tenho material organizado")
-  ];
-  var SITUACOES_IA = [
-    o("expand_transition", "Vai ampliar o uso de IA e precisa preparar a transição"),
-    o("already_using", "Já utiliza IA, mas enfrenta dificuldades"),
-    o("evaluating", "Ainda está avaliando por onde começar")
-  ];
-  var DIFICULDADES_IA = [
-    o("unreliable_output", "Erros ou informações não confiáveis"), o("rework", "Retrabalho"), o("overload", "Sobrecarga"),
-    o("inadequate_decisions", "Decisões inadequadas"), o("lack_of_checking", "Falta de conferência"), o("areas_misaligned", "Desencontro entre áreas"),
-    o("people_unprepared", "Pessoas sem preparo suficiente"), o("tools_disconnected", "Ferramentas desconectadas do processo"),
-    o("unclear_responsibilities", "Falta de responsabilidades claras"), o("other", "Outra")
-  ];
-  var AREAS_IA = [
-    o("operations", "Operações"), o("engineering", "Engenharia"), o("procurement", "Suprimentos"), o("finance", "Financeiro"),
-    o("legal_contracts", "Jurídico ou contratos"), o("it", "Tecnologia da informação"), o("board", "Diretoria"), o("other", "Outras áreas")
-  ];
-  var PESSOAS = [
-    o("up_to_10", "Até 10 pessoas"), o("11_to_50", "De 11 a 50 pessoas"), o("51_to_200", "De 51 a 200 pessoas"),
-    o("above_200", "Mais de 200 pessoas"), o("undisclosed", "Prefiro não informar")
-  ];
-  var PROCESSOS = [
-    o("planning", "Planejamento"), o("execution", "Execução"), o("procurement", "Compras e suprimentos"), o("measurement", "Medição"),
-    o("documentation", "Documentação"), o("customer_service", "Atendimento"), o("other", "Outro")
-  ];
-  var FAIXAS = [
-    o("up_to_100k", "Até R$ 100 mil"), o("100k_to_1m", "De R$ 100 mil a R$ 1 milhão"), o("1m_to_10m", "De R$ 1 milhão a R$ 10 milhões"),
-    o("10m_to_50m", "De R$ 10 milhões a R$ 50 milhões"), o("above_50m", "Acima de R$ 50 milhões"),
-    o("undisclosed", "Prefiro não informar"), o("unknown", "Ainda não sei")
-  ];
-  var DOCUMENTOS = [
-    o("contract", "Contrato"), o("projects", "Projetos"), o("schedule", "Cronograma"), o("budget", "Orçamento"), o("measurements", "Medições"),
-    o("photos_records", "Fotografias ou registros"), o("process_data", "Procedimentos ou dados do processo"),
-    o("none_organized", "Ainda não tenho documentos organizados"), o("other", "Outro")
-  ];
-  var CANAIS = [o("whatsapp", "WhatsApp"), o("email", "E-mail"), o("phone_call", "Ligação")];
-  var PERIODOS = [o("morning", "Manhã"), o("afternoon", "Tarde"), o("evening", "Noite"), o("business_hours_any", "Qualquer horário comercial")];
-  var UFS = [["AC", "Acre"], ["AL", "Alagoas"], ["AP", "Amapá"], ["AM", "Amazonas"], ["BA", "Bahia"], ["CE", "Ceará"], ["DF", "Distrito Federal"],
-    ["ES", "Espírito Santo"], ["GO", "Goiás"], ["MA", "Maranhão"], ["MT", "Mato Grosso"], ["MS", "Mato Grosso do Sul"], ["MG", "Minas Gerais"],
-    ["PA", "Pará"], ["PB", "Paraíba"], ["PR", "Paraná"], ["PE", "Pernambuco"], ["PI", "Piauí"], ["RJ", "Rio de Janeiro"], ["RN", "Rio Grande do Norte"],
-    ["RS", "Rio Grande do Sul"], ["RO", "Rondônia"], ["RR", "Roraima"], ["SC", "Santa Catarina"], ["SP", "São Paulo"], ["SE", "Sergipe"], ["TO", "Tocantins"]];
+  var PERFIS = [o("company_manager", "Empresa / gestor"), o("contractor", "Empreiteira / prestador"), o("owner_investor", "Proprietário / investidor"),
+    o("technical_team", "Profissional ou equipe técnica"), o("other", "Outro perfil")];
+  var PAPEIS = [o("decides", "Decido ou aprovo a contratação"), o("recommends", "Participo da análise e recomendo"), o("gathering", "Estou levantando informações"),
+    o("referring", "Estou indicando a situação"), o("other_unsure", "Outro / ainda não sei")];
+  var CANAIS = [o("whatsapp", "WhatsApp"), o("email", "E-mail")];
+  // Complemento opcional, depois do envio confirmado
+  var URGENCIAS = [o("immediate", "Imediata"), o("this_week", "Nesta semana"), o("this_month", "Neste mês"), o("undefined", "Sem urgência definida")];
+  var DOCUMENTOS = [o("yes", "Sim"), o("partial", "Parcialmente"), o("no", "Não"), o("unknown", "Ainda não sei")];
+  var PERIODOS = [o("morning", "Manhã"), o("afternoon", "Tarde"), o("evening", "Noite"), o("any", "Indiferente")];
+  // Perguntas opcionais "para adiantar a análise" (na mesma página; nenhuma é obrigatória)
+  var CONSEQUENCIAS = [o("penalty", "Multa ou penalidade"), o("stoppage", "Paralisação ou atraso"), o("margin_cash_loss", "Perda de margem ou caixa"),
+    o("technical_quality_risk", "Risco técnico ou de qualidade"), o("contract_conflict", "Conflito contratual"), o("decision_without_information", "Decisão sem informação suficiente"), o("other", "Outra")];
+  var FAIXAS = [o("up_to_100k", "Até R$ 100 mil"), o("100k_to_1m", "R$ 100 mil a R$ 1 milhão"), o("1m_to_10m", "R$ 1 a 10 milhões"), o("10m_to_50m", "R$ 10 a 50 milhões"),
+    o("above_50m", "Acima de R$ 50 milhões"), o("undisclosed", "Prefiro não informar"), o("unknown", "Ainda não sei")];
+  var MAX_CONSEQUENCIAS = 2;
 
+  var LIMITES = { narrativa: 1200, narrativaMin: 10, nome: 120, organizacao: 120, cidadeExterior: 80, regiao: 80 };
   var ORIGENS = ["hero", "industria", "produtos", "metodo", "sobre", "header", "final", "direto"];
   var PRODUTOS = ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12", "IA-1", "IA-2", "CV01"];
-  var NOMES_PRODUTOS = {
-    P01: "Diagnóstico de obra ou contrato", P02: "Análise crítica de projetos", P03: "Avaliação preliminar de terreno", P04: "Orçamento e análise de custos",
-    P05: "Comparação técnica de propostas", P06: "Planejamento de obra e recursos", P07: "Plano de recuperação de obra", P08: "Análise de processo e produtividade",
-    P09: "Medições e alterações contratuais", P10: "Acompanhamento técnico das obras", P11: "Vistoria para recebimento", P12: "Organização e conferência de documentos",
-    "IA-1": "Preparação da transição para IA", "IA-2": "Diagnóstico e ajustes após a adoção", CV01: "Visualização e comunicação técnica com IA e 3D"
-  };
 
-  // Perguntas por tipo: single (uma escolha), multi (várias, com limite), text (campo curto), area (texto longo), select (lista), note (aviso)
-  var q = function (id, tipo, rotulo, extra) {
-    var base = { id: id, tipo: tipo, rotulo: rotulo, obrigatorio: true };
-    for (var k in extra) base[k] = extra[k];
-    return base;
-  };
+  function achar(lista, v) { for (var i = 0; i < lista.length; i++) if (lista[i].v === v) return lista[i]; return null; }
 
-  var P_FASE = q("stage", "single", "Em qual fase o cenário está?", { opcoes: FASES });
-  var P_HORIZONTE = q("decisionHorizon", "single", "Quando essa decisão precisa avançar?", { opcoes: HORIZONTES });
-  var P_CONSEQ = q("consequences", "multi", "Qual consequência mais preocupa?", { opcoes: CONSEQUENCIAS, max: 2 });
-  var P_NARRATIVA = function (rotulo, ajuda) {
-    return q("narrative", "area", rotulo, { max: 700, min: 10, ajuda: ajuda || "Não precisa usar linguagem técnica. Não inclua dados pessoais sensíveis, segredos comerciais ou documentos confidenciais." });
-  };
+  // busca sem diferença de maiúsculas ou acentos
+  function normalizar(t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
 
-  function ramo(entrada) {
-    switch (entrada) {
-      case "underperforming":
-        return [
-          P_FASE,
-          q("issues", "multi", "O que está mais comprometido?", { opcoes: PROBLEMAS, max: 3 }),
-          P_CONSEQ, P_HORIZONTE,
-          P_NARRATIVA("Em poucas linhas, o que está acontecendo e qual decisão precisa ser tomada?")
-        ];
-      case "decision_support":
-        return [
-          q("branch.evaluate", "multi", "O que você precisa avaliar?", { opcoes: AVALIAR, max: 3 }),
-          q("stage", "single", "Qual é a fase atual?", { opcoes: FASES }),
-          P_HORIZONTE,
-          q("consequences", "multi", "Qual a consequência de decidir sem essa informação?", { opcoes: CONSEQUENCIAS, max: 2 }),
-          P_NARRATIVA("Qual decisão você precisa tomar com mais segurança?")
-        ];
-      case "visual_communication":
-        return [
-          q("branch.deliverable", "single", "O que precisa ser produzido?", { opcoes: ENTREGAS }),
-          q("note", "note", "", { texto: "Imagem conceitual, imagem baseada em projeto e modelo 3D editável são entregas diferentes. A definição final depende dos arquivos e da fidelidade necessários.", obrigatorio: false }),
-          q("branch.purpose", "single", "Qual é a finalidade?", { opcoes: FINALIDADES }),
-          q("branch.audience", "single", "Para quem será apresentado?", { opcoes: PUBLICOS_VISUAIS }),
-          q("branch.referenceLevel", "single", "Qual nível de referência existe?", { opcoes: REFERENCIAS }),
-          q("decisionHorizon", "single", "Quando precisa estar pronto?", { opcoes: HORIZONTES, ajuda: "São faixas de referência para a conversa; não representam promessa de entrega." }),
-          P_NARRATIVA("O que precisa ficar claro para quem verá esse material?")
-        ];
-      case "ai_decision_engineering":
-        return [
-          q("branch.aiSituation", "single", "Em qual situação sua empresa está?", { opcoes: SITUACOES_IA }),
-          q("branch.difficulties", "multi", "Quais dificuldades são observadas?", { opcoes: DIFICULDADES_IA, max: 10, condicao: function (r) { return r.branch && r.branch.aiSituation === "already_using"; } }),
-          q("branch.areas", "multi", "Quais áreas ou funções estão envolvidas?", { opcoes: AREAS_IA, max: 8 }),
-          q("branch.peopleRange", "single", "Quantas pessoas, aproximadamente, estão envolvidas?", { opcoes: PESSOAS }),
-          q("branch.affectedProcess", "single", "Qual é o processo mais afetado?", { opcoes: PROCESSOS }),
-          P_CONSEQ, P_HORIZONTE,
-          P_NARRATIVA("O que precisa melhorar na relação entre pessoas, áreas e IA?")
-        ];
-      default: // other_or_unsure
-        return [
-          q("note", "note", "", { texto: "Não precisa classificar o problema. Conte o essencial e a CRIVIA fará o enquadramento inicial.", obrigatorio: false }),
-          P_NARRATIVA("O que está acontecendo?", "Descreva o contexto em poucas linhas. Não inclua dados pessoais sensíveis, segredos comerciais ou documentos confidenciais."),
-          q("branch.decisionNeeded", "area", "Qual decisão precisa ser tomada?", { max: 500, min: 10 }),
-          P_CONSEQ, P_HORIZONTE
-        ];
+  /** Filtra [codigo, nome] pela busca: começa-com antes de contém. Devolve no máximo `max` itens. */
+  function filtrar(itens, busca, max) {
+    var b = normalizar(busca), ini = [], meio = [];
+    for (var i = 0; i < itens.length; i++) {
+      var n = normalizar(itens[i][1]);
+      if (!b) ini.push(itens[i]);
+      else if (n.indexOf(b) === 0) ini.push(itens[i]);
+      else if (n.indexOf(b) > 0) meio.push(itens[i]);
+      if (ini.length >= max && !b) break;
     }
-  }
-
-  var COMUNS = [
-    q("city", "text", "Cidade", { max: 80, min: 2, autocomplete: "address-level2", ajuda: "Somente a cidade; não peça nem informe endereço completo." }),
-    q("state", "select", "Estado", { opcoes: UFS.map(function (u) { return o(u[0], u[1] + " (" + u[0] + ")"); }), autocomplete: "address-level1" }),
-    q("availableDocuments", "multi", "Quais documentos você já tem?", { opcoes: DOCUMENTOS, max: 9, ajuda: "Nesta etapa não é preciso enviar nada." }),
-    q("estimatedRange", "single", "Faixa aproximada do empreendimento, contrato ou processo", { opcoes: FAIXAS, obrigatorio: false, ajuda: "Opcional. Ajuda a CRIVIA a se preparar para a conversa." })
-  ];
-
-  function perguntasEtapa3(respostas) {
-    return ramo(respostas.entryPath).concat(COMUNS).filter(function (p) { return !p.condicao || p.condicao(respostas); });
-  }
-
-  function obter(respostas, id) {
-    if (id.indexOf("branch.") === 0) return (respostas.branch || {})[id.slice(7)];
-    return respostas[id];
-  }
-  function definir(respostas, id, valor) {
-    if (id.indexOf("branch.") === 0) { respostas.branch = respostas.branch || {}; respostas.branch[id.slice(7)] = valor; }
-    else respostas[id] = valor;
-  }
-
-  // validação por etapa: devolve { campo: mensagem }
-  function validarEtapa(etapa, r) {
-    var e = {};
-    var vazio = function (v) { return v === undefined || v === null || v === "" || (Array.isArray(v) && !v.length); };
-    if (etapa === 1) {
-      if (vazio(r.entryPath)) e.entryPath = "Escolha a situação que melhor descreve o que você precisa agora.";
-    } else if (etapa === 2) {
-      if (vazio(r.audienceContext)) e.audienceContext = "Escolha o contexto em que esse cenário acontece.";
-      if (vazio(r.decisionRole)) e.decisionRole = "Escolha o seu papel nessa decisão.";
-    } else if (etapa === 3) {
-      perguntasEtapa3(r).forEach(function (p) {
-        if (p.tipo === "note") return;
-        var v = obter(r, p.id);
-        if (p.obrigatorio && vazio(v)) { e[p.id] = p.tipo === "multi" ? "Escolha ao menos uma opção." : p.tipo === "text" || p.tipo === "area" ? "Preencha este campo." : "Escolha uma opção."; return; }
-        if ((p.tipo === "text" || p.tipo === "area") && typeof v === "string" && v.trim().length) {
-          if (p.min && v.trim().length < p.min) e[p.id] = "Escreva ao menos " + p.min + " caracteres.";
-          if (p.max && v.length > p.max) e[p.id] = "Use no máximo " + p.max + " caracteres.";
-        }
-        if (p.tipo === "multi" && Array.isArray(v) && p.max && v.length > p.max) e[p.id] = "Escolha no máximo " + p.max + " opções.";
-      });
-    } else if (etapa === 4) {
-      var c = r.contact || {};
-      var empresarial = CONTEXTOS_EMPRESARIAIS.indexOf(r.audienceContext) >= 0;
-      if (!c.name || c.name.trim().length < 2) e["contact.name"] = "Informe seu nome.";
-      if (empresarial && !(c.organization || "").trim()) e["contact.organization"] = "Informe a empresa ou organização.";
-      if (!c.preferredChannel) e["contact.preferredChannel"] = "Escolha como prefere receber o retorno.";
-      if (c.preferredChannel === "whatsapp" || c.preferredChannel === "phone_call") {
-        if (!normalizarTelefone(c.phone || "")) e["contact.phone"] = "Informe um telefone válido, com DDD.";
-      }
-      if (c.preferredChannel === "email" || (c.email || "").trim()) {
-        if (!emailValido(c.email || "")) e["contact.email"] = "Informe um e-mail válido.";
-      }
-      if (c.secondChannel) {
-        var ok = c.secondChannel === "email" ? emailValido(c.secondValue || "") : !!normalizarTelefone(c.secondValue || "");
-        if (!ok) e["contact.secondValue"] = "Confira o segundo contato.";
-      }
-    }
-    return e;
+    return ini.concat(meio).slice(0, max);
   }
 
   function emailValido(v) {
@@ -260,6 +82,34 @@
     return null;
   }
 
+  /** Validação da página inteira. r = estado; devolve { campo: mensagem } (vazio = pode enviar). */
+  function validar(r) {
+    var e = {}, c = r.contact || {}, l = r.location || {};
+    if (!achar(SITUACOES, r.situationCode)) e.situationCode = "Escolha o que mais se aproxima do seu cenário.";
+    if (!achar(PERFIS, r.audienceProfile)) e.audienceProfile = "Escolha como você está falando.";
+    if (!achar(PAPEIS, r.decisionRole)) e.decisionRole = "Escolha qual é a sua participação.";
+    if (l.type === "brazil") {
+      if (!l.stateCode) e["location.state"] = "Escolha o estado.";
+      if (!l.cityCode) e["location.city"] = l.stateCode ? "Escolha uma cidade da lista." : "Escolha primeiro o estado.";
+    } else if (l.type === "international") {
+      if (!l.countryCode) e["location.country"] = "Escolha o país na lista.";
+      if (!(l.intlCity || "").trim()) e["location.cityName"] = "Informe a cidade.";
+      else if (l.intlCity.trim().length > LIMITES.cidadeExterior) e["location.cityName"] = "Use no máximo " + LIMITES.cidadeExterior + " caracteres.";
+      if ((l.foreignRegion || "").trim().length > LIMITES.regiao) e["location.foreignRegion"] = "Use no máximo " + LIMITES.regiao + " caracteres.";
+    } else e["location.type"] = "Informe se o cenário está no Brasil ou no exterior.";
+    var n = (r.narrative || "").trim();
+    if (n.length < LIMITES.narrativaMin) e.narrative = "Conte o essencial em ao menos " + LIMITES.narrativaMin + " caracteres.";
+    else if (n.length > LIMITES.narrativa) e.narrative = "Use no máximo " + LIMITES.narrativa + " caracteres.";
+    if ((c.name || "").trim().length < 2) e["contact.name"] = "Informe seu nome.";
+    if (!achar(CANAIS, c.preferredChannel)) e["contact.preferredChannel"] = "Escolha como prefere receber a resposta.";
+    if (c.preferredChannel === "whatsapp" && !normalizarTelefone(c.phone || "")) e["contact.phone"] = "Informe um WhatsApp válido, com DDD ou código do país (+).";
+    if (c.preferredChannel === "email" && !emailValido(c.email)) e["contact.email"] = "Informe um e-mail válido.";
+    if (c.preferredChannel !== "whatsapp" && (c.phone || "").trim() && !normalizarTelefone(c.phone)) e["contact.phone"] = "Confira o número do WhatsApp.";
+    if (c.preferredChannel !== "email" && (c.email || "").trim() && !emailValido(c.email)) e["contact.email"] = "Confira o e-mail.";
+    if ((r.consequences || []).length > MAX_CONSEQUENCIAS) e.consequences = "Escolha no máximo " + MAX_CONSEQUENCIAS + " opções.";
+    return e;
+  }
+
   // Parâmetros de origem: só valores das listas permitidas; o resto é descartado
   function lerOrigem(busca) {
     var p = new URLSearchParams(busca || "");
@@ -272,41 +122,38 @@
     };
   }
 
-  // Monta o corpo enviado ao servidor (o servidor valida de novo)
+  /** Corpo enviado ao servidor. Só vai o que pertence ao modo escolhido (nada residual de Brasil ↔ Exterior). */
   function montarPayload(r, origem, extra) {
-    var c = r.contact || {};
-    var s = {
-      entryPath: r.entryPath, audienceContext: r.audienceContext, decisionRole: r.decisionRole,
-      stage: r.stage || null, issues: r.entryPath === "underperforming" ? (r.issues || []) : [], consequences: r.consequences || [],
-      decisionHorizon: r.decisionHorizon, city: (r.city || "").trim(), state: r.state, estimatedRange: r.estimatedRange || null,
-      availableDocuments: r.availableDocuments || [], narrative: (r.narrative || "").trim(), branchSpecificData: {}
-    };
-    var b = r.branch || {};
-    var chaves = {
-      decision_support: ["evaluate"], visual_communication: ["deliverable", "purpose", "audience", "referenceLevel"],
-      ai_decision_engineering: ["aiSituation", "difficulties", "areas", "peopleRange", "affectedProcess"], other_or_unsure: ["decisionNeeded"], underperforming: []
-    }[r.entryPath] || [];
-    chaves.forEach(function (k) { if (b[k] !== undefined && b[k] !== "") s.branchSpecificData[k] = typeof b[k] === "string" ? b[k].trim() : b[k]; });
-    if (s.branchSpecificData.aiSituation !== "already_using") delete s.branchSpecificData.difficulties;
-    var contact = {
-      name: (c.name || "").trim(), organization: (c.organization || "").trim(), roleTitle: (c.roleTitle || "").trim(),
-      preferredChannel: c.preferredChannel, phone: c.phone || "", email: (c.email || "").trim(), preferredContactPeriod: c.preferredContactPeriod || null
-    };
-    if (c.secondChannel) { contact.secondChannel = c.secondChannel; contact.secondValue = (c.secondValue || "").trim(); }
+    var c = r.contact || {}, l = r.location || {};
+    var loc = l.type === "brazil"
+      ? { type: "brazil", countryCode: "BR", stateCode: l.stateCode, cityCode: l.cityCode, cityName: l.cityName }
+      : { type: "international", countryCode: l.countryCode, cityName: (l.intlCity || "").trim(), foreignRegion: (l.foreignRegion || "").trim() };
+    var contato = { name: (c.name || "").trim(), organization: (c.organization || "").trim(), preferredChannel: c.preferredChannel };
+    if (c.contactPeriod) contato.contactPeriod = c.contactPeriod;
+    var cenario = { situationCode: r.situationCode, contextAnswerCode: r.contextAnswerCode || null, audienceProfile: r.audienceProfile,
+      decisionRole: r.decisionRole, location: loc, narrative: (r.narrative || "").trim() };
+    if (r.urgency) cenario.urgency = r.urgency;
+    if ((r.consequences || []).length) cenario.consequences = r.consequences.slice();
+    if (r.documents) cenario.documents = r.documents;
+    if (r.estimatedRange) cenario.estimatedRange = r.estimatedRange;
+    if ((c.phone || "").trim()) contato.phone = c.phone.trim();
+    if ((c.email || "").trim()) contato.email = c.email.trim();
     return {
-      idempotencyKey: extra.idempotencyKey, schemaVersion: 1,
+      idempotencyKey: extra.idempotencyKey, schemaVersion: 2, formVersion: extra.formVersion, elapsedMs: extra.elapsedMs,
       source: { originCta: origem.originCta, productHint: origem.productHint, utmSource: origem.utmSource, utmMedium: origem.utmMedium,
         utmCampaign: origem.utmCampaign, utmContent: origem.utmContent, utmTerm: origem.utmTerm, deviceCategory: extra.deviceCategory, referrer: extra.referrer || "" },
-      scenario: s, contact: contact,
-      privacy: { privacyNoticeVersion: extra.privacyNoticeVersion, acknowledged: true, marketingConsent: false },
+      scenario: cenario,
+      contact: contato,
+      privacy: { privacyNoticeVersion: extra.privacyNoticeVersion, acknowledged: true },
       website: extra.honeypot || ""
     };
   }
 
   global.CRIVIA_REGRAS = {
-    ENTRADAS: ENTRADAS, CONTEXTOS: CONTEXTOS, PAPEIS: PAPEIS, CANAIS: CANAIS, PERIODOS: PERIODOS, NOMES_PRODUTOS: NOMES_PRODUTOS,
-    CONTEXTOS_EMPRESARIAIS: CONTEXTOS_EMPRESARIAIS, ORIGENS: ORIGENS, PRODUTOS: PRODUTOS,
-    perguntasEtapa3: perguntasEtapa3, validarEtapa: validarEtapa, obter: obter, definir: definir,
-    normalizarTelefone: normalizarTelefone, emailValido: emailValido, lerOrigem: lerOrigem, montarPayload: montarPayload
+    SITUACOES: SITUACOES, PERFIS: PERFIS, PAPEIS: PAPEIS, CANAIS: CANAIS, URGENCIAS: URGENCIAS, DOCUMENTOS: DOCUMENTOS, PERIODOS: PERIODOS,
+    CONSEQUENCIAS: CONSEQUENCIAS, FAIXAS: FAIXAS, MAX_CONSEQUENCIAS: MAX_CONSEQUENCIAS,
+    LIMITES: LIMITES, ORIGENS: ORIGENS, PRODUTOS: PRODUTOS,
+    achar: achar, normalizar: normalizar, filtrar: filtrar, validar: validar, normalizarTelefone: normalizarTelefone, emailValido: emailValido,
+    lerOrigem: lerOrigem, montarPayload: montarPayload
   };
 })(window);

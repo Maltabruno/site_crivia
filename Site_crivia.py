@@ -969,7 +969,7 @@ JS_CRIVIA = r"""var CRIVIA_IR_CENARIO = () => {
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
   var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
-  var CRIVIA_CTA_MICRO = "Leva cerca de 2 minutos. Você não precisa saber qual serviço escolher.";
+  var CRIVIA_CTA_MICRO = "Leva cerca de 1 minuto. Você não precisa saber qual serviço escolher.";
   var CRIVIA_ABRIR_CENARIO = (origem, interesse) => {
     const q = "?origem=" + encodeURIComponent(origem || "direto") + (interesse ? "&interesse=" + encodeURIComponent(interesse) : "");
     window.location.assign("apresentar-cenario.html" + q);
@@ -2417,7 +2417,12 @@ def publicar_cenario(ov):
     shutil.copyfile(fonte / "cenario.css", ov / "assets" / "css" / "cenario.css")
     shutil.copyfile(fonte / "regras.js", ov / "assets" / "js" / "cenario-regras.js")
     shutil.copyfile(fonte / "cenario.js", ov / "assets" / "js" / "cenario.js")
-    cfg = (fonte / "config.js").read_text(encoding="utf-8").replace("__CRIVIA_LEAD_ENDPOINT__", endpoint)
+    # localidades (IBGE) servidas pelo próprio site: a página nunca chama o IBGE durante o preenchimento
+    destino_loc = ov / "data" / "locations"
+    if destino_loc.exists():
+        shutil.rmtree(destino_loc)
+    shutil.copytree(fonte / "data" / "locations", destino_loc, ignore=shutil.ignore_patterns("README.md"))
+    cfg =(fonte / "config.js").read_text(encoding="utf-8").replace("__CRIVIA_LEAD_ENDPOINT__", endpoint)
     (ov / "assets" / "js" / "cenario-config.js").write_text(cfg, encoding="utf-8", newline=chr(10))
     aviso = (fonte / "aviso-privacidade.html").read_text(encoding="utf-8")
     (ov / "aviso-privacidade.html").write_text(aviso, encoding="utf-8", newline=chr(10))
@@ -2880,6 +2885,9 @@ CSS_FINAL = r"""
   .crivia-fim__acoes { flex-direction: column; width: min(15rem, 100%); }
   .crivia-fim__acoes .crivia-cta { width: 100%; height: 2.2rem; justify-content: center; }
 }
+/* menu do celular: todos os itens centralizados; o último (CTA do modelo) não pode encostar na borda nem quebrar */
+nav[aria-label="Mobile"] a { text-align: center; }
+nav[aria-label="Mobile"] a.underline { width: auto; max-width: 100%; font-size: 1.05rem; letter-spacing: .16em; white-space: nowrap; }
 """
 
 
