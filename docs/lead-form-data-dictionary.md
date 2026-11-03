@@ -46,7 +46,7 @@ Não são gravados: IP, User-Agent completo, fingerprint, GPS, CEP, endereço co
 
 ## Perguntas opcionais e protocolo
 
-As perguntas opcionais ("Para adiantar a análise") ficam **na mesma página**, em bloco recolhível, e vão no envio principal. Não existe mais passo extra depois do envio.
+As perguntas opcionais ("Para adiantar a análise") ficam **na mesma página**, em bloco sempre visível (não abre nem fecha), e vão no envio principal. Não existe mais passo extra depois do envio.
 O **protocolo não aparece na tela**: a confirmação com o protocolo segue ao canal escolhido. E-mail: automática (Apps Script, só com `CONFIRMATION_EMAIL_ENABLED=true` e remetente autorizado). WhatsApp: **enviada pela equipe** (o alerta interno traz a ação e o número); não há envio automático por WhatsApp sem um provedor/API contratado.
 A resposta do servidor informa `confirmation` (`email`, `whatsapp` ou `none`) e a página só promete o que de fato vai acontecer. A ação `details` (complemento por token) continua no backend, mas a página atual não a usa.
 

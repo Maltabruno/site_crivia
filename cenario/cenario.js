@@ -93,13 +93,25 @@
 
   // ── componentes ───────────────────────────────────────────────────────────────────────────────
   var contador = 0;
+  /** Organiza as opções em colunas alinhadas, sem caixa em volta: 4 colunas para rótulos curtos (até ~15 letras, cabem numa linha), 3 para médios (~22), 2 para longos
+      (nunca mais colunas que opções). No celular: 2 colunas só se tudo for curto; senão 1. O número vai em variáveis CSS. */
+  function colunas(cx, lista) {
+    var m = 0, n = lista.length;
+    lista.forEach(function (o) { m = Math.max(m, o.l.length); });
+    cx.classList.add("opcoes");
+    cx.style.setProperty("--cols", Math.min(n, m <= 15 ? 4 : m <= 22 ? 3 : 2));
+    cx.style.setProperty("--cols-m", m <= 14 ? Math.min(n, 2) : 1);
+  }
+
   function chips(nome, lista, aoEscolher, classe) {
     contador += 1;
+    var seg = classe === "segmento";       // Brasil/Exterior e canal continuam como botões segmentados; o resto é lista de escolha única
     var cx = h("div", { class: classe || "chips" });
     lista.forEach(function (o) {
       var inp = h("input", { type: "radio", name: nome + "-" + contador, value: o.v, onchange: function () { aoEscolher(o.v); } });
-      cx.appendChild(h("label", { class: "chip" }, inp, h("span", { texto: o.l })));
+      cx.appendChild(h("label", { class: seg ? "chip" : "chip chip--caixa" }, inp, seg ? null : h("span", { class: "chip__caixa chip__caixa--radio", "aria-hidden": "true" }), h("span", { texto: o.l })));
     });
+    if (!seg) colunas(cx, lista);
     return cx;
   }
   function marcar(cx, valor) { Array.prototype.forEach.call(cx.querySelectorAll("input"), function (i) { i.checked = Array.isArray(valor) ? valor.indexOf(i.value) >= 0 : i.value === valor; }); }
@@ -110,7 +122,8 @@
     o = o || {};
     contador += 1;
     var excl = o.exclusivas || [];
-    var cx = h("div", { class: o.classe || "chips" });
+    var cx = h("div", { class: "chips" });
+    colunas(cx, lista);
     function entradas() { return Array.prototype.slice.call(cx.querySelectorAll("input")); }
     function lidos() { return entradas().filter(function (i) { return i.checked; }).map(function (i) { return i.value; }); }
     lista.forEach(function (op) {
@@ -161,7 +174,7 @@
       "aria-describedby": [ajId, erId, o.area ? id + "-ct" : null].filter(Boolean).join(" "),
       oninput: function (ev) { o.aoMudar(ev.target.value); limpar(chave); salvar(); } });
     var msg = h("p", { class: "campo__erro", id: erId, role: "alert" });
-    var caixa = h("div", { class: "campo" }, h("label", { for: id }, rotulo, o.obrigatorio === false ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null),
+    var caixa = h("div", { class: "campo" }, h("label", { for: id, class: o.numerar ? "rotulo-num" : null }, rotulo, o.obrigatorio === false ? h("span", { class: "grupo__opcional", texto: " (opcional)" }) : null),
       o.ajuda ? h("p", { class: "campo__ajuda", id: ajId, texto: o.ajuda }) : null, ctrl, o.area ? h("p", { class: "campo__contador", id: id + "-ct", texto: "0 / " + R.LIMITES.narrativa }) : null, msg);
     registrar(chave, caixa, ctrl, msg);
     return { caixa: caixa, ctrl: ctrl };
@@ -175,7 +188,7 @@
       "aria-describedby": erId, autocomplete: "off", autocapitalize: "off", spellcheck: "false", placeholder: o.placeholder || "" });
     var lista = h("ul", { id: lbId, class: "combo__lista", role: "listbox", "aria-label": rotulo, hidden: "hidden" });
     var msg = h("p", { class: "campo__erro", id: erId, role: "alert" });
-    var caixa = h("div", { class: "campo" }, h("label", { for: id, texto: rotulo }), ctrl, lista, msg);
+    var caixa = h("div", { class: "campo" }, h("label", { for: id, texto: rotulo }), ctrl, lista, msg);   // Estado/Cidade/País: campos, sem número
     registrar(chave, caixa, ctrl, msg);
 
     function abrir() { lista.hidden = false; ctrl.setAttribute("aria-expanded", "true"); }
@@ -260,10 +273,10 @@
       var antes = e.situationCodes.length;
       e.situationCodes = sel; e.contextAnswerCode = ""; limpar("situationCodes"); desenharContexto(); salvar();
       if (sel.length && sel.length > antes) rastrear("scenario_branch_selected", { branch: sel[0] });
-    }, { classe: "chips chips--2", exclusivas: R.EXCLUSIVAS.situationCodes });
+    }, { exclusivas: R.EXCLUSIVAS.situationCodes });
     refs.situacao = sitMulti.cx;
     refs.contextoChips = h("div");
-    refs.contextoLegenda = h("legend", { class: "grupo__rotulo" });
+    refs.contextoLegenda = h("legend", { class: "grupo__rotulo grupo__rotulo--sub" });   // pergunta condicional: sem número
     refs.contexto = h("fieldset", { class: "grupo sub", hidden: "hidden" }, refs.contextoLegenda, refs.contextoChips);
     var b1 = h("div", { class: "bloco" }, grupoMulti("situationCodes", "O que mais se aproxima do seu cenário hoje?", sitMulti), refs.contexto);
 
@@ -304,7 +317,7 @@
       h("p", { class: "campo__ajuda", texto: "É a localização do cenário, não a sua residência. Usamos para avaliar atendimento e contexto local; não coletamos GPS nem endereço." }));
 
     // 4. relato
-    var rel = campo("narrative", "O que está acontecendo e qual decisão você precisa tomar?", { area: true, obrigatorio: true, autocomplete: "off",
+    var rel = campo("narrative", "O que está acontecendo e qual decisão você precisa tomar?", { area: true, obrigatorio: true, numerar: true, autocomplete: "off",
       ajuda: "Se puder, diga o que já aconteceu, o que mais preocupa e o que precisa ser definido. Não inclua senhas, documentos pessoais, dados bancários, informações médicas ou arquivos confidenciais.",
       aoMudar: function (v) { e.narrative = v; var ct = document.getElementById("c-narrative-ct"); if (ct) { ct.textContent = v.length + " / " + R.LIMITES.narrativa; ct.style.color = v.length > R.LIMITES.narrativa ? "#B3261E" : ""; } } });
     refs.narrativa = rel.ctrl;
@@ -318,8 +331,9 @@
     var mFaixa = multi("faixa", R.FAIXAS, function (sel) { e.estimatedRanges = sel; salvar(); }, { exclusivas: X.estimatedRanges });
     var mPer = multi("per", R.PERIODOS, function (sel) { c.contactPeriods = sel; salvar(); }, { exclusivas: X.contactPeriods });
     refs.urgencia = mUrg.cx; refs.consequencias = mCons.cx; refs.documentos = mDocs.cx; refs.faixa = mFaixa.cx; refs.periodo = mPer.cx;
-    var b4b = h("details", { class: "bloco opcionais", open: "open" },
-      h("summary", { class: "opcionais__titulo" }, "Para adiantar a análise ", h("span", { class: "grupo__opcional", texto: "(opcional — responda o que souber; pode marcar mais de uma)" })),
+    // sempre visível: o que não for preenchido simplesmente não é enviado
+    var b4b = h("section", { class: "bloco opcionais" },
+      h("h2", { class: "opcionais__titulo" }, "Para adiantar a análise ", h("span", { class: "grupo__opcional", texto: "(opcional — responda o que souber; pode marcar mais de uma)" })),
       h("div", { class: "opcionais__corpo" },
         grupoMulti("urgencies", "Quando essa decisão precisa avançar?", mUrg),
         grupoMulti("consequences", "O que mais preocupa se nada mudar?", mCons),
