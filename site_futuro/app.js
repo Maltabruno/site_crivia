@@ -321,7 +321,7 @@
   /* ───────── catálogo: 12 produtos do modelo Sentinela 2.0 ─────────
      Textos a partir do De-Para e do Catálogo R04 (proposta, ainda não aprovada). Sem preço, prazo ou promessa de resultado.
      MOSTRAR_ESTADO = false esconde a etiqueta de disponibilidade de cada produto. */
-  const MOSTRAR_ESTADO = true;
+  const MOSTRAR_ESTADO = false;
   const PRODUTOS = [
     { n: '01', apelido: 'EVTEA e implantação', nome: 'Estudo de alternativas de implantação', estado: 'Em qualificação',
       txt: 'Compara alternativas de implantação de um terreno, com as quantidades, os custos e os riscos de cada uma.',
@@ -527,4 +527,26 @@
   tri.querySelectorAll('.tri-steps button').forEach((b) => b.addEventListener('click', () => { manualAte = performance.now() + 6000; definir(+b.dataset.s); }));
   tri.style.setProperty('--st', 1);
   porRolagem();
+
+  /* ───────── dobra "A obra física": os três pontos ficam sobre partes reais da foto ─────────
+     Pontos em fração da imagem (1920×1081): interface (encontro tubulação × pilar), registro (tablet) e impacto (chumbadores da base). */
+  const triImg = tri.querySelector('.tri-media img');
+  const triNos = [...tri.querySelectorAll('.tri-node')];
+  const triLinhas = [...tri.querySelectorAll('.tri-lines line')];
+  const PONTOS = [[0.699, 0.350], [0.526, 0.516], [0.695, 0.714]];
+  const LIGA = [[0, 1], [1, 2], [0, 2]];
+  const ancorar = () => {
+    const box = tri.querySelector('.tri-sticky');
+    const w = box.clientWidth, h = box.clientHeight, nw = 1920, nh = 1081;
+    const s = Math.max(w / nw, h / nh), dw = nw * s, dh = nh * s, l0 = (w - dw) / 2, t0 = (h - dh) / 2;
+    const pos = PONTOS.map(([u, v]) => [((l0 + u * dw) - w / 2) * 1.05 + w / 2, ((t0 + v * dh) - h / 2) * 1.05 + h / 2]);
+    triNos.forEach((n, i) => { n.style.left = pos[i][0] + 'px'; n.style.top = pos[i][1] + 'px'; });
+    triLinhas.forEach((ln, k) => {
+      const [a, b] = LIGA[k];
+      ln.setAttribute('x1', pos[a][0] / w * 100); ln.setAttribute('y1', pos[a][1] / h * 100);
+      ln.setAttribute('x2', pos[b][0] / w * 100); ln.setAttribute('y2', pos[b][1] / h * 100);
+    });
+  };
+  addEventListener('resize', ancorar, { passive: true });
+  ancorar();
 })();

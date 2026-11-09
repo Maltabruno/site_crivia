@@ -522,3 +522,12 @@ body { --lx: 62%; --ly: 48%; }
   .xr-ring { width: 60vw; height: 60vw; }
 }
 @media (hover: none) { .xr-ring { opacity: .8; } }
+
+
+/* barra superior translúcida; o item "Apresentar meu cenário" segue o padrão dos demais */
+.masthead { background: linear-gradient(180deg, rgba(1,5,11,.46), rgba(1,5,11,.12)); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2); border-bottom: 1px solid rgba(124,202,255,.1); }
+.masthead .brand b, .masthead nav a { text-shadow: 0 1px 10px rgba(0,0,0,.65); }
+.masthead nav .nav-cta { min-height: 0; padding: 0; border: 0; background: none; gap: 6px; color: #b9c8d4; }
+.masthead nav .nav-cta::after { display: block; }
+.masthead nav .nav-cta:hover { color: #fff; }
+.masthead nav .nav-cta span { color: var(--cyan); }
