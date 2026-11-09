@@ -1,0 +1,12 @@
+# Fim de linha consistente no Git Bash, no VS Code e no GitHub
+* text=auto
+*.bat text eol=crlf
+*.sh text eol=lf
+*.py text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.zip binary
+*.woff2 binary
+*.pdf binary

@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
 auralis-design-system/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json

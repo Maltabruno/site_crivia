@@ -20,12 +20,13 @@ se o modelo mudar e a âncora não for encontrada, o script FALHA com mensagem
 clara e não gera nada pela metade. A geração é determinística (semente fixa):
 rodar duas vezes produz arquivos idênticos.
 
-Uso
+Uso (a partir de agora, o padrão é o SITE CRIVIA PADRÃO, na pasta `site_crivia_padrao/`)
 ---
-    python Site_crivia.py               # constrói e serve em http://localhost:8080
-    python Site_crivia.py --build-only  # só constrói (pasta site/)
-    python Site_crivia.py --no-browser  # constrói, serve e não abre o navegador
-    python Site_crivia.py --port 9000   # porta preferida
+    python Site_crivia.py                       # serve o Site CRIVIA padrão em http://localhost:8080
+    python Site_crivia.py --no-browser          # serve sem abrir o navegador
+    python Site_crivia.py --port 9000           # porta preferida
+    python Site_crivia.py --antigo              # constrói e serve o site anterior (modelo Auralis, pasta site/)
+    python Site_crivia.py --antigo --build-only # só constrói o site anterior
 
 O resultado também abre por duplo clique em `site/design-system.html` (file://).
 Só biblioteca padrão do Python 3. O arquivo anterior foi descartado por decisão
@@ -52,6 +53,7 @@ import zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent
+PASTA_PADRAO = REPO / "site_crivia_padrao"   # o site oficial: HTML, CSS e JS simples, sem etapa de construção
 ZIP_MODELO = REPO / "assets" / "references" / "auralis-design-system.zip"
 ZIP_NEXUS = REPO / "assets" / "references" / "nexus-cyber-design-system.zip"   # só a tipografia
 SAIDA = REPO / "site"
@@ -3386,13 +3388,13 @@ class Silencioso(http.server.SimpleHTTPRequestHandler):
         pass
 
 
-def servir(porta, abrir):
+def servir(porta, abrir, pasta=None, caminho="design-system.html"):
     class Servidor(socketserver.ThreadingTCPServer):
         allow_reuse_address = True
         daemon_threads = True
 
     def handler(*a, **k):
-        return Silencioso(*a, directory=str(SAIDA), **k)
+        return Silencioso(*a, directory=str(pasta or SAIDA), **k)
 
     servidor, escolhida = None, None
     for p in range(porta, porta + 20):
@@ -3404,7 +3406,7 @@ def servir(porta, abrir):
             log(f"porta {p} ocupada, tentando a próxima…")
     if servidor is None:
         raise SystemExit(f"{PREFIXO} ERRO: nenhuma porta livre entre {porta} e {porta + 19}.")
-    url = f"http://localhost:{escolhida}/design-system.html"
+    url = f"http://localhost:{escolhida}/{caminho}"
     log(f"servindo em {url}  (Ctrl+C para encerrar)")
     if abrir:
         threading.Timer(0.6, lambda: webbrowser.open(url)).start()
@@ -3421,11 +3423,20 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
-    ap = argparse.ArgumentParser(description="Constrói e serve o site da CRIVIA (modelo Auralis adaptado).")
-    ap.add_argument("--build-only", action="store_true", help="só constrói a pasta site/, sem servir")
+    ap = argparse.ArgumentParser(description="Serve o Site CRIVIA padrão (pasta site_crivia_padrao/). Com --antigo, constrói e serve o site anterior (modelo Auralis).")
+    ap.add_argument("--antigo", action="store_true", help="constrói e serve o site anterior (pasta site/), em vez do site padrão")
+    ap.add_argument("--build-only", action="store_true", help="com --antigo: só constrói a pasta site/, sem servir")
     ap.add_argument("--no-browser", action="store_true", help="não abre o navegador")
     ap.add_argument("--port", type=int, default=8080, help="porta preferida (padrão 8080)")
     args = ap.parse_args()
+    if not args.antigo:
+        if args.build_only:
+            raise SystemExit(f"{PREFIXO} --build-only só vale com --antigo. O site padrão não precisa ser construído.")
+        if not (PASTA_PADRAO / "index.html").is_file():
+            raise SystemExit(f"{PREFIXO} ERRO: não achei {PASTA_PADRAO / 'index.html'}.")
+        log(f"Site CRIVIA padrão: {PASTA_PADRAO}")
+        servir(args.port, not args.no_browser, PASTA_PADRAO, "index.html")
+        return
     try:
         construir()
     except ErroDePatch as e:

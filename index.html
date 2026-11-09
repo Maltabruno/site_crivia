@@ -3,37 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CRIVIA — abrir o site</title>
-<style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0d10;color:#e9edf2;font:16px/1.6 system-ui,sans-serif}
-  main{max-width:34rem;padding:2rem;text-align:center}
-  h1{font-size:1.4rem;margin:0 0 .75rem}
-  p{margin:.5rem 0;color:#aeb7c2}
-  code{background:#1a1f26;padding:.1rem .4rem;border-radius:4px;color:#e9edf2}
-  [hidden]{display:none}
-</style>
+<meta http-equiv="refresh" content="0; url=site_crivia_padrao/index.html">
+<link rel="canonical" href="site_crivia_padrao/index.html">
+<title>CRIVIA — Engenharia para Decisão</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#020812;color:#e9edf2;font:16px/1.6 system-ui,sans-serif}a{color:#69e7ff}</style>
 </head>
 <body>
-<main>
-  <h1>CRIVIA Engenharia Consultiva</h1>
-  <p id="a">Procurando o site no ar…</p>
-  <div id="b" hidden>
-    <p>O site precisa de um servidor local para funcionar por inteiro.</p>
-    <p>Dê dois cliques em <code>Abrir site.bat</code>, nesta pasta. Ele abre o site no navegador.</p>
-    <p>Com o servidor já ligado, <a href="#" onclick="location.reload();return false" style="color:#e9edf2">atualize esta página</a>.</p>
-  </div>
-</main>
-<script>
-(function () {
-  var portas = [8080, 8081, 8082, 8083, 8084, 8085];
-  function tenta(i) {
-    if (i >= portas.length) { document.getElementById("a").hidden = true; document.getElementById("b").hidden = false; return; }
-    var url = "http://localhost:" + portas[i] + "/";
-    fetch(url, { mode: "no-cors" }).then(function () { location.replace(url); }).catch(function () { tenta(i + 1); });
-  }
-  if (location.protocol === "http:" || location.protocol === "https:") { document.getElementById("a").textContent = "Esta página deve ser aberta pelo arquivo da pasta."; return; }
-  tenta(0);
-})();
-</script>
+<p>Abrindo o site da CRIVIA… Se nada acontecer, <a href="site_crivia_padrao/index.html">clique aqui</a>.</p>
 </body>
 </html>

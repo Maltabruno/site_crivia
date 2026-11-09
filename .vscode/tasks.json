@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Abrir Site CRIVIA padrão (porta 8080)",
+      "type": "shell",
+      "command": "python -I Site_crivia.py --port 8080",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Rodar os testes",
+      "type": "shell",
+      "command": "python -I -m unittest discover -s tests -v",
+      "problemMatcher": [],
+      "group": { "kind": "test", "isDefault": true }
+    },
+    {
+      "label": "Gerar e abrir o site anterior (Auralis)",
+      "type": "shell",
+      "command": "python -I Site_crivia.py --antigo --port 8081",
+      "problemMatcher": [],
+      "isBackground": true
+    }
+  ]
+}
