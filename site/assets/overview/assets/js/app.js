@@ -45263,7 +45263,7 @@ void main() {
     });
     observer.observe(document.documentElement);
   };
-  var CRIVIA_BASE_VH = 1180;
+  var CRIVIA_BASE_VH = 760;
   var CRIVIA_SOBRE_EM = 0.63;
   var CRIVIA_SOBRE_VH = 4;
   var CRIVIA_METODO_VH = 2.4;
@@ -50911,6 +50911,7 @@ void main() {
     children
   }) => {
     const active = useActActive(act);
+    if (act !== "hero") return (0, import_jsx_runtime14.jsx)(tag, { className, children });
     const layer = act === "hero" || act === "hand" ? {
       lineOut: { y: "70%", opacity: 0, filter: "blur(18px)" },
       lineIn: { y: "0%", opacity: 1, filter: "blur(0px)" },
@@ -51195,6 +51196,7 @@ void main() {
     ...rest
   }) => {
     const active = useActActive(act);
+    if (act !== "hero") return (0, import_jsx_runtime17.jsx)(tag, { className, ...rest, children });
     return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
       Inview,
       {
@@ -51256,7 +51258,7 @@ void main() {
     { value: "35", label: "projetos simultâneos" }
   ];
   var HandOverlay = () => {
-    const passos = ["Sintomas", "Causas", "Decisão"];
+    const passos = ["Incerteza", "Método", "Prova"];
     const indicadores = [
       { n: "20", u: "anos", r: "de experiência em engenharia e gestão de projetos" },
       { n: "35", u: "projetos", r: "conduzidos simultaneamente" },
@@ -51266,7 +51268,7 @@ void main() {
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind__topo", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealText, { tag: "h2", variant: "heading", act: "hand", className: "crivia-ind-titulo", children: "O problema quase nunca está onde aparece." }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealText, { tag: "p", variant: "copy", act: "hand", delayIn: 160, className: "font-geist crivia-ind-texto", children: "Atrasos, medições travadas e informações contraditórias podem ser sinais. A CRIVIA cruza contratos, cronogramas, custos e realidade de campo para identificar causas, avaliar riscos e apoiar decisões com caminhos claros." }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("ol", { className: "crivia-ind-seq", "aria-label": "Sintomas, causas, decisão", children: passos.map((nome, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { tag: "li", act: "hand", index: i, count: passos.length, delay: 320, className: "crivia-ind-passo" + (i === passos.length - 1 ? " crivia-ind-passo--ouro" : ""), children: nome }, nome)) })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("ol", { className: "crivia-ind-seq", "aria-label": "Incerteza, método, prova", children: passos.map((nome, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { tag: "li", act: "hand", index: i, count: passos.length, delay: 320, className: "crivia-ind-passo" + (i === passos.length - 1 ? " crivia-ind-passo--ouro" : ""), children: nome }, nome)) })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "crivia-ind__acao", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RevealItem, { act: "hand", index: 0, count: 1, delay: 520, className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CriviaCtaPrimary, { onClick: () => CRIVIA_ABRIR_CENARIO("industria"), children: "Apresentar meu cenário" }) }),
@@ -51717,7 +51719,7 @@ var CRIVIA_IR_CENARIO = () => {
     else { window.scrollTo({ top: max, behavior: "smooth" }); setTimeout(foco, 1200); }
   };
   var CRIVIA_IR_CENARIO_GERAL = () => { window.__criviaProduto = null; CRIVIA_IR_CENARIO(); };
-  var CRIVIA_CTA_MICRO = "Leva cerca de 1 minuto. Você não precisa saber qual serviço escolher.";
+  var CRIVIA_CTA_MICRO = "Você não precisa saber qual serviço escolher.";
   var CRIVIA_ABRIR_CENARIO = (origem, interesse) => {
     const q = "?origem=" + encodeURIComponent(origem || "direto") + (interesse ? "&interesse=" + encodeURIComponent(interesse) : "");
     window.location.assign("apresentar-cenario.html" + q);
@@ -51862,7 +51864,7 @@ var CRIVIA_IR_CENARIO = () => {
               criviaH("span", { className: "crivia-sobre__mono", "aria-hidden": true }, "BM"),
               criviaH("div", {}, criviaH("strong", {}, "Bruno Malta"), criviaH("span", {}, "Engenheiro e fundador da CRIVIA"))),
             criviaH("p", { className: "crivia-sobre__bruno-txt" }, "Sou engenheiro e, há mais de 20 anos, lidero grandes projetos e equipes multidisciplinares. Fui chamado para o que ninguém queria assumir, e aprendi que, quase sempre, a causa não está onde o sintoma aparece."),
-            criviaH("p", { className: "crivia-sobre__bruno-cham" }, "Por isso criei a CRIVIA. Conto essa história no vídeo.")),
+            criviaH("p", { className: "crivia-sobre__bruno-cham" }, "Por isso criei a CRIVIA.")),
           criviaH("div", { className: "crivia-sobre__formulas" },
             criviaH("p", rev(4, "crivia-sobre__rotulo"), "Fórmulas centrais"),
             criviaH("ol", {}, CRIVIA_FORMULAS.map((f, i) =>
@@ -51987,6 +51989,219 @@ var CRIVIA_IR_CENARIO = () => {
           criviaH("li", { key: t, className: "crivia-metodo__no crivia-rev", style: { "--i": 3 + i } }, criviaH("span", {}, t)))),
         criviaH("p", rev(11, "crivia-metodo__apoio"), "Essa ordem ajuda a relacionar a recomendação à situação observada e à decisão que precisa ser tomada. A decisão e a execução cabem ao cliente; a CRIVIA oferece apoio estratégico dentro do escopo contratado.")));
   };
+  // ── CRIVIA ── dobra "Motores": três momentos da obra, com resultado de exemplo e explicação de cada trabalho ──
+  var CRIVIA_COR = { azul: "#123A8F", claro: "#A9C1EE", ouro: "#E0A21A", ruim: "#9A6D08", bom: "#15809F", aviso: "#5C78A8" };
+  var criviaBRL = (v) => (v < 0 ? "− " : "") + "R$ " + Math.abs(v).toLocaleString("pt-BR");
+  var criviaAbrev = (v, sinal) => {
+    const a = Math.abs(v), s = sinal ? (v < 0 ? "− " : "+ ") : "";
+    return s + (a >= 1e6 ? (a / 1e6).toFixed(2).replace(".", ",") + " mi" : Math.round(a / 1000) + " mil");
+  };
+  var CRIVIA_MOTORES = [
+    { id: "raiox", quando: "Antes de contratar", nome: "Raio-X de Propostas e Orçamentos",
+      desc: "Cada item da proposta é comparado com a referência do SINAPI. Você vê onde há sobrepreço, onde o preço está baixo demais e o que ficou de fora da planilha.",
+      kpis: [["Proposta", "R$ 3.450.000", "", ""], ["Valor justo", "R$ 2.978.400", "", ""], ["Sobrepreço", "+ R$ 471.600", "ruim", "+15,8%"]],
+      ponte: { base: 2900000, topo: 3500000, eixo: "Eixo a partir de R$ 2,9 mi", passos: [
+        ["Valor justo", 2978400, "total", "azul", "Referência do SINAPI-ES com BDI de 25% para esta obra."],
+        ["Aço", 111000, "delta", "ouro", "Armação CA-50, 18.500 kg: R$ 21,50 por kg na proposta contra R$ 15,50 na referência (+38,7%)."],
+        ["Concreto", 76928, "delta", "ouro", "Concreto usinado fck 30 MPa, 680 m³: R$ 720,00 por m³ contra R$ 606,87 (+18,6%)."],
+        ["Estrutura", 75000, "delta", "ouro", "Estrutura metálica da cobertura, 55.000 kg: R$ 12,45 por kg contra R$ 11,09 (+12,3%)."],
+        ["Piso", 14000, "delta", "aviso", "Piso industrial polido, 2.800 m²: dentro do esperado (+3,5%). Conforme."],
+        ["Escavação", -51500, "delta", "bom", "7.900 m³ a R$ 12,02 contra R$ 18,54 (−35,1%). Preço baixo demais pode virar aditivo depois."],
+        ["Demais itens", 246172, "delta", "ouro", "Diferença que sobra entre os itens críticos acima e o total do sobrepreço."],
+        ["Proposta", 3450000, "total", "azul", "Valor total proposto pela empreiteira."] ] },
+      linhas: [
+        ["Omissão detectada na planilha", "Subestação aérea de 150 kVA prevista no projeto elétrico e ausente da proposta", "≈ R$ 92.000", "ADITIVO SURPRESA", "ruim"],
+        ["Escavação cotada 35,1% abaixo", "Preço baixo no início costuma abrir espaço para pedir aditivo de volume", "− R$ 51.500", "SUBPREÇO", "aviso"]],
+      como: { para: "Donos de obra privada e empreiteiras que estão orçando serviços.", envia: "A planilha da proposta em Excel (.xlsx).",
+        passos: ["Cada item é pareado com a referência do SINAPI.", "O BDI é aplicado e a Curva ABC mostra onde está 80% do dinheiro da obra.", "Itens caros, baratos demais e omitidos são marcados."],
+        recebe: ["Dossiê de 5 páginas", "Gráfico comparativo e tabela da Curva A, em vermelho e verde", "Roteiro de negociação para levar à reunião"] },
+      fonte: "Galpão de 2.800 m², Serra/ES. Referência SINAPI-ES com BDI de 25%." },
+    { id: "sentinela", quando: "Quando a obra trava", nome: "Diagnóstico Sentinela",
+      desc: "O pleito de aditivo é confrontado, dia a dia, com o diário de obra e a chuva medida pelo INMET. Cada período recebe um veredito.",
+      kpis: [["Aditivo cobrado", "R$ 485.000", "", ""], ["Devido", "R$ 74.200", "bom", ""], ["Economia", "R$ 410.800", "bom", "84,7%"]],
+      ponte: { base: 0, topo: 500000, eixo: "", passos: [
+        ["Cobrado", 485000, "total", "azul", "Valor do aditivo cobrado pela empreiteira, com percentuais lineares e sem prova contábil."],
+        ["Chuva", -130400, "delta", "bom", "26,9% do pleito. Dias de chuva alegados sem chuva no satélite INMET (16 de 22 dias com 0,0 mm)."],
+        ["Mão de obra", -192600, "delta", "bom", "39,7% do pleito. Os diários assinados mostram equipe realocada para o pátio, com produção normal."],
+        ["Adm. local", -87800, "delta", "bom", "18,1% do pleito. Cálculo não acompanha o avanço da obra."],
+        ["Devido", 74200, "total", "ouro", "15,3% do pleito. Valor recomendado para o acordo técnico."] ] },
+      linhas: [
+        ["12/08 a 16/08 · pleito alega chuva intensa", "Satélite INMET: 0,0 a 1,8 mm · fora do caminho crítico · diário: 8 operários (cobrou 32)", "R$ 68.400", "IMPROCEDENTE", "ruim"],
+        ["24/09 a 04/10 · erro de furação nos chumbadores", "Satélite INMET: 0,0 mm · no caminho crítico · diário: 14 operários em retrabalho", "R$ 74.200", "PROCEDENTE", "bom"]],
+      como: { para: "Obras atrasadas, empreiteiras com medição glosada e advogados que defendem empresas contra aditivos e multas.", envia: "Diários de obra escaneados, contrato com cronograma e a notificação do pleito.",
+        passos: ["A chuva real do período é buscada na base do INMET.", "Os diários são lidos e confrontados com o cronograma.", "Cada alegação é comparada com o que o campo mostra."],
+        recebe: ["Linha do tempo com alegação, chuva medida, caminho crítico e realidade do diário", "Veredito por período: procedente ou improcedente", "Valor a glosar calculado"] },
+      fonte: "Ampliação industrial, Linhares/ES. Fontes: diários de obra, INMET e contrato." },
+    { id: "medicao", quando: "Durante a execução", nome: "Planejamento e Medição",
+      desc: "Todo mês, o que a construtora cobra é comparado com o que foi feito em campo. Você libera o que está pronto, retém o resto e vê o que pode travar nos próximos 30 dias.",
+      kpis: [["Cobrado, medição nº 04", "R$ 280.000", "", ""], ["Aprovado", "R$ 235.000", "bom", ""], ["Retido", "− R$ 45.000", "ruim", "Liberado com retenção"]],
+      curva: true,
+      linhas: [
+        ["Divisórias drywall, 3º pavimento", "Cobrado 100% · verificado 70% · falta fechamento de lã de rocha", "− R$ 25.500", "RETENÇÃO", "ruim"],
+        ["Laje técnica da cobertura", "Cobrado 100% · verificado 79,5% · aguarda laudo de rompimento", "− R$ 19.500", "HOLD POINT", "aviso"],
+        ["Radar de 30 dias · decidir até 13/11", "Compra do quadro geral e do transformador (prazo de fábrica de 45 dias)", "", "CRÍTICO", "ruim"]],
+      como: { para: "Quem já contratou a obra e não quer voltar à incerteza.", envia: "A planilha de medição da construtora, numa data de corte fixa (por exemplo, dia 25).",
+        passos: ["Inspeção visual focada, com fotos, no que foi cobrado.", "O que foi visto é cruzado com a planilha de medição.", "Cada pagamento recebe uma condição de liberação."],
+        recebe: ["Boletim de 4 páginas", "Certificado de liberação e glosa, com a Curva S", "Radar dos suprimentos críticos dos próximos 30 dias e os documentos exigidos para pagar"] },
+      fonte: "Edifício comercial e clínica, Vitória/ES." }
+  ];
+  var CRIVIA_TONS = {
+    azul: { f: ["#2F5BC4", "#0B2C80"], t: "#6F94E0", s: "#071F5C" },
+    ouro: { f: ["#F6C65A", "#C98F10"], t: "#FCE6A6", s: "#9A6D08" },
+    bom: { f: ["#47BEDB", "#15809F"], t: "#9BE0F0", s: "#0D5D77" },
+    aviso: { f: ["#93AACE", "#5C78A8"], t: "#C9D7EC", s: "#415B84" }
+  };
+  var CriviaPonte = ({ g }) => {
+    const n = g.passos.length;
+    const [sel, setSel] = (0, import_react35.useState)(n - 1);
+    const [ligado, setLigado] = (0, import_react35.useState)(0);
+    const [rodada, setRodada] = (0, import_react35.useState)(0);
+    (0, import_react35.useEffect)(() => {
+      setLigado(0);
+      let k = 0;
+      const id = setInterval(() => { k += 1; setLigado(k); setSel(Math.min(k, n) - 1); if (k >= n) clearInterval(id); }, 430);
+      return () => clearInterval(id);
+    }, [rodada, n]);
+    const W = 600, H = 214, L = 6, R = 14, T = 34, B = 30;
+    const bw = (W - L - R) / n, pw = bw * 0.58, dx = Math.min(11, pw * 0.2), dy = dx * 0.6;
+    const y = (v) => T + (H - T - B) * (1 - (v - g.base) / (g.topo - g.base));
+    let acc = 0;
+    const barras = g.passos.map((p, i) => {
+      let v0, v1;
+      if (p[2] === "total") { v0 = g.base; v1 = p[1]; acc = p[1]; } else { v0 = acc; v1 = acc + p[1]; acc = v1; }
+      return { p, i, v0, v1, topo: Math.max(v0, v1), fim: acc };
+    });
+    const defs = Object.keys(CRIVIA_TONS).map((k) => {
+      const c = CRIVIA_TONS[k];
+      return (0, import_jsx_runtime26.jsxs)("g", { children: [
+        (0, import_jsx_runtime26.jsxs)("linearGradient", { id: "cmf-" + k, x1: 0, y1: 0, x2: 0, y2: 1, children: [(0, import_jsx_runtime26.jsx)("stop", { offset: "0", stopColor: c.f[0] }), (0, import_jsx_runtime26.jsx)("stop", { offset: "1", stopColor: c.f[1] })] }),
+        (0, import_jsx_runtime26.jsxs)("linearGradient", { id: "cms-" + k, x1: 0, y1: 0, x2: 0, y2: 1, children: [(0, import_jsx_runtime26.jsx)("stop", { offset: "0", stopColor: c.s }), (0, import_jsx_runtime26.jsx)("stop", { offset: "1", stopColor: c.s, stopOpacity: 0.78 })] })
+      ] }, k);
+    });
+    const grade = [0.25, 0.5, 0.75, 1].map((q, i) => (0, import_jsx_runtime26.jsx)("line", { x1: L, x2: W - R, y1: T + (H - T - B) * q - (H - T - B) * 0, y2: T + (H - T - B) * q, stroke: "#7C93C4", strokeOpacity: q === 1 ? 0.55 : 0.18, strokeDasharray: q === 1 ? "none" : "2 5" }, "gr" + i));
+    const el = [];
+    barras.forEach((b, i) => {
+      const x = L + i * bw + (bw - pw) / 2, ytop = y(b.topo), ybase = y(Math.min(b.v0, b.v1)), h = Math.max(4, ybase - ytop);
+      const ton = CRIVIA_TONS[b.p[3]] ? b.p[3] : "azul", c = CRIVIA_TONS[ton], on = i < ligado, ativo = i === sel;
+      if (i < n - 1) el.push((0, import_jsx_runtime26.jsx)("line", { x1: x + pw + dx, x2: x + bw, y1: y(b.fim) - dy, y2: y(b.fim) - dy, stroke: "#7C93C4", strokeWidth: 1, strokeDasharray: "3 3", style: { opacity: ligado > i + 1 ? 1 : 0, transition: "opacity .4s ease" } }, "c" + i));
+      el.push((0, import_jsx_runtime26.jsxs)("g", { className: "crivia-mot__bar3d" + (on ? " is-on" : "") + (ativo ? " is-ativa" : ""), children: [
+        (0, import_jsx_runtime26.jsx)("ellipse", { cx: x + (pw + dx) / 2, cy: ybase + 3, rx: pw * 0.72, ry: 4, fill: "#001D3D", fillOpacity: 0.16 }),
+        (0, import_jsx_runtime26.jsx)("polygon", { points: (x + pw) + "," + ytop + " " + (x + pw + dx) + "," + (ytop - dy) + " " + (x + pw + dx) + "," + (ytop - dy + h) + " " + (x + pw) + "," + (ytop + h), fill: "url(#cms-" + ton + ")" }),
+        (0, import_jsx_runtime26.jsx)("rect", { x, y: ytop, width: pw, height: h, fill: "url(#cmf-" + ton + ")" }),
+        (0, import_jsx_runtime26.jsx)("polygon", { points: x + "," + ytop + " " + (x + dx) + "," + (ytop - dy) + " " + (x + pw + dx) + "," + (ytop - dy) + " " + (x + pw) + "," + ytop, fill: c.t }),
+        (0, import_jsx_runtime26.jsx)("rect", { x, y: ytop, width: pw, height: Math.min(h, 3), fill: "#fff", fillOpacity: 0.22 }),
+        (0, import_jsx_runtime26.jsx)("text", { x: x + (pw + dx) / 2, y: ytop - dy - 7, textAnchor: "middle", className: "crivia-mot__vlr", children: criviaAbrev(b.p[1], b.p[2] === "delta") })
+      ] }, "b" + i));
+      el.push((0, import_jsx_runtime26.jsx)("text", { x: x + (pw + dx) / 2, y: H - 10, textAnchor: "middle", className: "crivia-mot__rot-x" + (ativo ? " is-ativo" : ""), children: b.p[0] }, "t" + i));
+      el.push((0, import_jsx_runtime26.jsx)("rect", { x: L + i * bw, y: 0, width: bw, height: H, fill: "transparent", tabIndex: 0, role: "button", "aria-label": b.p[0] + ": " + criviaBRL(b.p[1]), style: { cursor: "pointer" },
+        onMouseEnter: () => setSel(i), onFocus: () => setSel(i), onClick: () => setSel(i) }, "h" + i));
+    });
+    const s = g.passos[sel] || g.passos[n - 1];
+    return criviaH("div", { className: "crivia-mot__graf" },
+      criviaH("svg", { viewBox: "0 0 " + W + " " + H, className: "crivia-mot__svg", role: "group", "aria-label": "Gráfico em cascata, de exemplo", children: [(0, import_jsx_runtime26.jsx)("defs", { children: defs }, "defs"), ...grade, ...el] }),
+      criviaH("div", { className: "crivia-mot__leitura font-geist" },
+        criviaH("b", { className: "t-" + s[3] }, s[0] + " · " + (s[2] === "delta" ? (s[1] < 0 ? "− " : "+ ") : "") + "R$ " + Math.abs(s[1]).toLocaleString("pt-BR")),
+        criviaH("span", {}, s[4])),
+      criviaH("div", { className: "crivia-mot__rodape-graf font-geist" },
+        criviaH("span", {}, g.eixo || "Passe o cursor sobre as barras para ler cada etapa."),
+        criviaH("button", { type: "button", className: "crivia-mot__replay", onClick: () => setRodada((r) => r + 1) }, "↻ Reproduzir")));
+  };
+  var CriviaCurvaS = () => {
+    const [t, setT] = (0, import_react35.useState)(60);
+    const W = 600, H = 190, L = 10, R = 10, T = 12, B = 28, N = 64;
+    const X = (u) => L + (W - L - R) * u, Y = (v) => T + (H - T - B) * (1 - v);
+    const sig = (u, c, k) => { const f = (z) => 1 / (1 + Math.exp(-k * (z - c))); return (f(u) - f(0)) / (f(1) - f(0)); };
+    const cob = (u) => sig(u, 0.45, 9), ver = (u) => sig(u, 0.57, 8.5);
+    const ponto = (fn) => { let d = ""; for (let i = 0; i <= N; i++) { const u = i / N; d += (i ? "L" : "M") + X(u).toFixed(1) + " " + Y(fn(u)).toFixed(1) + " "; } return d; };
+    let gap = ponto(cob);
+    for (let i = N; i >= 0; i--) { const u = i / N; gap += "L" + X(u).toFixed(1) + " " + Y(ver(u)).toFixed(1) + " "; }
+    const u = t / 100, xc = X(u), yc = Y(cob(u)), yv = Y(ver(u));
+    return criviaH("div", { className: "crivia-mot__graf" },
+      criviaH("svg", { viewBox: "0 0 " + W + " " + H, className: "crivia-mot__svg", role: "img", "aria-label": "Curva S de exemplo: o avanço verificado em campo fica atrás do avanço cobrado", children: [
+        (0, import_jsx_runtime26.jsx)("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, stroke: "#7C93C4", strokeOpacity: 0.5 }, "eixo"),
+        (0, import_jsx_runtime26.jsx)("path", { d: gap + "Z", fill: CRIVIA_COR.ruim, fillOpacity: 0.12 }, "gap"),
+        (0, import_jsx_runtime26.jsx)("path", { d: ponto(cob), fill: "none", stroke: CRIVIA_COR.azul, strokeWidth: 3, strokeLinecap: "round", pathLength: 1, className: "crivia-mot__traco" }, "cob"),
+        (0, import_jsx_runtime26.jsx)("path", { d: ponto(ver), fill: "none", stroke: CRIVIA_COR.ouro, strokeWidth: 3, strokeLinecap: "round", pathLength: 1, className: "crivia-mot__traco crivia-mot__traco--2" }, "ver"),
+        (0, import_jsx_runtime26.jsx)("line", { x1: xc, x2: xc, y1: T, y2: H - B, stroke: "#7C93C4", strokeDasharray: "3 3" }, "mk"),
+        (0, import_jsx_runtime26.jsx)("line", { x1: xc, x2: xc, y1: yc, y2: yv, stroke: CRIVIA_COR.ruim, strokeWidth: 3, strokeLinecap: "round" }, "df"),
+        (0, import_jsx_runtime26.jsx)("circle", { cx: xc, cy: yc, r: 6, fill: CRIVIA_COR.azul, stroke: "#fff", strokeWidth: 2 }, "p1"),
+        (0, import_jsx_runtime26.jsx)("circle", { cx: xc, cy: yv, r: 6.5, fill: CRIVIA_COR.ouro, stroke: "#fff", strokeWidth: 2 }, "p2"),
+        (0, import_jsx_runtime26.jsx)("text", { x: Math.min(xc + 12, W - 70), y: (yc + yv) / 2 + 4, className: "crivia-mot__vlr", fill: CRIVIA_COR.ruim, children: "defasagem" }, "tx"),
+        (0, import_jsx_runtime26.jsx)("text", { x: L, y: H - 10, className: "crivia-mot__rot-x", children: "início da obra" }, "x0"),
+        (0, import_jsx_runtime26.jsx)("text", { x: W - R, y: H - 10, textAnchor: "end", className: "crivia-mot__rot-x", children: "entrega" }, "x1")
+      ] }),
+      criviaH("div", { className: "crivia-mot__curva-ctl font-geist" },
+        criviaH("span", { style: { color: CRIVIA_COR.azul } }, "● cobrado pela construtora"),
+        criviaH("input", { type: "range", min: 0, max: 100, value: t, "aria-label": "Percorrer o cronograma", onChange: (e) => setT(+e.target.value), className: "crivia-mot__range" }),
+        criviaH("span", { style: { color: CRIVIA_COR.aviso } }, "● verificado em campo")),
+      criviaH("p", { className: "crivia-mot__eixo font-geist" }, "Curva S de exemplo, sem valores. Arraste para ver a defasagem em cada momento da obra."));
+  };
+  var CriviaComo = ({ c }) => criviaH("div", { className: "crivia-mot__como" },
+    criviaH("div", { className: "crivia-mot__bloco" }, criviaH("span", { className: "font-geist crivia-mot__rot" }, "Para quem"), criviaH("p", {}, c.para)),
+    criviaH("div", { className: "crivia-mot__bloco" }, criviaH("span", { className: "font-geist crivia-mot__rot" }, "Você envia"), criviaH("p", {}, c.envia)),
+    criviaH("div", { className: "crivia-mot__bloco crivia-mot__bloco--larga" }, criviaH("span", { className: "font-geist crivia-mot__rot" }, "Como trabalhamos"),
+      criviaH("ol", {}, c.passos.map((p) => criviaH("li", { key: p }, p)))),
+    criviaH("div", { className: "crivia-mot__bloco crivia-mot__bloco--larga crivia-mot__bloco--recebe" }, criviaH("span", { className: "font-geist crivia-mot__rot" }, "Você recebe"),
+      criviaH("ul", {}, c.recebe.map((p) => criviaH("li", { key: p }, p)))));
+  var CriviaMotores = () => {
+    const [i, setI] = (0, import_react35.useState)(0);
+    const [vista, setVista] = (0, import_react35.useState)(0);
+    const esq = (0, import_react35.useRef)(null), cx = (0, import_react35.useRef)(null), ex = (0, import_react35.useRef)(null);
+    const m = CRIVIA_MOTORES[i];
+    (0, import_react35.useEffect)(() => {
+      let raf = 0;
+      const ss = (a, b, p) => { const k = Math.min(1, Math.max(0, (p - a) / (b - a))); return k * k * (3 - 2 * k); };
+      const tick = () => {
+        raf = requestAnimationFrame(tick);
+        const p = getScrollProgress();
+        const ent = ss(0.14, 0.19, p), sai = ss(0.30, 0.335, p);
+        if (cx.current) {
+          const esc = (0.74 + 0.26 * ent) * (1 + 0.12 * sai), bl = (1 - ent) * 16 + sai * 8;
+          cx.current.style.transform = "scale(" + esc.toFixed(4) + ")";
+          cx.current.style.filter = bl > 0.3 ? "blur(" + bl.toFixed(1) + "px)" : "none";
+        }
+        if (esq.current) esq.current.style.transform = "translateX(" + ((1 - ent) * -56 - sai * 30).toFixed(1) + "px)";
+        if (ex.current) { ex.current.style.opacity = (Math.sin(Math.PI * ent) * 0.85).toFixed(3); ex.current.style.transform = "translate(-50%, -50%) scale(" + (0.5 + ent * 1.5).toFixed(3) + ")"; }
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    }, []);
+    const escolher = (k) => { setI(k); setVista(0); };
+    const mover = (e) => { const r = e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty("--mx", (e.clientX - r.left) + "px"); e.currentTarget.style.setProperty("--my", (e.clientY - r.top) + "px"); };
+    return criviaH("div", { className: "crivia-mot" },
+      criviaH("div", { className: "crivia-mot__in" },
+        criviaH("div", { className: "crivia-mot__esq", ref: esq },
+          criviaH("span", { className: "font-geist crivia-cat__selo" }, criviaH("span", { className: "crivia-cat__selo-ponto", "aria-hidden": true }), "Onde a CRIVIA entra"),
+          criviaH("h2", { className: "crivia-mot__titulo" }, "Três momentos da obra. Três decisões com número na mesa."),
+          criviaH("p", { className: "font-geist crivia-mot__sub" }, "Cada trabalho termina em um documento que você lê na reunião e usa para negociar, destravar ou pagar."),
+          criviaH("div", { className: "crivia-mot__abas", role: "tablist", "aria-label": "Momentos da obra" }, CRIVIA_MOTORES.map((x, k) =>
+            criviaH("button", { key: x.id, type: "button", role: "tab", "aria-selected": k === i, className: "crivia-mot__aba" + (k === i ? " is-on" : ""), onClick: () => escolher(k) },
+              criviaH("span", { className: "font-geist crivia-mot__quando" }, x.quando),
+              criviaH("strong", {}, x.nome),
+              criviaH("span", { className: "font-geist crivia-mot__desc" }, x.desc)))),
+          criviaH("div", { className: "crivia-mot__acao" }, criviaH(CriviaCtaPrimary, { onClick: () => CRIVIA_ABRIR_CENARIO("produtos"), children: "Apresentar meu cenário" }))),
+        criviaH("div", { className: "crivia-mot__dir" },
+          criviaH("span", { className: "crivia-mot__explosao", ref: ex, "aria-hidden": true }),
+          criviaH("div", { className: "crivia-mot__caixa", ref: cx },
+            criviaH("div", { className: "crivia-mot__painel", role: "tabpanel", key: m.id, onPointerMove: mover },
+              criviaH("div", { className: "crivia-mot__pcab" },
+                criviaH("div", {}, criviaH("span", { className: "font-geist crivia-mot__quando" }, m.quando), criviaH("h3", {}, m.nome)),
+                criviaH("div", { className: "crivia-mot__vistas font-geist", role: "tablist", "aria-label": "Tipo de conteúdo" }, ["Resultado de exemplo", "Como funciona"].map((r, k) =>
+                  criviaH("button", { key: r, type: "button", role: "tab", "aria-selected": k === vista, className: k === vista ? "is-on" : "", onClick: () => setVista(k) }, r)))),
+              vista === 1 ? criviaH(CriviaComo, { c: m.como }) : criviaH(import_react35.Fragment, {},
+                criviaH("div", { className: "crivia-mot__kpis" }, m.kpis.map((k) =>
+                  criviaH("div", { key: k[0], className: "crivia-mot__kpi" },
+                    criviaH("span", { className: "font-geist" }, k[0]),
+                    criviaH("b", { className: k[2] ? "t-" + k[2] : "" }, k[1]),
+                    k[3] ? criviaH("em", { className: "font-geist " + (k[2] ? "t-" + k[2] : "") }, k[3]) : null))),
+                m.curva ? criviaH(CriviaCurvaS, {}) : criviaH(CriviaPonte, { g: m.ponte }),
+                criviaH("ul", { className: "crivia-mot__linhas" }, m.linhas.map((l) =>
+                  criviaH("li", { key: l[0] },
+                    criviaH("div", {}, criviaH("strong", {}, l[0]), criviaH("small", { className: "font-geist" }, l[1])),
+                    criviaH("div", { className: "crivia-mot__val font-geist" }, l[2] ? criviaH("span", {}, l[2]) : null, criviaH("i", { className: "t-" + l[4] }, l[3]))))),
+                criviaH("p", { className: "font-geist crivia-mot__fonte" }, criviaH("span", { className: "crivia-mot__ilus" }, "Exemplo ilustrativo"), " ", m.fonte)))))));
+  };
+  var MotoresOverlay = () => criviaH("div", { className: "pointer-events-none absolute inset-0 select-none font-display text-overlay-ink" }, criviaH(CriviaMotores, {}));
   var HomeView = () => {
     return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("main", { className: "relative bg-scene-backdrop", children: [
       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { className: "sr-only", children: "CRIVIA Engenharia Consultiva — Engenharia para Decisão" }),
@@ -51996,6 +52211,7 @@ var CRIVIA_IR_CENARIO = () => {
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Grain, {}),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SiteHeader, {}),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0, 0], disappear: [0.05, 0.14], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(HeroOverlay, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.14, 0.18], disappear: [0.30, 0.335], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(MotoresOverlay, {}) }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.34, 0.41], disappear: [0.47, 0.53], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(HandOverlay, {}) }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(ScrollFade, { appear: [0.575, 0.615], className: "pointer-events-none absolute inset-0 z-10", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(WaveOverlay, {}) }),
         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SobreOverlay, {}),

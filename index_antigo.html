@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRIVIA — Engenharia Consultiva | Inteligência e Precisão Técnica</title>
+  
+  <!-- Google Fonts: Rajdhani (Nexus Display), Plus Jakarta Sans (Body), JetBrains Mono (Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP + ScrollTrigger + Lenis Smooth Scroll -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            void: '#04070D',
+            surface: '#080E1A',
+            crivia: {
+              amber: '#F59E0B',
+              amberGlow: '#FDE047',
+              cyan: '#00B4D8',
+              cyanBright: '#22D3EE',
+              royal: '#0A369D',
+              navy: '#001D3D',
+              emerald: '#10B981',
+              emeraldDeep: '#2D6A4F'
+            }
+          },
+          fontFamily: {
+            display: ['Rajdhani', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-void: #04070D;
+      --bg-surface: #080E1A;
+      --node-amber: #F59E0B;
+      --beam-cyan: #22D3EE;
+      --arc-royal: #1D4ED8;
+      --node-emerald: #10B981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      selection-background-color: #00B4D8;
+    }
+
+    /* Acabamento Metálico 3D da Marca CRIVIA */
+    .crivia-metallic-text {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 35%, #CBD5E1 68%, #64748B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0px 4px 0px #0A2540) drop-shadow(0px 12px 28px rgba(0, 180, 216, 0.25));
+    }
+
+    /* Reflexo de Piso Realista */
+    .floor-reflection {
+      background: 
+        radial-gradient(ellipse 50% 35% at 32% 0%, rgba(245, 158, 11, 0.28) 0%, rgba(0, 180, 216, 0.12) 45%, transparent 80%),
+        linear-gradient(180deg, rgba(4, 7, 13, 0) 0%, rgba(8, 14, 26, 0.85) 35%, #04070D 100%);
+      border-top: 1px solid rgba(245, 158, 11, 0.22);
+      box-shadow: 0 -10px 40px rgba(245, 158, 11, 0.12);
+    }
+
+    /* Feixe de Luz Vertical Dourado */
+    .golden-laser-pillar {
+      width: 2px;
+      background: linear-gradient(180deg, transparent 0%, rgba(245, 158, 11, 0.8) 30%, #FDE047 85%, #FFFFFF 100%);
+      box-shadow: 0 0 20px 2px rgba(245, 158, 11, 0.65), 0 0 45px 6px rgba(245, 158, 11, 0.3);
+      opacity: 0;
+      transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .golden-laser-pillar.visible {
+      opacity: 1;
+    }
+
+    /* Botão Lumina Primary com Conic Border Beam */
+    .btn-lumina {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px;
+      border-radius: 9999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+    .btn-lumina::before {
+      content: '';
+      position: absolute;
+      inset: -150%;
+      background: conic-gradient(from 0deg, transparent 65%, #00B4D8 82%, #F59E0B 95%, #FFF 100%);
+      animation: rotateBeam 3.5s linear infinite;
+    }
+    .btn-lumina-inner {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 32px;
+      border-radius: 9999px;
+      background: linear-gradient(180deg, rgba(12, 22, 44, 0.92) 0%, rgba(5, 9, 18, 0.98) 100%);
+      backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 0 18px rgba(0, 180, 216, 0.15);
+      transition: all 0.35s ease;
+    }
+    .btn-lumina:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 0 35px rgba(0, 180, 216, 0.35), 0 0 60px rgba(245, 158, 11, 0.2);
+    }
+    .btn-lumina:hover .btn-lumina-inner {
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.35), inset 0 0 28px rgba(245, 158, 11, 0.3);
+    }
+
+    @keyframes rotateBeam {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Cards Bento Nexus Cyber */
+    .cyber-card {
+      background: linear-gradient(145deg, rgba(13, 25, 48, 0.55) 0%, rgba(6, 11, 22, 0.8) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.14);
+      backdrop-filter: blur(16px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .cyber-card:hover {
+      border-color: rgba(34, 211, 238, 0.45);
+      box-shadow: 0 20px 50px -15px rgba(0, 180, 216, 0.22), inset 0 0 25px rgba(34, 211, 238, 0.08);
+      transform: translateY(-4px);
+    }
+
+    /* Grid Cibernético Sutil de Fundo */
+    .cyber-grid-bg {
+      background-size: 56px 56px;
+      background-image: 
+        linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+    }
+
+    /* EFEITO BLUR UP PARA OS TEXTOS DA HERO */
+    .hero-blur-item {
+      opacity: 0;
+      filter: blur(16px);
+      transform: translateY(32px);
+      will-change: opacity, transform, filter;
+    }
+
+    /* Badge de Interação */
+    #hero-interaction-badge {
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    #hero-interaction-badge.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  </style>
+</head>
+<body class="cyber-grid-bg antialiased selection:bg-crivia-cyan selection:text-void">
+
+  <!-- BACKGROUND CANVAS FIXO PARA CONEXÃO ENTRE DOBRAS -->
+  <canvas id="scroll-network-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-60"></canvas>
+
+  <!-- NAVBAR GLASSMORPHISM -->
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-sky-500/10 bg-void/75 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-full border border-crivia-cyan/40 flex items-center justify-center relative bg-surface/80 group-hover:border-crivia-amber transition-colors">
+          <span class="w-3 h-3 rounded-full bg-crivia-amber shadow-[0_0_12px_#F59E0B]"></span>
+          <span class="absolute inset-1 rounded-full border border-dashed border-crivia-cyan/50 animate-spin" style="animation-duration: 12s;"></span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display font-bold text-2xl tracking-wider text-white leading-none">CRIVIA</span>
+          <span class="font-display text-[9px] tracking-[0.34em] text-crivia-cyanBright uppercase mt-0.5">Engenharia Consultiva</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 font-mono text-xs tracking-widest uppercase text-slate-300">
+        <a href="#simbolo" class="hover:text-crivia-cyanBright transition-colors">[01. Telemetria]</a>
+        <a href="#pilares" class="hover:text-crivia-cyanBright transition-colors">[02. Atuação]</a>
+        <a href="#projetos" class="hover:text-crivia-cyanBright transition-colors">[03. Portfólio]</a>
+        <a href="#metodologia" class="hover:text-crivia-cyanBright transition-colors">[04. Método]</a>
+      </nav>
+
+      <a href="#contato" class="btn-lumina">
+        <span class="btn-lumina-inner !py-2.5 !px-5 text-xs font-mono uppercase tracking-wider text-white">
+          <span>Diagnóstico Técnico</span>
+          <span class="w-2 h-2 rounded-full bg-crivia-amber animate-ping"></span>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- DOBRA 1: HERO SECTION -->
+  <section id="simbolo" class="relative min-h-screen pt-24 pb-16 flex flex-col justify-center overflow-hidden z-10">
+    
+    <!-- Pilar de Laser Vertical Dourado (Fade in sincronizado com textos) -->
+    <div class="golden-laser-pillar absolute top-0 bottom-[18vh] right-[14%] hidden lg:block pointer-events-none z-10">
+      <div class="absolute bottom-0 -left-3 w-7 h-7 rounded-full bg-amber-400/40 blur-md"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
+      
+      <!-- COLUNA ESQUERDA: SÍMBOLO DA CRIVIA COM ANIMAÇÃO DE CHEGADA 360° -->
+      <div class="lg:col-span-6 relative flex items-center justify-center h-[460px] md:h-[540px]" id="hero-logo-container">
+        <!-- Halo de Luz Âmbar & Ciano -->
+        <div class="absolute w-72 h-72 rounded-full bg-amber-500/15 blur-[90px] pointer-events-none"></div>
+        <div class="absolute w-96 h-96 rounded-full bg-cyan-500/10 blur-[110px] pointer-events-none"></div>
+        
+        <!-- Canvas Interativo de Raios, Feixes e Esferas 3D -->
+        <canvas id="crivia-symbol-canvas" width="620" height="560" class="relative z-20 cursor-crosshair max-w-full h-auto"></canvas>
+        
+        <!-- Badge de Instrução Interativa (Aparece após montagem do símbolo) -->
+        <div id="hero-interaction-badge" class="absolute bottom-4 left-1/2 z-30 px-4 py-1.5 rounded-full bg-surface/80 border border-sky-400/20 backdrop-blur-md flex items-center gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-crivia-cyanBright animate-pulse"></span>
+          <span class="font-mono text-[11px] uppercase tracking-widest text-slate-300">Passe o cursor nos nós para excitar a malha elétrica</span>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: TEXTOS COM EFEITO BLUR UP (CHEGADA APÓS O SÍMBOLO) -->
+      <div id="hero-text-column" class="lg:col-span-6 flex flex-col items-start text-left z-20">
+        
+        <!-- 1. Tag de Telemetria -->
+        <div class="hero-blur-item inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-950/50 border border-crivia-cyan/30 mb-6">
+          <span class="font-mono text-[11px] uppercase tracking-[0.22em] text-crivia-cyanBright">SYS.CRIVIA // ENGENHARIA DE ALTA PRECISÃO</span>
+        </div>
+
+        <!-- 2. Lockup Monumental Metálico: H1 CRIVIA -->
+        <h1 class="hero-blur-item font-display font-bold text-6xl sm:text-8xl xl:text-[6.5rem] tracking-tight crivia-metallic-text leading-none mb-2 select-none">
+          CRIVIA
+        </h1>
+
+        <!-- 3. Subtítulo Assinatura -->
+        <p class="hero-blur-item font-display font-semibold text-sm sm:text-lg tracking-[0.42em] text-sky-400 uppercase mb-8 pl-1">
+          ENGENHARIA CONSULTIVA
+        </p>
+
+        <!-- 4. Headline Principal -->
+        <h2 class="hero-blur-item font-display font-semibold text-2xl sm:text-4xl text-white uppercase tracking-wide leading-tight mb-5 max-w-xl">
+          Dados brutos canalizados em <span class="text-transparent bg-clip-text bg-gradient-to-r from-crivia-cyanBright via-sky-300 to-crivia-amber">infraestrutura de alta confiabilidade.</span>
+        </h2>
+
+        <!-- 5. Parágrafo Explicativo -->
+        <p class="hero-blur-item text-slate-300/90 text-base sm:text-lg leading-relaxed mb-10 max-w-xl font-light">
+          Transformamos complexidade técnica, auditoria de obras e gerenciamento de projetos críticos em decisões exatas. Cada conexão é calculada para mitigar riscos e maximizar performance operacional.
+        </p>
+
+        <!-- 6. Botões Lumina CTAs -->
+        <div class="hero-blur-item flex flex-wrap items-center gap-5">
+          <a href="#pilares" class="btn-lumina group">
+            <span class="btn-lumina-inner">
+              <span class="font-display font-bold text-base uppercase tracking-wider text-white">Explorar Engenharia</span>
+              <span class="w-8 h-8 rounded-full bg-crivia-amber/20 border border-crivia-amber/50 flex items-center justify-center text-crivia-amberGlow group-hover:rotate-45 transition-transform">
+                ↗
+              </span>
+            </span>
+          </a>
+
+          <a href="#projetos" class="px-7 py-4 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-slate-700/70 hover:border-crivia-cyan/60 backdrop-blur-md font-display font-semibold text-base uppercase tracking-wider text-slate-200 transition-all">
+            Ver Telemetria de Obras
+          </a>
+        </div>
+
+        <!-- 7. Barra de Indicadores Técnicos -->
+        <div class="hero-blur-item grid grid-cols-3 gap-8 pt-10 mt-10 border-t border-slate-800/80 w-full max-w-lg">
+          <div>
+            <div class="font-mono text-xs text-crivia-cyanBright uppercase tracking-widest">Precisão BIM</div>
+            <div class="font-display font-bold text-3xl text-white mt-0.5">99.94%</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-crivia-amber uppercase tracking-widest">Mitigação Risco</div>
+            <div class="font-display font-bold text-3xl text-white mt-0.5">-42% CAPEX</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-crivia-emerald uppercase tracking-widest">Compliance</div>
+            <div class="font-display font-bold text-3xl text-white mt-0.5">ISO / ABNT</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Piso Reflexivo Horizontal -->
+    <div class="floor-reflection absolute bottom-0 left-0 right-0 h-[18vh] pointer-events-none z-0"></div>
+  </section>
+
+  <!-- DOBRA 2: DESMONTE & REMONTAGEM NOS 4 PILARES -->
+  <section id="pilares" class="relative py-32 z-10 border-t border-sky-500/10 bg-surface/60">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-[0.25em] text-crivia-amber block mb-3">// 02. ARQUITETURA DE SOLUÇÕES</span>
+          <h2 class="font-display font-bold text-4xl sm:text-6xl uppercase tracking-tight text-white">
+            A Malha Técnica <span class="text-crivia-cyanBright">Desconstruída</span>
+          </h2>
+        </div>
+        <p class="text-slate-400 max-w-md text-sm sm:text-base">
+          Assim como os nós do nosso símbolo convergem para o núcleo âmbar, nossas quatro frentes de atuação integram todas as disciplinas de um empreendimento.
+        </p>
+      </div>
+
+      <!-- Bento Grid 4 Pilares -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- Card 1 -->
+        <div class="md:col-span-7 cyber-card rounded-2xl p-8 sm:p-10 group">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-mono text-xs px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">NÓ CENTRAL // 01</span>
+            <span class="w-4 h-4 rounded-full bg-crivia-amber shadow-[0_0_18px_#F59E0B]"></span>
+          </div>
+          <h3 class="font-display font-bold text-3xl uppercase text-white mb-4 group-hover:text-crivia-amberGlow transition-colors">
+            Gerenciamento & Fiscalização de Obras Críticas
+          </h3>
+          <p class="text-slate-300 leading-relaxed mb-6">
+            Controle rigoroso de escopo, prazo, qualidade e CAPEX em tempo real. Aplicamos telemetria de avanço físico-financeiro para impedir desvios antes que impactem o caminho crítico.
+          </p>
+          <ul class="space-y-2 font-mono text-xs text-slate-400">
+            <li class="flex items-center gap-2"><span class="text-crivia-amber">▹</span> Planejamento Executivo 4D/5D & Curva S Preditiva</li>
+            <li class="flex items-center gap-2"><span class="text-crivia-amber">▹</span> Auditoria de Contratos, Pleitos (Claims) e Medições</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="md:col-span-5 cyber-card rounded-2xl p-8 sm:p-10 group">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-mono text-xs px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">FEIXE CIANO // 02</span>
+            <span class="w-4 h-4 rounded-full bg-crivia-cyanBright shadow-[0_0_18px_#22D3EE]"></span>
+          </div>
+          <h3 class="font-display font-bold text-3xl uppercase text-white mb-4 group-hover:text-crivia-cyanBright transition-colors">
+            Engenharia Diagnóstica, Perícias & Laudos
+          </h3>
+          <p class="text-slate-300 leading-relaxed mb-6">
+            Investigação patológica instrumentada, ensaios não destrutivos e pareceres técnicos com rigor científico inquestionável.
+          </p>
+          <div class="font-mono text-xs text-crivia-cyanBright uppercase tracking-wider mt-auto">
+            [ NBR 16747 • Inspeção Predial & Industrial ]
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="md:col-span-5 cyber-card rounded-2xl p-8 sm:p-10 group">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-mono text-xs px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">NÓ ESMERALDA // 03</span>
+            <span class="w-4 h-4 rounded-full bg-crivia-emerald shadow-[0_0_18px_#10B981]"></span>
+          </div>
+          <h3 class="font-display font-bold text-3xl uppercase text-white mb-4 group-hover:text-crivia-emerald transition-colors">
+            EVTE & Engenharia de Custos
+          </h3>
+          <p class="text-slate-300 leading-relaxed mb-6">
+            Estudos de Viabilidade Técnica, Econômica e Ambiental com modelagem paramétrica e engenharia de valor para otimização de investimentos.
+          </p>
+          <div class="font-mono text-xs text-crivia-emerald uppercase tracking-wider">
+            [ Otimização de LCOE & TIR ]
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="md:col-span-7 cyber-card rounded-2xl p-8 sm:p-10 group">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-mono text-xs px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">ÓRBITA ROYAL // 04</span>
+            <span class="w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_18px_#3B82F6]"></span>
+          </div>
+          <h3 class="font-display font-bold text-3xl uppercase text-white mb-4 group-hover:text-blue-400 transition-colors">
+            Coordenação BIM & Gêmeos Digitais
+          </h3>
+          <p class="text-slate-300 leading-relaxed mb-6">
+            Compatibilização multidisciplinar com detecção automatizada de interferências (Clash Detection), garantindo obra limpa, sem retrabalho de campo e ativo digital pronto para operação (As-Built 7D).
+          </p>
+          <ul class="space-y-2 font-mono text-xs text-slate-400">
+            <li class="flex items-center gap-2"><span class="text-crivia-cyanBright">▹</span> Modelagem Federada LOD 400 / LOD 500</li>
+            <li class="flex items-center gap-2"><span class="text-crivia-cyanBright">▹</span> Integração IoT e Manutenção Preditiva</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 3: GALERIA DE TELEMETRIA HORIZONTAL -->
+  <section id="projetos" class="relative py-28 z-10 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 mb-12 flex items-end justify-between">
+      <div>
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-crivia-cyanBright block mb-3">// 03. TELEMETRIA DE CAMPO</span>
+        <h2 class="font-display font-bold text-4xl sm:text-6xl uppercase text-white">Performance Comprovada</h2>
+      </div>
+      <span class="font-mono text-xs text-slate-400 hidden sm:block">STATUS: TODOS OS SISTEMAS NOMINAIS ●</span>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="cyber-card rounded-2xl p-8 border-t-2 border-t-crivia-cyanBright">
+        <div class="font-mono text-xs text-slate-400 mb-2">CASE #01 // INFRAESTRUTURA LOGÍSTICA</div>
+        <div class="font-display font-bold text-5xl text-white my-3">-18.4%</div>
+        <div class="font-display font-semibold text-lg uppercase text-crivia-cyanBright mb-3">Redução no Custo Global via Engenharia de Valor</div>
+        <p class="text-slate-400 text-sm">Revisão estrutural e de fundações profundas em complexo portuário-industrial sem alteração de cronograma.</p>
+      </div>
+
+      <div class="cyber-card rounded-2xl p-8 border-t-2 border-t-crivia-amber">
+        <div class="font-mono text-xs text-slate-400 mb-2">CASE #02 // ENERGIA & SUBESTAÇÕES</div>
+        <div class="font-display font-bold text-5xl text-white my-3">ZERO</div>
+        <div class="font-display font-semibold text-lg uppercase text-crivia-amber mb-3">Aditivos Contratuais Não-Mapeados</div>
+        <p class="text-slate-400 text-sm">Fiscalização executiva e matriz de riscos preditiva aplicada a obras de missão crítica de alta tensão.</p>
+      </div>
+
+      <div class="cyber-card rounded-2xl p-8 border-t-2 border-t-crivia-emerald">
+        <div class="font-mono text-xs text-slate-400 mb-2">CASE #03 // ATIVOS CORPORATIVOS & INDUSTRIAIS</div>
+        <div class="font-display font-bold text-5xl text-white my-3">100%</div>
+        <div class="font-display font-semibold text-lg uppercase text-crivia-emerald mb-3">Rastreabilidade Técnica em BIM</div>
+        <p class="text-slate-400 text-sm">Coordenação de 14 disciplinas simultâneas eliminando 1.240 colisões críticas antes da mobilização do canteiro.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 4: METODOLOGIA O EFEITO CRIVIA -->
+  <section id="metodologia" class="relative py-32 z-10 border-t border-sky-500/10 bg-void/90 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-crivia-cyanBright block mb-3">// 04. O EFEITO CRIVIA</span>
+        <h2 class="font-display font-bold text-4xl sm:text-6xl uppercase tracking-tight text-white mb-6">
+          Canalização de Dados em <span class="text-crivia-amber">Decisão Executiva</span>
+        </h2>
+        <p class="text-slate-400 text-base leading-relaxed">
+          Variáveis dispersas de projeto, incertezas geológicas e riscos orçamentários convergem pelo nosso núcleo de inteligência e emergem como um vetor de controle cristalino.
+        </p>
+      </div>
+
+      <!-- Diagrama de Canalização & Filtro -->
+      <div class="relative grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <!-- Entrada: Dados Caóticos -->
+        <div class="cyber-card rounded-2xl p-8 border-l-4 border-l-rose-500/60">
+          <div class="font-mono text-xs text-rose-400 uppercase tracking-widest mb-3">[INPUT // DADOS BRUTOS]</div>
+          <h4 class="font-display font-bold text-2xl uppercase text-white mb-3">Entropia de Canteiro</h4>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Múltiplos projetos desintegrados, variações de escopo, interferências em campo e imprecisão de medições.
+          </p>
+          <div class="flex flex-wrap gap-2 font-mono text-[11px] text-slate-500">
+            <span class="px-2 py-1 bg-surface rounded border border-slate-800">+ Desvios de Custo</span>
+            <span class="px-2 py-1 bg-surface rounded border border-slate-800">+ Claims</span>
+            <span class="px-2 py-1 bg-surface rounded border border-slate-800">+ Colisões</span>
+          </div>
+        </div>
+
+        <!-- Núcleo: O Filtro Consultivo Crivia -->
+        <div class="cyber-card rounded-2xl p-8 border-y-2 border-y-crivia-amber relative text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-crivia-amber/20 border border-crivia-amber flex items-center justify-center mb-4 shadow-[0_0_25px_#F59E0B]">
+            <span class="w-6 h-6 rounded-full bg-crivia-amber animate-pulse"></span>
+          </div>
+          <div class="font-mono text-xs text-crivia-amber uppercase tracking-widest mb-2">[NÚCLEO // CRIVIA MATRIX]</div>
+          <h4 class="font-display font-bold text-2xl uppercase text-white mb-3">Engenharia Consultiva</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Compatibilização BIM 5D, Auditoria Preditiva, Telemetria Físico-Financeira e Compliance Normativo.
+          </p>
+        </div>
+
+        <!-- Saída: Vetor Alinhado -->
+        <div class="cyber-card rounded-2xl p-8 border-r-4 border-r-crivia-cyanBright">
+          <div class="font-mono text-xs text-crivia-cyanBright uppercase tracking-widest mb-3">[OUTPUT // VETOR ESTÁVEL]</div>
+          <h4 class="font-display font-bold text-2xl uppercase text-white mb-3">Previsibilidade Total</h4>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Empreendimento entregue no prazo e orçamento, ativo com As-Built 7D certificado e zero litígios contratuais.
+          </p>
+          <div class="flex flex-wrap gap-2 font-mono text-[11px] text-crivia-cyanBright">
+            <span class="px-2 py-1 bg-sky-950/60 rounded border border-crivia-cyan/40">✓ Risco Blindado</span>
+            <span class="px-2 py-1 bg-sky-950/60 rounded border border-crivia-cyan/40">✓ ROI Protegido</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 5: CONVERSÃO EXECUTIVA -->
+  <section id="contato" class="relative py-32 z-10 border-t border-amber-500/20 bg-gradient-to-b from-void via-surface to-void">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+        <span class="w-2 h-2 rounded-full bg-crivia-amber animate-ping"></span>
+        <span class="font-mono text-xs uppercase tracking-widest text-amber-300">Canal Direto com a Diretoria Técnica</span>
+      </div>
+
+      <h2 class="font-display font-bold text-5xl sm:text-7xl uppercase crivia-metallic-text mb-6">
+        Pronto para Blindar seu Próximo Projeto?
+      </h2>
+      <p class="text-slate-300 text-lg max-w-2xl mx-auto mb-10 font-light">
+        Agende uma sessão de diagnóstico técnico com os engenheiros consultores da Crivia e transforme incertezas de obra em previsibilidade absoluta.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+        <a href="mailto:contato@crivia.eng.br" class="btn-lumina">
+          <span class="btn-lumina-inner !px-10 !py-5">
+            <span class="font-display font-bold text-lg uppercase tracking-wider text-white">Solicitar Proposta Consultiva</span>
+            <span class="text-crivia-amberGlow text-xl">⚡</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER MONUMENTAL -->
+  <footer class="relative z-10 border-t border-sky-500/10 bg-void py-12 text-slate-500 font-mono text-xs">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-crivia-amber"></span>
+        <span class="font-display font-bold text-lg text-white tracking-wider">CRIVIA</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-slate-400">Engenharia Consultiva & Telemetria</span>
+      </div>
+      <div>
+        <span>© 2026 CRIVIA ENGENHARIA. TODOS OS DIREITOS RESERVADOS.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DO SÍMBOLO 3D + ANIMAÇÃO DE CHEGADA 360° + BLUR UP DOS TEXTOS -->
+  <script>
+    const canvas = document.getElementById('crivia-symbol-canvas');
+    const ctx = canvas.getContext('2d');
+    let mouse = { x: -9999, y: -9999, active: false };
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      mouse.x = (e.clientX - rect.left) * scaleX;
+      mouse.y = (e.clientY - rect.top) * scaleY;
+      mouse.active = true;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mouse.active = false;
+      mouse.x = -9999;
+      mouse.y = -9999;
+    });
+
+    const CX = 310;
+    const CY = 280;
+    const R_OUT = 195;
+    const R_MID = 135;
+    const R_IN  = 88;
+
+    const deg2rad = (deg) => (deg * Math.PI) / 180;
+    const polar = (r, deg) => ({
+      targetX: CX + r * Math.cos(deg2rad(deg)),
+      targetY: CY + r * Math.sin(deg2rad(deg)),
+      targetR: r,
+      targetDeg: deg
+    });
+
+    // Mapeamento dos 11 Nós Esféricos do Símbolo da Crivia
+    const nodes = [
+      { id: 'core', ...polar(0, 0), r: 22, type: 'amber', label: 'NÚCLEO CRIVIA' },
+      { id: 'east', ...polar(138, 0), r: 12, type: 'blue', label: 'VETOR DECISÃO' },
+      { id: 'ne_in', ...polar(R_IN, -45), r: 12, type: 'green', label: 'AUDITORIA' },
+      { id: 'ne_out', ...polar(R_OUT, -40), r: 16, type: 'green', label: 'SUSTENTABILIDADE' },
+      { id: 'top_out', ...polar(R_OUT, -82), r: 18, type: 'blue', label: 'GESTÃO CAPEX' },
+      { id: 'nw_out', ...polar(R_OUT, -138), r: 18, type: 'blue', label: 'PROJETOS BIM' },
+      { id: 'w_out', ...polar(R_OUT, 180), r: 17, type: 'green', label: 'PLANEJAMENTO' },
+      { id: 'sw_out', ...polar(R_OUT, 138), r: 17, type: 'blue', label: 'PERÍCIAS' },
+      { id: 's_out', ...polar(R_OUT, 88), r: 18, type: 'green', label: 'COMPLIANCE' },
+      { id: 'se_in', ...polar(R_IN, 48), r: 14, type: 'green', label: 'VIABILIDADE' },
+      { id: 'se_out', ...polar(R_OUT, 42), r: 15, type: 'blue', label: 'OPERAÇÃO' }
+    ];
+
+    // Configuração dos pontos iniciais para chegada em 360° (Vórtice Espiral)
+    nodes.forEach((n, idx) => {
+      const angleOffset = (idx / nodes.length) * Math.PI * 2;
+      const startDist = 380 + (idx % 3) * 60;
+      n.startX = CX + Math.cos(angleOffset) * startDist;
+      n.startY = CY + Math.sin(angleOffset) * startDist;
+      n.startAngle = angleOffset;
+      n.x = n.startX;
+      n.y = n.startY;
+      n.scale = 0;
+      n.alpha = 0;
+    });
+
+    const getNode = (id) => nodes.find(n => n.id === id);
+
+    // Hastes retas Ciano do Símbolo Crivia
+    const beams = [
+      ['core', 'east'],
+      ['core', 'ne_in'],
+      ['ne_in', 'ne_out'],
+      ['core', 'nw_out'],
+      ['core', 'w_out'],
+      ['core', 'sw_out'],
+      ['core', 'se_in'],
+      ['se_in', 'se_out'],
+      ['se_in', 's_out'],
+      ['top_out', 'ne_in']
+    ];
+
+    // Pulsos de Energia contínuos
+    const pulses = [];
+    function spawnPulse(fromId, toId, color = '#22D3EE') {
+      pulses.push({ from: getNode(fromId), to: getNode(toId), progress: 0, speed: 0.025 + Math.random() * 0.02, color });
+    }
+
+    // 80 Partículas Estelares que chegam em 360° e giram em vórtice (Torus Auralis/Nexus)
+    const swarmParticles = [];
+    for (let i = 0; i < 75; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 320 + Math.random() * 260;
+      swarmParticles.push({
+        x: CX + Math.cos(ang) * dist,
+        y: CY + Math.sin(ang) * dist,
+        radius: dist,
+        angle: ang,
+        angularSpeed: (0.015 + Math.random() * 0.035) * (Math.random() > 0.4 ? 1 : -1),
+        inwardSpeed: 1.8 + Math.random() * 2.5,
+        size: 1.5 + Math.random() * 2.2,
+        color: Math.random() > 0.5 ? '#22D3EE' : (Math.random() > 0.5 ? '#FBBF24' : '#FFFFFF'),
+        history: [],
+        alive: true
+      });
+    }
+
+    // Ondas de choque (Shockwaves) na ignição do símbolo
+    const shockwaves = [];
+
+    // Controle da Montagem do Símbolo
+    const ASSEMBLY_DURATION = 1750; // ms
+    let animStartTime = null;
+    let symbolAssembled = false;
+
+    // Função de Entrada dos Textos com Efeito Blur Up
+    function triggerHeroTextEntrance() {
+      if (window.heroTextTriggered) return;
+      window.heroTextTriggered = true;
+
+      // Revela o pilar de laser dourado à direita
+      const laserPillar = document.querySelector('.golden-laser-pillar');
+      if (laserPillar) laserPillar.classList.add('visible');
+
+      // Revela a badge de instrução interativa
+      const badge = document.getElementById('hero-interaction-badge');
+      if (badge) badge.classList.add('visible');
+
+      // Animação GSAP Blur Up escalonada em todos os elementos da coluna direita
+      gsap.fromTo(".hero-blur-item",
+        {
+          opacity: 0,
+          y: 35,
+          filter: "blur(18px)"
+        },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 1.05,
+          stagger: 0.12,
+          ease: "power3.out",
+          clearProps: "filter,transform" // Deixa o texto com nitidez vetorial nativa após animação
+        }
+      );
+    }
+
+    // Fallback defensivo: se a aba perder foco ou demorar, garante que o texto apareça
+    setTimeout(() => {
+      triggerHeroTextEntrance();
+    }, 2400);
+
+    // Efeito de Raio Fractal
+    function drawLightning(x1, y1, x2, y2, color, jitter = 6) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      const segments = 8;
+      for (let i = 1; i < segments; i++) {
+        const t = i / segments;
+        const nx = x1 + (x2 - x1) * t + (Math.random() - 0.5) * jitter * 2;
+        const ny = y1 + (y2 - y1) * t + (Math.random() - 0.5) * jitter * 2;
+        ctx.lineTo(nx, ny);
+      }
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 18;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Desenho de Esferas 3D com Iluminação Especular
+    function drawSphere3D(x, y, radius, type, hoverFactor = 0, scaleFactor = 1, alpha = 1) {
+      if (scaleFactor <= 0.01 || alpha <= 0.01) return;
+      const r = radius * scaleFactor * (1 + hoverFactor * 0.28);
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, Math.max(0, alpha));
+      const grad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r);
+      if (type === 'amber') {
+        grad.addColorStop(0, '#FEF08A');
+        grad.addColorStop(0.45, '#F59E0B');
+        grad.addColorStop(1, '#78350F');
+        ctx.shadowColor = '#F59E0B';
+        ctx.shadowBlur = 30 + hoverFactor * 25;
+      } else if (type === 'green') {
+        grad.addColorStop(0, '#A7F3D0');
+        grad.addColorStop(0.5, '#10B981');
+        grad.addColorStop(1, '#064E3B');
+        ctx.shadowColor = '#10B981';
+        ctx.shadowBlur = 15 + hoverFactor * 20;
+      } else {
+        grad.addColorStop(0, '#60A5FA');
+        grad.addColorStop(0.5, '#1D4ED8');
+        grad.addColorStop(1, '#0A192F');
+        ctx.shadowColor = '#38BDF8';
+        ctx.shadowBlur = 15 + hoverFactor * 20;
+      }
+
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(1, r), 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function renderSymbol(time) {
+      if (!animStartTime) animStartTime = time;
+      const elapsed = time - animStartTime;
+      const progress = Math.min(1, elapsed / ASSEMBLY_DURATION);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // --- FASE 1 & 2: CHEGADA DAS PARTÍCULAS EM 360° (VÓRTICE TORUS) ---
+      if (progress < 1) {
+        swarmParticles.forEach((p) => {
+          if (!p.alive) return;
+          p.radius -= p.inwardSpeed * (1 + (1 - progress) * 1.5);
+          p.angle += p.angularSpeed;
+          p.x = CX + Math.cos(p.angle) * p.radius;
+          p.y = CY + Math.sin(p.angle) * p.radius;
+
+          p.history.push({ x: p.x, y: p.y });
+          if (p.history.length > 5) p.history.shift();
+
+          // Desenha rastro estelar
+          if (p.history.length > 1) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(p.history[0].x, p.history[0].y);
+            for (let k = 1; k < p.history.length; k++) {
+              ctx.lineTo(p.history[k].x, p.history[k].y);
+            }
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = p.size * 0.7;
+            ctx.globalAlpha = (1 - progress * 0.6) * 0.7;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 8;
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // Estrela brilhante na cabeça
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 12;
+          ctx.globalAlpha = 1 - progress * 0.3;
+          ctx.fill();
+          ctx.restore();
+
+          if (p.radius < 15) p.alive = false;
+        });
+      }
+
+      // Interpolação dos Nós do Símbolo em direção à sua posição final
+      const easeP = progress < 0.5 
+        ? 4 * progress * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      nodes.forEach((node) => {
+        if (!symbolAssembled) {
+          // Trajetória espiral até o destino
+          const curDist = (1 - easeP) * 360 + easeP * Math.hypot(node.targetX - CX, node.targetY - CY);
+          const targetAng = Math.atan2(node.targetY - CY, node.targetX - CX);
+          const curAng = (1 - easeP) * (node.startAngle + Math.PI * 2) + easeP * targetAng;
+          node.x = CX + Math.cos(curAng) * curDist;
+          node.y = CY + Math.sin(curAng) * curDist;
+          node.alpha = Math.min(1, progress * 1.8);
+          // Efeito de overshoot elástico no fechamento
+          node.scale = progress >= 0.85 
+            ? 1 + Math.sin((progress - 0.85) / 0.15 * Math.PI) * 0.3 
+            : progress / 0.85;
+        } else {
+          node.x = node.targetX;
+          node.y = node.targetY;
+          node.scale = 1;
+          node.alpha = 1;
+        }
+      });
+
+      // Checagem de Conclusão da Montagem do Símbolo
+      if (progress >= 1 && !symbolAssembled) {
+        symbolAssembled = true;
+        // Dispara ondas de choque da ignição do núcleo
+        shockwaves.push({ r: 5, maxR: 260, alpha: 1, color: '#F59E0B' });
+        shockwaves.push({ r: 5, maxR: 320, alpha: 0.8, color: '#22D3EE' });
+
+        // DISPARA O EFEITO BLUR UP DOS TEXTOS À DIREITA
+        triggerHeroTextEntrance();
+
+        // Inicializa pulsos periódicos
+        setInterval(() => {
+          const randomBeam = beams[Math.floor(Math.random() * beams.length)];
+          spawnPulse(randomBeam[0], randomBeam[1], Math.random() > 0.35 ? '#22D3EE' : '#FBBF24');
+        }, 260);
+      }
+
+      // 1. Feixes de Entrada à Esquerda (Aparecem progressivamente)
+      if (progress > 0.4) {
+        const fiberAlpha = Math.min(1, (progress - 0.4) / 0.6);
+        for (let i = 0; i < 6; i++) {
+          ctx.save();
+          ctx.beginPath();
+          const startY = 80 + i * 78;
+          const targetNode = nodes[3 + (i % 5)];
+          ctx.moveTo(0, startY + Math.sin(time * 0.002 + i) * 15);
+          ctx.quadraticCurveTo(110, CY + (i - 2.5) * 28, targetNode.x, targetNode.y);
+          ctx.strokeStyle = i % 2 === 0 ? 'rgba(34, 211, 238, 0.28)' : 'rgba(245, 158, 11, 0.22)';
+          ctx.lineWidth = 1.2;
+          ctx.globalAlpha = fiberAlpha;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // 2. Arcos Concêntricos 3D (Desenhados dinamicamente na montagem)
+      const drawArcTube = (radius, startDeg, endDeg, color, width = 8, arcProgress = 1) => {
+        if (arcProgress <= 0.01) return;
+        ctx.save();
+        ctx.beginPath();
+        const currentEnd = startDeg + (endDeg - startDeg) * arcProgress;
+        ctx.arc(CX, CY, radius, deg2rad(startDeg), deg2rad(currentEnd), false);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.shadowColor = '#00B4D8';
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+
+        // Ponto de luz quente na ponta do feixe desenhado
+        if (arcProgress < 0.99) {
+          const tipX = CX + radius * Math.cos(deg2rad(currentEnd));
+          const tipY = CY + radius * Math.sin(deg2rad(currentEnd));
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, width * 0.9, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowColor = '#22D3EE';
+          ctx.shadowBlur = 16;
+          ctx.fill();
+        }
+        ctx.restore();
+      };
+
+      const arcDrawP = progress < 0.35 ? 0 : Math.min(1, (progress - 0.35) / 0.65);
+      // Arco Externo ("C" principal)
+      drawArcTube(R_OUT, 42, 320, '#1E40AF', 9, arcDrawP);
+      // Arco Intermediário Superior
+      drawArcTube(R_MID, 195, 310, '#0284C7', 7, arcDrawP);
+      // Arco Interno ("C" menor)
+      drawArcTube(R_IN, 48, 315, '#1E3A8A', 8, arcDrawP);
+
+      // 3. Hastes Retas Radiais Ciano/Douradas
+      if (progress > 0.45) {
+        const beamAlpha = Math.min(1, (progress - 0.45) / 0.55);
+        beams.forEach(([idA, idB]) => {
+          const a = getNode(idA);
+          const b = getNode(idB);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          grad.addColorStop(0, idA === 'core' ? '#F59E0B' : '#00B4D8');
+          grad.addColorStop(1, '#0284C7');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 6.5;
+          ctx.shadowColor = '#22D3EE';
+          ctx.shadowBlur = 10;
+          ctx.globalAlpha = beamAlpha;
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+
+      // 4. Ondas de Choque (Shockwaves da ignição)
+      for (let s = shockwaves.length - 1; s >= 0; s--) {
+        const sw = shockwaves[s];
+        sw.r += 6.5;
+        sw.alpha *= 0.94;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(CX, CY, sw.r, 0, Math.PI * 2);
+        ctx.strokeStyle = sw.color;
+        ctx.globalAlpha = sw.alpha;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = sw.color;
+        ctx.shadowBlur = 22;
+        ctx.stroke();
+        ctx.restore();
+        if (sw.alpha < 0.02) shockwaves.splice(s, 1);
+      }
+
+      // 5. Pulsos de Luz nas Hastes
+      if (symbolAssembled) {
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const p = pulses[i];
+          p.progress += p.speed;
+          if (p.progress >= 1) {
+            pulses.splice(i, 1);
+            continue;
+          }
+          const px = p.from.x + (p.to.x - p.from.x) * p.progress;
+          const py = p.from.y + (p.to.y - p.from.y) * p.progress;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(px, py, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 18;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // 6. Desenho dos Nós e Interatividade com Cursor
+      const coreNode = getNode('core');
+      nodes.forEach((node) => {
+        let hoverFactor = 0;
+        if (symbolAssembled) {
+          const dist = Math.hypot(mouse.x - node.x, mouse.y - node.y);
+          const isHovered = dist < 135;
+          hoverFactor = isHovered ? (1 - dist / 135) : 0;
+
+          if (isHovered && mouse.active) {
+            if (node.id !== 'core') {
+              drawLightning(node.x, node.y, coreNode.x, coreNode.y, '#FBBF24', 5.5);
+            }
+            drawLightning(mouse.x, mouse.y, node.x, node.y, '#22D3EE', 3.5);
+          }
+        }
+
+        drawSphere3D(node.x, node.y, node.r, node.type, hoverFactor, node.scale, node.alpha);
+      });
+
+      requestAnimationFrame(renderSymbol);
+    }
+
+    requestAnimationFrame(renderSymbol);
+
+    // Inicialização Lenis Smooth Scroll + GSAP ScrollTrigger
+    const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from(".cyber-card", {
+      scrollTrigger: {
+        trigger: "#pilares",
+        start: "top 75%"
+      },
+      y: 50,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.9,
+      ease: "power3.out"
+    });
+  </script>
+</body>
+</html>

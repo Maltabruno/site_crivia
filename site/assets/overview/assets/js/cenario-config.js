@@ -15,7 +15,7 @@ window.CRIVIA_CENARIO_CONFIG = {
   voltarAoSiteUrl: "index.html",
 
   // Texto do microtexto do botão do site (configurável; o tempo é uma hipótese a validar com testes de uso).
-  microtexto: "Leva cerca de 1 minuto. Você não precisa saber qual serviço escolher.",
+  microtexto: "Você não precisa saber qual serviço escolher.",
 
   // Canal de solicitações de titulares: PENDENTE (não inventar). Ainda não é exibido na interface: entra no Aviso quando for definido.
   canalPrivacidade: "contato@criviaengenharia.com.br",   // definido pelo responsável: o mesmo e-mail atende privacidade

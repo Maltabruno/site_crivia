@@ -269,7 +269,7 @@
     var topo = h("div", null,
       h("h1", { class: "etapa__titulo etapa__titulo--grande", id: "titulo-pagina", tabindex: "-1", texto: "Apresente o cenário. A CRIVIA ajuda a encontrar o que precisa ser decidido." }),
       h("p", { class: "etapa__desc", texto: "Conte o essencial sobre a situação. A CRIVIA analisa o contexto e responde pelo canal indicado, sem compromisso de contratação." }),
-      h("p", { class: "micro", texto: "Leva cerca de 1 minuto. Não envie documentos confidenciais nesta etapa." }));
+      h("p", { class: "micro", texto: "Não envie documentos confidenciais nesta etapa." }));
     refs.resumo = h("div", { id: "resumo" });
 
     // 1. situação + pergunta curta que depende dela
