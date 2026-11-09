@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CRIVIA Engenharia Consultiva: engenharia independente para decisões críticas de orçamento, contrato e avanço de obras.">
+  <meta name="theme-color" content="#020812">
+  <title>CRIVIA — Engenharia para Decisão</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/PlusJakartaSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="cursor-lens" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <a class="brand" href="#inicio" aria-label="CRIVIA — início">
+      <img src="assets/logo-icon.png" alt="" width="38" height="38">
+      <span><b>CRIVIA</b><small>ENGENHARIA CONSULTIVA</small></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span><b>MENU</b></button>
+    <nav id="main-nav" aria-label="Navegação principal">
+      <a href="#visao">VISÃO</a>
+      <a href="#produto-1">TRABALHOS</a>
+      <a href="#catalogo">CATÁLOGO</a>
+      <a href="#metodo">MÉTODO</a>
+      <a href="#sobre">SOBRE</a>
+      <a class="nav-cta" href="#contato" data-abrir-contato>APRESENTAR MEU CENÁRIO <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <section class="xr chapter" id="inicio" data-chapter="00">
+      <div class="xr-bg" aria-hidden="true">
+        <img class="xr-base" src="assets/proto-planta.jpg" alt="" fetchpriority="high">
+        <div class="xr-layer">
+          <img class="xr-tech" src="assets/proto-planta.jpg" alt="">
+          <div class="xr-grid"></div>
+          <div class="xr-call" style="left:47%;top:20%"><i></i><b>ESTRUTURA</b><span>aço CA-50: +38,7% sobre a referência</span><em>exemplo</em></div>
+          <div class="xr-call" style="left:68%;top:46%"><i></i><b>REGISTRO</b><span>diário de obra × INMET: 0,0 mm no dia alegado</span><em>exemplo</em></div>
+          <div class="xr-call" style="left:24%;top:64%"><i></i><b>MEDIÇÃO</b><span>cobrado 100% · verificado 70%</span><em>exemplo</em></div>
+          <div class="xr-call" style="left:36%;top:30%"><i></i><b>OMISSÃO</b><span>item previsto no projeto e fora da planilha</span><em>exemplo</em></div>
+        </div>
+        <div class="xr-shade"></div>
+        <div class="xr-ring"></div>
+      </div>
+      <div class="xr-copy">
+        <p class="sys-label"><i></i> ENGENHARIA PARA DECISÃO</p>
+        <div class="hero-logo-stage" tabindex="0" aria-label="CRIVIA Engenharia Consultiva">
+          <span class="hero-logo-pulse" aria-hidden="true"></span>
+          <img class="hero-logo" src="assets/logo-full.png" alt="CRIVIA Engenharia Consultiva" width="1100" height="500">
+          <span class="hero-logo-status" aria-hidden="true">CRIVIA // ENGENHARIA PARA DECISÃO</span>
+        </div>
+        <h1>Veja o que a obra<br><em>ainda não revelou.</em></h1>
+        <p class="hero-intro">Engenharia independente para transformar orçamento, contrato e avanço físico em evidência para decisão.</p>
+        <div class="hero-actions">
+          <a class="button button--primary" href="#visao">COMO A CRIVIA ENXERGA <span>↓</span></a>
+          <a class="button button--whats" data-whats href="https://wa.me/5527996971800" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.43 15.1L2 22l5.04-1.32A9.9 9.9 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 1 1-4.3 14.97l-.31-.18-2.99.78.8-2.91-.2-.32A8.1 8.1 0 0 1 12.04 3.8Zm-3.2 4.1c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.48 2.5 1.07 3 .86 3.54.8.54-.05 1.74-.71 1.98-1.4.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35-.3-.15-1.74-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.91-2.18-.24-.57-.48-.5-.66-.5Z"/></svg> CONTATO WHATSAPP</a>
+        </div>
+      </div>
+      <p class="xr-hint" aria-hidden="true">A MIRA REVELA A CAMADA TÉCNICA · MOVA O PONTEIRO</p>
+    </section>
+
+    <section class="tri s1 chapter" id="visao" data-chapter="01">
+      <div class="tri-sticky">
+        <div class="tri-media" aria-hidden="true"><img src="assets/inspection.jpg" alt=""><div class="tri-grid"></div><div class="tri-shade"></div></div>
+        <svg class="tri-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <line class="l l1" x1="68" y1="24" x2="82" y2="46" pathLength="1"/>
+          <line class="l l2" x1="82" y1="46" x2="72" y2="68" pathLength="1"/>
+          <line class="l l3" x1="68" y1="24" x2="72" y2="68" pathLength="1"/>
+        </svg>
+        <span class="tri-node n1" style="left:68%;top:24%"><i>?</i><b>INTERFACE</b><small>ponto crítico</small></span>
+        <span class="tri-node n2" style="left:82%;top:46%"><i>?</i><b>REGISTRO</b><small>evidência vinculada</small></span>
+        <span class="tri-node n3" style="left:72%;top:68%"><i>?</i><b>IMPACTO</b><small>efeito rastreado</small></span>
+
+        <div class="tri-copy">
+          <p class="section-code">01 / ONDE ESTÁ A CAUSA</p>
+          <h2>A obra física é só<br><em>a primeira camada.</em></h2>
+          <ol class="tri-steps" aria-label="Da incerteza à decisão robusta">
+            <li class="is-on"><button type="button" data-s="1"><i>01</i><b>INCERTEZA</b><span>Atraso, medição travada, informação contraditória. O sintoma aparece, a causa não.</span></button></li>
+            <li><button type="button" data-s="2"><i>02</i><b>MÉTODO</b><span>Documento, campo, tempo e dinheiro são cruzados. As evidências se ligam.</span></button></li>
+            <li><button type="button" data-s="3"><i>03</i><b>DECISÃO ROBUSTA</b><span>Cada achado aponta para uma evidência. Quem decide tem o que defender.</span></button></li>
+          </ol>
+        </div>
+        <div class="tri-status" id="tri-status" aria-live="polite">ESTADO 1 DE 3 · INCERTEZA</div>
+      </div>
+    </section>
+
+    <!-- 02 · Raio-X -->
+    <section class="product chapter" id="produto-1" data-chapter="02" data-lab="raiox">
+      <div class="product-media" aria-hidden="true"><img src="assets/planning.jpg" alt="" loading="lazy"><div class="product-wash"></div></div>
+      <div class="product-shell">
+        <header class="product-heading">
+          <p class="section-code">02 / ANTES DE CONTRATAR</p>
+          <h2>Raio-X de<br><em>Propostas e Orçamentos.</em></h2>
+          <p>Cada item da proposta é comparado com a referência do SINAPI. Você vê onde há sobrepreço, onde o preço está baixo demais e o que ficou de fora da planilha.</p>
+        </header>
+        <div class="lab interactive-panel" data-lab-root></div>
+        <div class="product-footer"><span>VOCÊ RECEBE</span><b>Dossiê de 5 páginas · Curva A em vermelho e verde · Roteiro de negociação</b><a href="#contato" data-abrir-contato data-assunto="Raio-X de Propostas e Orçamentos">APRESENTAR MEU CENÁRIO ↗</a></div>
+      </div>
+    </section>
+
+    <!-- 03 · Diagnóstico -->
+    <section class="product chapter" id="produto-2" data-chapter="03" data-lab="sentinela">
+      <div class="product-media" aria-hidden="true"><img src="assets/bim-review.jpg" alt="" loading="lazy"><div class="product-wash"></div></div>
+      <div class="product-shell">
+        <header class="product-heading">
+          <p class="section-code">03 / QUANDO A OBRA TRAVA</p>
+          <h2>Diagnóstico<br><em>Sentinela.</em></h2>
+          <p>O pleito de aditivo é confrontado, dia a dia, com o diário de obra e a chuva medida pelo INMET. Cada período recebe um veredito.</p>
+        </header>
+        <div class="lab interactive-panel" data-lab-root></div>
+        <div class="product-footer"><span>VOCÊ RECEBE</span><b>Linha do tempo com a realidade do diário · Veredito por período · Valor a glosar</b><a href="#contato" data-abrir-contato data-assunto="Diagnóstico Sentinela">APRESENTAR MEU CENÁRIO ↗</a></div>
+      </div>
+    </section>
+
+    <!-- 04 · Medição -->
+    <section class="product chapter" id="produto-3" data-chapter="04" data-lab="medicao">
+      <div class="product-media" aria-hidden="true"><img src="assets/mep-scan.jpg" alt="" loading="lazy"><div class="product-wash"></div></div>
+      <div class="product-shell">
+        <header class="product-heading">
+          <p class="section-code">04 / DURANTE A EXECUÇÃO</p>
+          <h2>Planejamento<br><em>e Medição.</em></h2>
+          <p>Todo mês, o que a construtora cobra é comparado com o que foi feito em campo. Você libera o que está pronto, retém o resto e vê o que pode travar nos próximos 30 dias.</p>
+        </header>
+        <div class="lab interactive-panel" data-lab-root></div>
+        <div class="product-footer"><span>VOCÊ RECEBE</span><b>Boletim de 4 páginas · Liberação e glosa com Curva S · Radar de suprimentos críticos</b><a href="#contato" data-abrir-contato data-assunto="Planejamento e Medição">APRESENTAR MEU CENÁRIO ↗</a></div>
+      </div>
+    </section>
+
+    <!-- 05 · Catálogo -->
+    <section class="catalog chapter" id="catalogo" data-chapter="05">
+      <div class="catalog-wrap">
+        <header class="catalog-head">
+          <p class="section-code">05 / CATÁLOGO</p>
+          <h2>Produtos para<br><em>cada decisão.</em></h2>
+          <p>Doze produtos, organizados pelo momento da obra. Cada proposta define a pergunta, as entradas, as entregas, o aceite e os limites do trabalho. Eles podem ser contratados individualmente, combinados ou em ciclos.</p>
+        </header>
+        <div class="catalog-tabs" role="tablist" aria-label="Grupos de produtos" id="catalog-tabs"></div>
+        <div class="catalog-grid" id="catalog-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 06 · Método -->
+    <section class="method chapter" id="metodo" data-chapter="06">
+      <div class="method-bg" aria-hidden="true">
+        <img class="mb-base" src="assets/metodo.jpg" alt="" loading="lazy">
+        <img class="mb-reveal" src="assets/metodo.jpg" alt="" loading="lazy">
+        <div class="mb-grid"></div>
+        <div class="mb-shade"></div>
+        <div class="mb-lens"></div>
+      </div>
+      <div class="method-wrap">
+        <p class="section-code">06 / MÉTODO SENTINELA</p>
+        <h2>A tecnologia chama atenção.<br><em>O método sustenta a decisão.</em></h2>
+        <div class="method-stage">
+          <ol class="steps" role="tablist" aria-label="Movimentos do método" id="method-steps"></ol>
+          <article class="step-card" id="step-card" role="tabpanel" aria-live="polite"></article>
+        </div>
+        <ol class="method-order" aria-label="Ordem de referência">
+          <li>Realidade</li><li>Causa</li><li>Risco</li><li>Responsabilidade</li><li>Decisão</li><li>Dinheiro</li><li>Execução</li><li>Verificação</li>
+        </ol>
+        <p class="method-note">A decisão e a execução cabem ao cliente. A CRIVIA oferece apoio estratégico dentro do escopo contratado.</p>
+      </div>
+    </section>
+
+    <!-- 07 · Sobre -->
+    <section class="about chapter" id="sobre" data-chapter="07">
+      <div class="about-wrap">
+        <header class="about-head">
+          <p class="section-code">07 / SOBRE A CRIVIA</p>
+          <h2>Engenharia<br><em>para decisão.</em></h2>
+          <p>A CRIVIA é engenharia independente para decisões críticas: encontra a causa por trás do sintoma e entrega a quem decide uma solução que cabe na realidade.</p>
+        </header>
+        <div class="about-grid">
+          <article class="founder">
+            <div class="founder-top"><span class="founder-mono" aria-hidden="true">BM</span><div><strong>Bruno Malta</strong><small>Engenheiro e fundador da CRIVIA</small></div></div>
+            <p>Sou engenheiro e, há mais de 20 anos, lidero grandes projetos e equipes multidisciplinares. Fui chamado para o que ninguém queria assumir, e aprendi que, quase sempre, a causa não está onde o sintoma aparece.</p>
+            <p class="founder-call">Por isso criei a CRIVIA.</p>
+          </article>
+          <ul class="about-formulas">
+            <li><span>VISÃO</span><p>Tornar possível o que parecia impossível.</p></li>
+            <li><span>MISSÃO</span><p>Encontrar rápido a causa por trás do sintoma em projetos críticos e entregar a quem decide uma solução que cabe na realidade.</p></li>
+            <li><span>FILOSOFIA</span><p>Controle mostra o sintoma. Compreensão revela a causa. Boa decisão precisa dos dois.</p></li>
+          </ul>
+        </div>
+        <ul class="about-stats">
+          <li><b>20<small>anos</small></b><span>de experiência em engenharia e gestão de projetos</span></li>
+          <li><b>35<small>projetos</small></b><span>conduzidos simultaneamente</span></li>
+          <li><b>R$ 380<small>mi</small></b><span>valor global de empreendimento industrial</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 08 · Contato -->
+    <section class="contact chapter" id="contato" data-chapter="08">
+      <div class="contact-bg" aria-hidden="true">
+        <img class="cb-factory" src="assets/final-fabrica.jpg" alt="" loading="lazy">
+        <img class="cb-mark" src="assets/logo-icon-xl.png" alt="" loading="lazy">
+      </div>
+      <div class="contact-orbit" aria-hidden="true">
+        <span class="ring ring--1"></span><span class="ring ring--2"></span><span class="ring ring--3"></span>
+        <div class="orbit-core"><span class="orbit-halo"></span><img src="assets/logo-icon.png" alt="" loading="lazy"></div>
+      </div>
+      <div class="contact-copy">
+        <p class="section-code">08 / PRÓXIMA DECISÃO</p>
+        <h2>Qual camada da sua obra<br><em>precisa ser revelada?</em></h2>
+        <p>Conte o essencial sobre a situação. A CRIVIA analisa o contexto e responde pelo canal que você indicar, sem compromisso de contratação.</p>
+        <div class="cta-block">
+          <div class="cta-row">
+            <a class="button-shine" href="#contato" data-abrir-contato><span class="bs-label">APRESENTAR MEU CENÁRIO</span><span class="bs-arrow" aria-hidden="true">→</span></a>
+            <a class="button button--whats" data-whats href="https://wa.me/5527996971800" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.43 15.1L2 22l5.04-1.32A9.9 9.9 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 1 1-4.3 14.97l-.31-.18-2.99.78.8-2.91-.2-.32A8.1 8.1 0 0 1 12.04 3.8Zm-3.2 4.1c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.48 2.5 1.07 3 .86 3.54.8.54-.05 1.74-.71 1.98-1.4.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35-.3-.15-1.74-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.91-2.18-.24-.57-.48-.5-.66-.5Z"/></svg> CONTATO WHATSAPP</a>
+          </div>
+          <p class="cta-micro">Você não precisa saber qual produto escolher. A conversa continua no WhatsApp.</p>
+        </div>
+        <p class="contact-mail">Prefere escrever? <a href="mailto:contato@criviaengenharia.com.br">contato@criviaengenharia.com.br</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#inicio" aria-label="Voltar ao início"><img src="assets/logo-icon.png" alt="" width="38" height="38"><span><b>CRIVIA</b><small>ENGENHARIA CONSULTIVA</small></span></a>
+    <p>Engenharia para decisão.<br>Espírito Santo · Brasil</p>
+    <div class="footer-links"><a href="#produto-1">Trabalhos</a><a href="#catalogo">Catálogo</a><a href="#metodo">Método</a><a href="aviso-privacidade.html">Aviso de Privacidade</a></div>
+    <img class="footer-seal" src="assets/proud-member.png" alt="Selo Proud BNI Member" width="120" height="70" loading="lazy">
+    <small>© 2026 CRIVIA Engenharia Consultiva Ltda.</small>
+  </footer>
+
+
+  <dialog id="contato-dialog" aria-labelledby="cd-titulo">
+    <form method="dialog" class="cd-box" id="cd-form">
+      <button type="button" class="cd-fechar" id="cd-fechar" aria-label="Fechar">×</button>
+      <p class="section-code">APRESENTAR MEU CENÁRIO</p>
+      <h2 id="cd-titulo">Apresente o cenário.</h2>
+      <p class="cd-sub">Descreva a situação, as dúvidas e o que você precisa decidir. A conversa continua no WhatsApp, com esta mensagem já pronta.</p>
+      <p class="cd-assunto" id="cd-assunto" hidden></p>
+      <label for="cd-texto" class="cd-label">Sua situação</label>
+      <textarea id="cd-texto" rows="7" maxlength="700" placeholder="Ex.: recebi três propostas para uma obra e preciso entender onde está o risco antes de contratar…"></textarea>
+      <div class="cd-meta"><span id="cd-cont">0 / 700</span><span>Não envie documentos confidenciais nesta etapa.</span></div>
+      <div class="cd-acoes">
+        <a class="button button--whats cd-whats" id="cd-whats" href="https://wa.me/5527996971800" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.43 15.1L2 22l5.04-1.32A9.9 9.9 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 1 1-4.3 14.97l-.31-.18-2.99.78.8-2.91-.2-.32A8.1 8.1 0 0 1 12.04 3.8Zm-3.2 4.1c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.48 2.5 1.07 3 .86 3.54.8.54-.05 1.74-.71 1.98-1.4.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35-.3-.15-1.74-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.91-2.18-.24-.57-.48-.5-.66-.5Z"/></svg> CONTINUAR NO WHATSAPP</a>
+        <a class="cd-email" id="cd-email" href="mailto:contato@criviaengenharia.com.br">ou escreva por e-mail</a>
+      </div>
+      <p class="cd-nota">Nada é enviado antes de você abrir o WhatsApp e confirmar o envio por lá.</p>
+    </form>
+  </dialog>
+
+  <div class="chapter-rail" aria-hidden="true"><b>00</b><i></i><span>08</span></div>
+  <script src="app.js"></script>
+</body>
+</html>
