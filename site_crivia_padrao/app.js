@@ -538,7 +538,7 @@
   const ancorar = () => {
     const box = tri.querySelector('.tri-sticky');
     const w = box.clientWidth, h = box.clientHeight, nw = 1920, nh = 1081;
-    const s = Math.max(w / nw, h / nh), dw = nw * s, dh = nh * s, l0 = (w - dw) / 2, t0 = (h - dh) / 2;
+    const s = Math.max(w / nw, h / nh), dw = nw * s, dh = nh * s, px = w < 900 ? 0.64 : 0.5, l0 = (w - dw) * px, t0 = (h - dh) / 2;
     const pos = PONTOS.map(([u, v]) => [((l0 + u * dw) - w / 2) * 1.05 + w / 2, ((t0 + v * dh) - h / 2) * 1.05 + h / 2]);
     triNos.forEach((n, i) => { n.style.left = pos[i][0] + 'px'; n.style.top = pos[i][1] + 'px'; });
     triLinhas.forEach((ln, k) => {
