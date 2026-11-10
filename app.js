@@ -307,15 +307,18 @@
   });
 
   // entrada dos capítulos e início das animações dos gráficos
+  /* a seção aparece quando 22% dela está na tela OU quando uma boa faixa da tela já é dela:
+     em seções muito altas (catálogo, no celular) 22% nunca chegava e o conteúdo ficava invisível, deixando a tela preta */
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      entry.target.classList.toggle('is-visible', entry.isIntersecting);
-      if (entry.isIntersecting && entry.target.dataset.lab) {
+      const aparece = entry.isIntersecting && (entry.intersectionRatio >= .22 || entry.intersectionRect.height >= innerHeight * .12);
+      entry.target.classList.toggle('is-visible', aparece);
+      if (aparece && entry.target.dataset.lab) {
         const lab = labs[entry.target.dataset.lab];
         if (lab && !lab.played) setTimeout(lab.play, 350);
       }
     });
-  }, { threshold: .22 });
+  }, { threshold: Array.from({ length: 51 }, (_, i) => i / 50) });
   document.querySelectorAll('.product, .method, .contact, .catalog, .about').forEach((element) => revealObserver.observe(element));
 
   /* ───────── catálogo: 12 produtos do modelo Sentinela 2.0 ─────────
