@@ -593,3 +593,13 @@ body { --lx: 62%; --ly: 48%; }
 .legal-back { margin: 36px 0 0; }
 .legal-foot { padding: 28px clamp(20px,5vw,40px); border-top: 1px solid var(--line); text-align: center; color: var(--muted); }
 .legal-page .hero-intro { display: none; }
+
+/* o site já é escuro: avisa ao navegador para não aplicar o "modo escuro automático", que apagava números e textos no celular */
+:root { color-scheme: dark; }
+
+/* celular e tablet: números em cor sólida e textos secundários mais claros, para não perderem destaque em telas pequenas */
+@media (max-width: 1100px) {
+  :root { --muted: #b4c4d1; --soft: #d6e1e9; }
+  .about-stats b { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #fff; -webkit-text-fill-color: #fff; font-weight: 400; text-shadow: 0 0 18px rgba(105,231,255,.35); }
+  .about-stats span { color: #e2ebf1; }
+}
