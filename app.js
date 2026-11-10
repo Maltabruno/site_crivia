@@ -492,8 +492,14 @@
     px = e.clientX - r.left; py = e.clientY - r.top; lastMove = performance.now();
     body.style.setProperty('--lx', px + 'px'); body.style.setProperty('--ly', py + 'px');
   }, { passive: true });
+  /* celular e tablet: a mira passeia mais devagar e para durante a rolagem, para não pesar na primeira tela */
+  const toque = window.matchMedia('(max-width: 900px), (hover: none)');
+  let ultimoQuadro = 0, ultimaRolagem = -1e9;
+  addEventListener('scroll', () => { ultimaRolagem = performance.now(); }, { passive: true });
   const passeio = (t) => {
     requestAnimationFrame(passeio);
+    if (toque.matches && (t - ultimoQuadro < 70 || t - ultimaRolagem < 250)) return;
+    ultimoQuadro = t;
     if (reducedMotion || t - lastMove < 3000) return;
     const r = xr.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
     const x = r.width * (.58 + .22 * Math.sin(t * .00055)), y = r.height * (.46 + .2 * Math.sin(t * .00085 + 1));
@@ -536,7 +542,7 @@
   const PONTOS = [[0.699, 0.350], [0.526, 0.516], [0.695, 0.714]];
   const LIGA = [[0, 1], [1, 2], [0, 2]];
   const ancorar = () => {
-    const box = tri.querySelector('.tri-sticky');
+    const box = tri.querySelector('.tri-media');
     const w = box.clientWidth, h = box.clientHeight, nw = 1920, nh = 1081;
     const s = Math.max(w / nw, h / nh), dw = nw * s, dh = nh * s, px = w < 900 ? 0.64 : 0.5, l0 = (w - dw) * px, t0 = (h - dh) / 2;
     const pos = PONTOS.map(([u, v]) => [((l0 + u * dw) - w / 2) * 1.05 + w / 2, ((t0 + v * dh) - h / 2) * 1.05 + h / 2]);

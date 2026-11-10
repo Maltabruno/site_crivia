@@ -536,9 +536,23 @@ body { --lx: 62%; --ly: 48%; }
 
 /* telas pequenas: foto da dobra "A obra física" centrada na coluna e pontos sem rótulo; anotações do raio-X só com o título */
 @media (max-width: 900px) { .tri-media img { object-position: 64% 50%; } }
+
+/* celular e tablet: a foto e o triângulo ficam na metade de cima, o texto embaixo, e a dobra prende menos a rolagem */
+@media (max-width: 900px) {
+  .tri { min-height: 120svh; }
+  .tri-media, .tri-lines { bottom: auto; height: 48svh; }
+  .tri-shade { background: linear-gradient(180deg, rgba(1,7,15,.3) 0, rgba(1,7,15,.1) 45%, #020813 100%); }
+  .tri-copy { align-self: end; padding: 0 18px 26px; }
+  .tri-copy h2 { font-size: clamp(2.1rem, 8.6vw, 3.4rem); margin-bottom: 14px; }
+  .tri-steps button { padding: 9px 12px; }
+  .tri-node { grid-template-columns: 22px auto; gap: 2px 8px; transform: translate(-11px,-11px); font-size: 10px; }
+  .tri-node i { width: 22px; height: 22px; font-size: 11px; }
+  .tri-lines .l { stroke-width: 1.1; }
+  .tri.s3 .tri-lines .l { stroke-width: 1.8; }
+}
 @media (max-width: 700px) {
   .tri-node b { display: none; }
-  .tri-node { grid-template-columns: 34px; }
+  .tri-node { grid-template-columns: 22px; }
   .xr-call span, .xr-call em { display: none; }
 }
 
