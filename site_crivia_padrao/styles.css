@@ -391,6 +391,8 @@ footer > small { grid-column: 1/-1; padding-top: 18px; border-top: 1px solid var
   .kpi b { font-size: 15px; white-space: normal; }
   .kpi { padding: 9px 9px; }
   .kpi span { font-size: 9.5px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kpi:last-child { grid-column: 1 / -1; }
   .svgwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .svgwrap svg { min-width: 540px; }
   .curve-ctl { grid-template-columns: 1fr; gap: 6px; }
