@@ -136,52 +136,52 @@
   const LABS = {
     raiox: {
       quando: 'ANTES DE CONTRATAR', nome: 'Raio-X de Propostas e Orçamentos',
-      kpis: [['Proposta', 'R$ 3.450.000', '', ''], ['Valor justo', 'R$ 2.978.400', '', ''], ['Sobrepreço', '+ R$ 471.600', 'ouro', '+15,8%']],
+      kpis: [['Proposta', 'R$ 3.450.000', '', ''], ['Valor de referência técnica', 'R$ 2.978.400', '', ''], ['Diferença frente à referência', '+ R$ 471.600', 'ouro', '+15,8% (estimada)']],
       ponte: { base: 2900000, topo: 3500000, eixo: 'Eixo a partir de R$ 2,9 mi. Passe o cursor sobre as barras.', passos: [
-        ['Valor justo', 2978400, 'total', 'azul', 'Referência do SINAPI-ES com BDI de 25% para esta obra.'],
-        ['Aço', 111000, 'delta', 'ouro', 'Armação CA-50, 18.500 kg: R$ 21,50 por kg na proposta contra R$ 15,50 na referência (+38,7%).'],
-        ['Concreto', 76928, 'delta', 'ouro', 'Concreto usinado fck 30 MPa, 680 m³: R$ 720,00 por m³ contra R$ 606,87 (+18,6%).'],
-        ['Estrutura', 75000, 'delta', 'ouro', 'Estrutura metálica da cobertura, 55.000 kg: R$ 12,45 por kg contra R$ 11,09 (+12,3%).'],
-        ['Piso', 14000, 'delta', 'aviso', 'Piso industrial polido, 2.800 m²: dentro do esperado (+3,5%). Conforme.'],
-        ['Escavação', -51500, 'delta', 'bom', '7.900 m³ a R$ 12,02 contra R$ 18,54 (−35,1%). Preço baixo demais pode virar pedido de aditivo depois.'],
-        ['Demais itens', 246172, 'delta', 'ouro', 'Diferença que sobra entre os itens críticos acima e o total do sobrepreço.'],
+        ['Referência técnica', 2978400, 'total', 'azul', 'Valor de referência técnica: SINAPI-ES com BDI de 25% para esta obra.'],
+        ['Aço', 111000, 'delta', 'ouro', 'Armação CA-50, 18.500 kg: R$ 21,50 por kg na proposta contra R$ 15,50 na referência (diferença estimada de +38,7%).'],
+        ['Concreto', 76928, 'delta', 'ouro', 'Concreto usinado fck 30 MPa, 680 m³: R$ 720,00 por m³ contra R$ 606,87 (diferença estimada de +18,6%).'],
+        ['Estrutura', 75000, 'delta', 'ouro', 'Estrutura metálica da cobertura, 55.000 kg: R$ 12,45 por kg contra R$ 11,09 (diferença estimada de +12,3%).'],
+        ['Piso', 14000, 'delta', 'aviso', 'Piso industrial polido, 2.800 m²: dentro da faixa de referência (+3,5%).'],
+        ['Escavação', -51500, 'delta', 'bom', '7.900 m³ a R$ 12,02 contra R$ 18,54 (−35,1%). Preço abaixo da referência pode ensejar pedido de aditivo depois.'],
+        ['Demais itens', 246172, 'delta', 'ouro', 'Diferença que sobra entre os itens críticos acima e o total da diferença estimada.'],
         ['Proposta', 3450000, 'total', 'azul', 'Valor total proposto pela empreiteira.'] ] },
       linhas: [
-        ['Omissão detectada na planilha', 'Subestação aérea de 150 kVA prevista no projeto elétrico e ausente da proposta', '≈ R$ 92.000', 'ADITIVO SURPRESA', 'ouro'],
-        ['Escavação cotada 35,1% abaixo', 'Preço baixo no início costuma abrir espaço para pedir aditivo de volume', '− R$ 51.500', 'PREÇO BAIXO DEMAIS', 'bom']],
+        ['Possível omissão identificada na análise', 'Subestação aérea de 150 kVA prevista no projeto elétrico e ausente da proposta', '≈ R$ 92.000', 'RISCO DE ADITIVO', 'ouro'],
+        ['Escavação cotada 35,1% abaixo da referência', 'Preço abaixo da referência pode abrir espaço para pedido de aditivo de volume (hipótese a confirmar)', '− R$ 51.500', 'PREÇO ABAIXO DA REFERÊNCIA', 'bom']],
       como: { para: 'Donos de obra privada e empreiteiras que estão orçando serviços.', envia: 'A planilha da proposta em Excel (.xlsx).',
-        passos: ['Cada item é pareado com a referência do SINAPI.', 'O BDI é aplicado e a Curva ABC mostra onde está 80% do dinheiro da obra.', 'Itens caros, baratos demais e omitidos são marcados.'],
-        recebe: ['Dossiê de 5 páginas', 'Gráfico comparativo e tabela da Curva A, em vermelho e verde', 'Roteiro de negociação para levar à reunião'] },
-      fonte: 'Galpão de 2.800 m², Serra/ES. Referência SINAPI-ES com BDI de 25%.'
+        passos: ['Os itens definidos no escopo, com prioridade para a Curva A, são pareados com referências técnicas como o SINAPI.', 'O BDI é aplicado e a Curva ABC mostra onde se concentra a maior parte do valor da proposta.', 'Itens acima ou abaixo da referência e possíveis omissões são sinalizados para avaliação.'],
+        recebe: ['Dossiê de 5 páginas', 'Gráfico comparativo e tabela da Curva A, em vermelho e verde', 'Roteiro de pontos de negociação para levar à reunião, a critério do cliente'] },
+      fonte: 'Galpão de 2.800 m², Serra/ES. Referência SINAPI-ES com BDI de 25%. Diferenças estimadas, sujeitas a escopo, data-base, BDI, especificações e condições de contratação.'
     },
     sentinela: {
       quando: 'QUANDO A OBRA TRAVA', nome: 'Diagnóstico Sentinela',
-      kpis: [['Aditivo cobrado', 'R$ 485.000', '', ''], ['Devido', 'R$ 74.200', 'bom', ''], ['Economia', 'R$ 410.800', 'bom', '84,7%']],
-      ponte: { base: 0, topo: 500000, eixo: 'Passe o cursor sobre as barras para ver a justificativa de cada glosa.', passos: [
-        ['Cobrado', 485000, 'total', 'azul', 'Valor do aditivo cobrado pela empreiteira, com percentuais lineares e sem prova contábil.'],
-        ['Chuva', -130400, 'delta', 'bom', '26,9% do pleito. Dias de chuva alegados sem chuva no satélite INMET (16 de 22 dias com 0,0 mm).'],
-        ['Mão de obra', -192600, 'delta', 'bom', '39,7% do pleito. Os diários assinados mostram equipe realocada para o pátio, com produção normal.'],
-        ['Adm. local', -87800, 'delta', 'bom', '18,1% do pleito. Cálculo não acompanha o avanço da obra.'],
-        ['Devido', 74200, 'total', 'ouro', '15,3% do pleito. Valor recomendado para o acordo técnico.'] ] },
+      kpis: [['Aditivo cobrado', 'R$ 485.000', '', ''], ['Valor recomendado para avaliação', 'R$ 74.200', 'bom', ''], ['Diferença entre o pleito e o valor recomendado', 'R$ 410.800', 'bom', '84,7%']],
+      ponte: { base: 0, topo: 500000, eixo: 'Passe o cursor sobre as barras para ver a justificativa técnica de cada ajuste recomendado.', passos: [
+        ['Cobrado', 485000, 'total', 'azul', 'Valor do aditivo cobrado pela empreiteira, com percentuais lineares e sem comprovação contábil no conjunto documental disponível.'],
+        ['Chuva', -130400, 'delta', 'bom', '26,9% do pleito. Dias de chuva alegados sem registro de chuva no satélite INMET (16 de 22 dias com 0,0 mm). Diferença técnica sob análise.'],
+        ['Mão de obra', -192600, 'delta', 'bom', '39,7% do pleito. Os diários assinados indicam equipe realocada para o pátio, com produção normal.'],
+        ['Adm. local', -87800, 'delta', 'bom', '18,1% do pleito. Cálculo aparenta não acompanhar o avanço da obra (hipótese a confirmar).'],
+        ['Valor recomendado', 74200, 'total', 'ouro', 'Valor recomendado para avaliação: 15,3% do pleito. Base para o acordo técnico, sujeita à decisão do cliente e, quando necessário, a apoio jurídico.'] ] },
       linhas: [
-        ['12/08 a 16/08 · pleito alega chuva intensa', 'Satélite INMET: 0,0 a 1,8 mm · fora do caminho crítico · diário: 8 operários (cobrou 32)', 'R$ 68.400', 'IMPROCEDENTE', 'ouro'],
-        ['24/09 a 04/10 · erro de furação nos chumbadores', 'Satélite INMET: 0,0 mm · no caminho crítico · diário: 14 operários em retrabalho', 'R$ 74.200', 'PROCEDENTE', 'bom']],
-      como: { para: 'Obras atrasadas, empreiteiras com medição glosada e advogados que defendem empresas contra aditivos e multas.', envia: 'Diários de obra escaneados, contrato com cronograma e a notificação do pleito.',
-        passos: ['A chuva real do período é buscada na base do INMET.', 'Os diários são lidos e confrontados com o cronograma.', 'Cada alegação é comparada com o que o campo mostra.'],
-        recebe: ['Linha do tempo com alegação, chuva medida, caminho crítico e realidade do diário', 'Veredito por período: procedente ou improcedente', 'Valor a glosar calculado'] },
+        ['12/08 a 16/08 · pleito alega chuva intensa', 'Satélite INMET: 0,0 a 1,8 mm · fora do caminho crítico · diário: 8 operários (32 cobrados)', 'R$ 68.400', 'EVIDÊNCIA INSUFICIENTE PARA SUSTENTAR O PLEITO', 'ouro'],
+        ['24/09 a 04/10 · erro de furação nos chumbadores', 'Satélite INMET: 0,0 mm · no caminho crítico · diário: 14 operários em retrabalho', 'R$ 74.200', 'EVIDÊNCIA COMPATÍVEL COM O PLEITO', 'bom']],
+      como: { para: 'Obras atrasadas, empreiteiras com medição reduzida pelo contratante e advogados que defendem empresas contra aditivos e multas.', envia: 'Diários de obra escaneados, contrato com cronograma e a notificação do pleito.',
+        passos: ['A chuva real do período é buscada na base do INMET.', 'Os diários são lidos e confrontados com o cronograma.', 'As alegações do pleito são comparadas com as evidências de campo disponíveis.'],
+        recebe: ['Linha do tempo com alegação, chuva medida, caminho crítico e realidade do diário', 'Análise técnica por período, fundamentada nas evidências disponíveis', 'Diferença técnica sob análise e valor recomendado para avaliação', 'Recomendação técnica: acordo, pagamento ou glosa dependem do decisor e, quando necessário, de apoio jurídico'] },
       fonte: 'Ampliação industrial, Linhares/ES. Fontes: diários de obra, INMET e contrato.'
     },
     medicao: {
       quando: 'DURANTE A EXECUÇÃO', nome: 'Planejamento e Medição',
-      kpis: [['Cobrado, medição nº 04', 'R$ 280.000', '', ''], ['Aprovado', 'R$ 235.000', 'bom', ''], ['Retido', '− R$ 45.000', 'ouro', 'Liberado com retenção']],
+      kpis: [['Cobrado, medição nº 04', 'R$ 280.000', '', ''], ['Valor com evidência verificada', 'R$ 235.000', 'bom', ''], ['Diferença sob análise', '− R$ 45.000', 'ouro', 'Recomendação técnica: liberação parcial, sujeita à decisão do cliente']],
       curva: true,
       linhas: [
-        ['Divisórias drywall, 3º pavimento', 'Cobrado 100% · verificado 70% · falta fechamento de lã de rocha', '− R$ 25.500', 'RETENÇÃO', 'ouro'],
-        ['Laje técnica da cobertura', 'Cobrado 100% · verificado 79,5% · aguarda laudo de rompimento', '− R$ 19.500', 'HOLD POINT', 'aviso'],
-        ['Radar de 30 dias · decidir até 13/11', 'Compra do quadro geral e do transformador (prazo de fábrica de 45 dias)', '', 'CRÍTICO', 'ouro']],
+        ['Divisórias drywall, 3º pavimento', 'Cobrado 100% · evidência verificada 70% · fechamento de lã de rocha não evidenciado', '− R$ 25.500', 'PONTO DE CONTROLE', 'ouro'],
+        ['Laje técnica da cobertura', 'Cobrado 100% · evidência verificada 79,5% · aguarda laudo de rompimento', '− R$ 19.500', 'NOVA VERIFICAÇÃO', 'aviso'],
+        ['Radar de 30 dias · decisão do cliente até 13/11', 'Compra do quadro geral e do transformador (prazo de fábrica de 45 dias)', '', 'CRÍTICO', 'ouro']],
       como: { para: 'Quem já contratou a obra e não quer voltar à incerteza.', envia: 'A planilha de medição da construtora, numa data de corte fixa (por exemplo, dia 25).',
-        passos: ['Inspeção visual focada, com fotos, no que foi cobrado.', 'O que foi visto é cruzado com a planilha de medição.', 'Cada pagamento recebe uma condição de liberação.'],
-        recebe: ['Boletim de 4 páginas', 'Certificado de liberação e glosa, com a Curva S', 'Radar dos suprimentos críticos dos próximos 30 dias e os documentos exigidos para pagar'] },
+        passos: ['Inspeção visual focada nos itens definidos no escopo, com fotos.', 'O que foi visto é cruzado com a planilha de medição.', 'Para os itens analisados, a CRIVIA recomenda condições técnicas de liberação, retenção ou nova verificação.'],
+        recebe: ['Boletim de 4 páginas', 'Recomendação técnica de liberação ou retenção segundo os critérios definidos, com a Curva S', 'Radar dos suprimentos críticos dos próximos 30 dias e os documentos que devem embasar a decisão de pagamento'] },
       fonte: 'Edifício comercial e clínica, Vitória/ES.'
     }
   };
