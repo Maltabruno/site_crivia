@@ -39,7 +39,7 @@ em { color: var(--cyan); font-style: normal; font-weight: 300; }
 .cursor-lens::before, .cursor-lens::after { content: ""; position: absolute; background: var(--cyan); opacity: .7; }
 .cursor-lens::before { width: 8px; height: 1px; left: -5px; top: 50%; box-shadow: 39px 0 var(--cyan); }
 .cursor-lens::after { width: 1px; height: 8px; top: -5px; left: 50%; box-shadow: 0 39px var(--cyan); }
-@media (hover: none) { .cursor-lens { display: none; } }
+@media (hover: none), (pointer: coarse), (max-width: 900px) { .cursor-lens { display: none; } }
 
 .masthead { position: fixed; inset: 0 0 auto 0; z-index: 100; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px,4vw,64px); border-bottom: 1px solid rgba(124,202,255,.13); background: linear-gradient(180deg, rgba(1,5,11,.92), rgba(1,5,11,.5)); backdrop-filter: blur(14px); }
 .brand { display: inline-flex; align-items: center; gap: 11px; position: relative; z-index: 2; }
@@ -537,6 +537,12 @@ body { --lx: 62%; --ly: 48%; }
 /* telas pequenas: foto da dobra "A obra física" centrada na coluna e pontos sem rótulo; anotações do raio-X só com o título */
 @media (max-width: 900px) { .tri-media img { object-position: 64% 50%; } }
 
+/* tablet e celular: as seções aparecem logo, sem deslocamento, para não deixar lacuna preta ao rolar */
+@media (max-width: 1100px) {
+  .chapter .product-heading, .chapter .interactive-panel, .chapter .method-wrap, .chapter .contact-copy, .chapter .catalog-wrap, .chapter .about-wrap { transform: none; transition: opacity .3s ease; }
+  .chapter.is-visible .interactive-panel { transition-delay: 0s; }
+}
+
 /* tablet e celular: a foto de fundo de cada trabalho aparece no alto, mais clara, e some aos poucos sob o painel */
 @media (max-width: 1100px) {
   .product-media { bottom: auto; height: min(560px, 70svh); -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
@@ -546,7 +552,7 @@ body { --lx: 62%; --ly: 48%; }
 
 /* celular e tablet: a foto e o triângulo ficam na metade de cima, o texto embaixo, e a dobra prende menos a rolagem */
 @media (max-width: 900px) {
-  .tri { min-height: 120svh; }
+  .tri { min-height: 142svh; }
   .tri-media, .tri-lines { bottom: auto; height: 48svh; }
   .tri-shade { background: linear-gradient(180deg, rgba(1,7,15,.3) 0, rgba(1,7,15,.1) 45%, #020813 100%); }
   .tri-copy { align-self: end; padding: 0 18px 26px; }
