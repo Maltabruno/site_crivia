@@ -154,7 +154,7 @@ h2 { font-size: clamp(2.8rem,6vw,7rem); line-height: .94; text-wrap: balance; }
 .kpi { display: flex; flex-direction: column; gap: 5px; padding: 11px 13px; border: 1px solid var(--line); background: rgba(255,255,255,.035); min-width: 0; }
 .kpi span { color: var(--muted); font: 600 10px/1.2 var(--text); letter-spacing: .09em; text-transform: uppercase; }
 .kpi b { font: 500 clamp(18px,1.7vw,26px)/1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.kpi em { font: 600 11px/1 var(--text); }
+.kpi em { font: 600 11px/1.3 var(--text); }
 .t-ouro { color: var(--gold) !important; } .t-bom { color: #5fd3ee !important; } .t-aviso { color: #a9bdd8 !important; } .t-azul { color: #8db0f5 !important; }
 .chart { display: flex; flex-direction: column; gap: 8px; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -180,7 +180,7 @@ input[type="range"] { width: 100%; accent-color: var(--cyan); cursor: ew-resize;
 .rows strong { display: block; font: 500 14px/1.3 var(--display); }
 .rows small { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.4; }
 .rows .val { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; text-align: right; font: 500 14px/1 var(--display); font-variant-numeric: tabular-nums; }
-.rows .val i { font: 700 10px/1 var(--text); font-style: normal; letter-spacing: .07em; padding: 4px 8px; border: 1px solid currentColor; }
+.rows .val i { font: 700 10px/1.25 var(--text); font-style: normal; letter-spacing: .07em; padding: 4px 8px; border: 1px solid currentColor; max-width: 17em; }
 .src { margin: 0; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 11px; }
 .tag-ilus { font: 700 10px/1 var(--text); letter-spacing: .1em; text-transform: uppercase; padding: 4px 8px; border: 1px dashed rgba(148,208,255,.5); color: var(--soft); white-space: nowrap; }
 /* como funciona */
