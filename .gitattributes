@@ -10,3 +10,5 @@
 *.zip binary
 *.woff2 binary
 *.pdf binary
+
+site_crivia_padrao/CNAME text eol=lf
