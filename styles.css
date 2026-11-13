@@ -677,7 +677,7 @@ body { --lx: 62%; --ly: 48%; }
   .exp { padding: 96px 16px 60px; }
   .exp-body { padding: 20px 18px 20px; }
   .exp-meta li { grid-template-columns: 1fr; gap: 3px; }
-  .xv text { display: none; }
+  .xv text, .xv .xv-legenda { display: none; }
 }
 
 /* ───────── página individual de experiência (modelo único para todos os casos) ───────── */
@@ -736,4 +736,17 @@ body { --lx: 62%; --ly: 48%; }
   .expp-itens li { grid-template-columns: 1fr; gap: 6px; }
   .expp-fim .button { width: 100%; }
   .expp-fim div { width: 100%; }
+}
+
+/* marca d'água das páginas de experiência: imagem ilustrativa do assunto, escurecida, atrás do conteúdo */
+.expp-marca { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.expp-marca img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% center; filter: grayscale(.35) brightness(.55) contrast(1.08) saturate(.85); opacity: .52; -webkit-mask-image: linear-gradient(90deg, transparent 4%, rgba(0,0,0,.55) 42%, #000 78%), linear-gradient(0deg, transparent 0, #000 34%); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent 4%, rgba(0,0,0,.55) 42%, #000 78%), linear-gradient(0deg, transparent 0, #000 34%); mask-composite: intersect; }
+.expp-marca::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2,8,18,.86) 0, rgba(2,8,18,.42) 46%, rgba(2,8,18,.12)), radial-gradient(circle at 80% 30%, rgba(0,148,255,.12), transparent 45%); }
+.expp-crivia { isolation: isolate; overflow: hidden; }
+.expp-marca--painel img { object-position: center; opacity: .3; -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 100%); -webkit-mask-composite: source-over; mask-image: linear-gradient(90deg, transparent 30%, #000 100%); mask-composite: add; }
+.expp-marca--painel::after { background: linear-gradient(90deg, rgba(3,12,24,.92) 0, rgba(3,12,24,.5) 70%, rgba(3,12,24,.3)); }
+.expp-visual { background: rgba(2,9,18,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+@media (max-width: 900px) {
+  .expp-marca img { object-position: center; opacity: .36; -webkit-mask-image: linear-gradient(0deg, transparent 0, #000 40%); mask-image: linear-gradient(0deg, transparent 0, #000 40%); }
+  .expp-marca::after { background: linear-gradient(180deg, rgba(2,8,18,.55), rgba(2,8,18,.8)); }
 }

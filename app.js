@@ -83,7 +83,7 @@
   const chapters = [...document.querySelectorAll('.chapter')];
   const navLinks = [...document.querySelectorAll('.masthead nav a[href^="#"]')];
   const railCurrent = document.querySelector('.chapter-rail b');
-  const navFor = { 'produto-2': 'produto-1', 'produto-3': 'produto-1', inicio: null, contato: null, experiencia: null };
+  const navFor = { 'produto-2': 'produto-1', 'produto-3': 'produto-1', inicio: null, contato: null };
 
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -169,7 +169,7 @@
       como: { para: 'Obras atrasadas, empreiteiras com medição reduzida pelo contratante e advogados que defendem empresas contra aditivos e multas.', envia: 'Diários de obra escaneados, contrato com cronograma e a notificação do pleito.',
         passos: ['A chuva real do período é buscada na base do INMET.', 'Os diários são lidos e confrontados com o cronograma.', 'As alegações do pleito são comparadas com as evidências de campo disponíveis.'],
         recebe: ['Linha do tempo com alegação, chuva medida, caminho crítico e realidade do diário', 'Análise técnica por período, fundamentada nas evidências disponíveis', 'Diferença técnica sob análise e valor recomendado para avaliação', 'Recomendação técnica: acordo, pagamento ou glosa dependem do decisor e, quando necessário, de apoio jurídico'] },
-      fonte: 'Ampliação industrial, Linhares/ES. Fontes: diários de obra, INMET e contrato.'
+      fonte: 'Ampliação industrial. Fontes: diários de obra, INMET e contrato.'
     },
     medicao: {
       quando: 'DURANTE A EXECUÇÃO', nome: 'Planejamento e Medição',
