@@ -83,7 +83,7 @@
   const chapters = [...document.querySelectorAll('.chapter')];
   const navLinks = [...document.querySelectorAll('.masthead nav a[href^="#"]')];
   const railCurrent = document.querySelector('.chapter-rail b');
-  const navFor = { 'produto-2': 'produto-1', 'produto-3': 'produto-1', inicio: null, contato: null };
+  const navFor = { 'produto-2': 'produto-1', 'produto-3': 'produto-1', inicio: null, contato: null, experiencia: null };
 
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -319,7 +319,7 @@
       }
     });
   }, { threshold: Array.from({ length: 51 }, (_, i) => i / 50) });
-  document.querySelectorAll('.product, .method, .contact, .catalog, .about').forEach((element) => revealObserver.observe(element));
+  document.querySelectorAll('.product, .method, .contact, .catalog, .about, .exp').forEach((element) => revealObserver.observe(element));
 
   /* ───────── catálogo: 12 produtos do modelo Sentinela 2.0 ─────────
      Textos a partir do De-Para e do Catálogo R04 (proposta, ainda não aprovada). Sem preço, prazo ou promessa de resultado.

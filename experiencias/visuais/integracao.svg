@@ -1,0 +1,24 @@
+<svg class="xv" viewBox="0 0 640 360" role="img" aria-label="Composição gráfica: cinco frentes de uma ampliação industrial convergem para um único ponto de visão de conjunto.">
+  <circle class="xv-halo" cx="474" cy="180" r="118"/>
+  <g class="xv-links">
+    <path d="M222 62 C340 62 352 180 436 180" pathLength="1"/>
+    <path d="M222 121 C328 121 352 180 436 180" pathLength="1"/>
+    <path d="M222 180 L436 180" pathLength="1"/>
+    <path d="M222 239 C328 239 352 180 436 180" pathLength="1"/>
+    <path d="M222 298 C340 298 352 180 436 180" pathLength="1"/>
+  </g>
+  <g class="xv-nodes">
+    <circle cx="215" cy="62" r="6.5"/><circle cx="215" cy="121" r="6.5"/><circle cx="215" cy="180" r="6.5"/><circle cx="215" cy="239" r="6.5"/><circle cx="215" cy="298" r="6.5"/>
+  </g>
+  <g text-anchor="end">
+    <text x="196" y="66">OBRAS CIVIS</text>
+    <text x="196" y="125">ELÉTRICA E SUBESTAÇÕES</text>
+    <text x="196" y="184">LINHAS DE PRODUÇÃO</text>
+    <text x="196" y="243">UTILIDADES</text>
+    <text x="196" y="302">ÁGUA E EFLUENTES</text>
+  </g>
+  <circle class="xv-ring2" cx="474" cy="180" r="64"/>
+  <circle class="xv-ring" cx="474" cy="180" r="38"/>
+  <circle class="xv-dot" cx="474" cy="180" r="9"/>
+  <text class="xv-gold" x="474" y="272" text-anchor="middle">VISÃO DE CONJUNTO</text>
+</svg>

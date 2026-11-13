@@ -4,6 +4,15 @@ cd /d "%~dp0"
 echo.
 echo  === Publicar o site da CRIVIA ===
 echo.
+rem So publica a partir do ramo principal. Copias de previa (outros ramos) nao vao para o ar por engano.
+for /f "delims=" %%b in ('git branch --show-current') do set RAMO=%%b
+if not "%RAMO%"=="main" (
+  echo  Esta pasta e uma copia de previa ^(ramo %RAMO%^). Nada foi publicado.
+  echo  Para publicar, use a pasta site_crivia depois da aprovacao.
+  echo.
+  pause
+  exit /b 1
+)
 echo  1/2 Enviando os arquivos para o GitHub (ramo main)...
 git add -A
 git commit -m "Atualiza o site"

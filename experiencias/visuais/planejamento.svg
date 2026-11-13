@@ -1,0 +1,38 @@
+<svg class="xv" viewBox="0 0 640 360" role="img" aria-label="Composição gráfica: cronograma com barras de previsto e realizado, uma frente crítica com impedimento e as alternativas de recuperação depois da data de corte.">
+  <g class="xv-row-lines">
+    <line class="xv-row" x1="28" x2="612" y1="92" y2="92"/><line class="xv-row" x1="28" x2="612" y1="138" y2="138"/><line class="xv-row" x1="28" x2="612" y1="184" y2="184"/><line class="xv-row" x1="28" x2="612" y1="230" y2="230"/><line class="xv-row" x1="28" x2="612" y1="276" y2="276"/>
+  </g>
+  <text x="28" y="74">FRENTE 01</text>
+  <text class="xv-gold" x="28" y="120">FRENTE 02 · CRÍTICA</text>
+  <text x="28" y="166">FRENTE 03</text>
+  <text x="28" y="212">FRENTE 04</text>
+  <text x="28" y="258">FRENTE 05</text>
+
+  <rect class="xv-prev" x="170" y="60" width="130" height="20"/>
+  <rect class="xv-real" x="170" y="66" width="130" height="8"/>
+
+  <rect class="xv-prev" x="210" y="106" width="150" height="20"/>
+  <rect class="xv-real" x="210" y="112" width="58" height="8"/>
+  <rect class="xv-stall" x="268" y="109" width="112" height="14"/>
+  <rect class="xv-alt" x="380" y="106" width="104" height="20"/>
+  <path class="xv-diamond" d="M274 102 l9 14 l-9 14 l-9 -14 Z"/>
+
+  <rect class="xv-prev" x="300" y="152" width="140" height="20"/>
+  <rect class="xv-real" x="322" y="158" width="58" height="8"/>
+  <rect class="xv-alt" x="380" y="152" width="96" height="20"/>
+
+  <rect class="xv-prev" x="440" y="198" width="130" height="20"/>
+  <rect class="xv-alt" x="384" y="198" width="116" height="20"/>
+
+  <rect class="xv-prev" x="470" y="244" width="130" height="20"/>
+
+  <line class="xv-cut" x1="380" x2="380" y1="44" y2="290"/>
+  <text x="380" y="36" text-anchor="middle">DATA DE CORTE</text>
+
+  <g transform="translate(28 322)">
+    <rect class="xv-prev" x="0" y="-9" width="22" height="11"/><text x="30" y="0">PREVISTO</text>
+    <rect class="xv-real" x="124" y="-6" width="22" height="6"/><text x="154" y="0">REALIZADO</text>
+    <path class="xv-diamond" d="M262 -12 l6 9 l-6 9 l-6 -9 Z"/><text x="276" y="0">IMPEDIMENTO</text>
+    <rect class="xv-alt" x="404" y="-9" width="22" height="11"/><text x="434" y="0">ALTERNATIVA</text>
+  </g>
+</svg>

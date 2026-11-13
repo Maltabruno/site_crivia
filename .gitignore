@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 auralis-design-system/
+# casos ainda não aprovados: o repositório é público, então rascunhos não são enviados
+experiencias/rascunhos/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

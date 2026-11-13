@@ -1,0 +1,179 @@
+{
+  "_leia": [
+    "Fonte única das experiências do site. Depois de alterar este arquivo, rode 'Gerar experiencias.bat'.",
+    "Só entra no site o caso com autorizada=true E publicada=true. na_home=true mostra o cartão na página inicial.",
+    "Este repositório é público no GitHub: não registre aqui casos ainda não aprovados. Rascunhos ficam em experiencias/rascunhos/, que não é enviada.",
+    "Não use nomes de contratantes, pessoas, CNPJ, valores de contrato nem resultados sem documento."
+  ],
+  "experiencias": [
+    {
+      "id": "ampliacao-industrial-linhares",
+      "ordem": 1,
+      "autorizada": true,
+      "publicada": true,
+      "na_home": true,
+      "competencia_central": "Compreender e integrar informações de diferentes disciplinas em um empreendimento industrial multidisciplinar.",
+      "categoria": "AMPLIAÇÃO INDUSTRIAL",
+      "titulo": ["Quando diferentes projetos precisam", "funcionar como um só."],
+      "local": "Linhares | Espírito Santo",
+      "resumo": "Experiência em gerenciamento de ampliação industrial multidisciplinar, envolvendo planejamento, integração técnica, contratos e acompanhamento de diferentes frentes de trabalho.",
+      "origem": "Experiência profissional do fundador da CRIVIA.",
+      "evidencia": "Atuação registrada em Certidão de Acervo Técnico do CREA.",
+      "visual": "integracao.svg",
+      "pagina": {
+        "seo_titulo": "Ampliação Industrial Multidisciplinar em Linhares | CRIVIA",
+        "seo_descricao": "Conheça a experiência profissional que sustenta a atuação da CRIVIA em integração técnica, planejamento e gerenciamento de empreendimentos industriais.",
+        "subtitulo": "Ampliação industrial multidisciplinar | Linhares, Espírito Santo",
+        "autoria": "Experiência profissional de Bruno Malta, fundador da CRIVIA.",
+        "secoes": [
+          {
+            "rotulo": "O DESAFIO",
+            "paragrafos": [
+              "Uma ampliação industrial envolve diferentes disciplinas, equipes, fornecedores, sistemas e frentes de execução.",
+              "Nesse ambiente, o andamento de uma atividade pode depender de decisões e entregas de várias outras.",
+              "Em Linhares, no Espírito Santo, uma ampliação industrial reuniu obras civis, instalações elétricas, subestações, linhas de produção, utilidades, sistemas de tratamento de água e efluentes e outras estruturas industriais.",
+              "O desafio dos serviços de gerenciamento era acompanhar diferentes frentes de trabalho, integrar informações e apoiar a condução do empreendimento."
+            ],
+            "destaque": "Quando muitas partes precisam funcionar juntas, compreender as relações entre elas é tão importante quanto acompanhar cada atividade."
+          },
+          {
+            "rotulo": "A ATUAÇÃO",
+            "paragrafos": [
+              "Bruno Malta atuou como gerente de contrato e responsável técnico nos serviços de gerenciamento, planejamento e apoio técnico.",
+              "A experiência envolveu acompanhamento de atividades, integração de informações, análise de projetos, planejamento, controle físico-financeiro, documentação contratual e avaliação de condições de execução.",
+              "O trabalho exigia relacionar informações técnicas, operacionais e contratuais de diferentes disciplinas.",
+              "O objetivo era apoiar a condução dos serviços com informações que permitissem acompanhar o empreendimento de forma integrada."
+            ]
+          },
+          {
+            "rotulo": "A EVIDÊNCIA DOCUMENTADA",
+            "paragrafos": [
+              "A atuação profissional está registrada em Certidões de Acervo Técnico do sistema CREA.",
+              "Os documentos comprovam a participação de Bruno Malta em serviços de gerenciamento, planejamento, consultoria e apoio técnico na ampliação industrial.",
+              "O atestado vinculado à CAT do CREA-ES registra sua atuação entre junho de 2011 e maio de 2014, como gerente de contrato e responsável técnico.",
+              "Também registra a execução satisfatória dos serviços de gerenciamento contratados, conforme declaração da contratante.",
+              "A experiência demonstra atuação documentada em um ambiente industrial multidisciplinar, com diferentes frentes de trabalho e necessidades de integração técnica."
+            ]
+          },
+          {
+            "rotulo": "A LIÇÃO",
+            "paragrafos": [
+              "Em empreendimentos complexos, o problema percebido em uma frente de trabalho pode estar relacionado a condições existentes em outra.",
+              "Por isso, acompanhar atividades isoladamente nem sempre permite compreender o conjunto.",
+              "É necessário relacionar informações, identificar dependências, avaliar interferências e considerar os impactos das decisões."
+            ],
+            "destaque": "A compreensão do conjunto pode revelar questões que não aparecem quando cada parte é analisada separadamente."
+          }
+        ],
+        "representa": {
+          "antes": [
+            "Essa trajetória integra a experiência profissional que sustenta a CRIVIA.",
+            "Ela reforça uma ideia central da empresa:"
+          ],
+          "destaque": "O problema que aparece nem sempre é o problema que precisa ser resolvido.",
+          "depois": [
+            "A CRIVIA investiga situações, confronta informações e apresenta caminhos tecnicamente fundamentados para apoiar decisões."
+          ]
+        },
+        "nota": [
+          "Esta experiência foi desenvolvida por Bruno Malta antes da constituição da CRIVIA, no âmbito de outra empresa.",
+          "A atuação profissional está registrada em Certidões de Acervo Técnico.",
+          "Não se trata de contrato executado diretamente pela CRIVIA."
+        ]
+      }
+    },
+    {
+      "id": "planejamento-controle-tres-lagoas",
+      "ordem": 2,
+      "autorizada": true,
+      "publicada": true,
+      "na_home": true,
+      "competencia_central": "Organizar informações, identificar impedimentos e estruturar planejamento e alternativas de recuperação em uma operação com dificuldades.",
+      "categoria": "PLANEJAMENTO E CONTROLE",
+      "titulo": ["Quando trabalhar mais", "não resolve o problema."],
+      "local": "Três Lagoas | Mato Grosso do Sul",
+      "resumo": "Uma construtora local enfrentava atrasos na execução de obras de um viveiro industrial. O trabalho de planejamento e controle ajudou a organizar informações, identificar atividades críticas e estruturar alternativas de recuperação.",
+      "origem": "Experiência profissional do fundador da CRIVIA.",
+      "evidencia": "Proposta de consultoria, registros de reuniões e entregáveis datados.",
+      "visual": "planejamento.svg",
+      "pagina": {
+        "seo_titulo": "Planejamento e Controle de Obras em Três Lagoas | CRIVIA",
+        "seo_descricao": "Uma experiência em planejamento e controle de obras industriais, com análise de impedimentos, alternativas de recuperação e acompanhamento de resultados.",
+        "subtitulo": "Planejamento e controle de obras industriais | Três Lagoas, Mato Grosso do Sul",
+        "autoria": "Experiência profissional de Bruno Malta, fundador da CRIVIA.",
+        "secoes": [
+          {
+            "rotulo": "O DESAFIO",
+            "paragrafos": [
+              "Uma construtora local de Três Lagoas havia assumido a execução de dois pacotes de obras de um viveiro para uma grande indústria de celulose.",
+              "A empresa possuía experiência em construção civil, mas precisava atender a exigências de planejamento, acompanhamento e documentação estabelecidas pelo cliente industrial.",
+              "Em outubro de 2023, a obra já apresentava atrasos.",
+              "A perfuração do solo enfrentava dificuldades provocadas por camadas resistentes, pedras e entulho compactado.",
+              "As brocas quebravam e o avanço não correspondia ao necessário.",
+              "O aumento da quantidade de perfuradores não havia produzido o resultado esperado.",
+              "Atrasos de materiais, alterações de especificações e chuvas agravavam a situação.",
+              "Ao mesmo tempo, o cliente cobrava documentos de controle e planos de recuperação."
+            ],
+            "destaque": "Aumentar os recursos não estava resolvendo o impedimento principal. Era necessário compreender melhor o problema."
+          },
+          {
+            "rotulo": "A ATUAÇÃO",
+            "paragrafos": [
+              "Bruno Malta foi contratado para atuar no planejamento e controle do projeto.",
+              "O trabalho foi executado predominantemente de forma remota, com reuniões e informações fornecidas pelas equipes envolvidas.",
+              "Foram estruturados cronogramas, curvas de avanço físico, histogramas, controles de atividades críticas, mapas de suprimentos, relatórios gerenciais e planos de recuperação.",
+              "Entre outubro de 2023 e janeiro de 2024, foram desenvolvidos 16 ciclos semanais de cronogramas.",
+              "O acompanhamento permitiu comparar o avanço previsto com o realizado, identificar desvios e organizar prioridades.",
+              "Os planos de ação contemplaram alternativas como utilização de equipamentos de perfuração adequados, mudanças na sequência de atividades, priorização de frentes críticas e programação de equipes em paralelo."
+            ],
+            "destaque": "O trabalho ajudou a transformar dificuldades de execução em informações organizadas, alternativas e ações acompanháveis."
+          },
+          {
+            "rotulo": "OS RESULTADOS DOCUMENTADOS",
+            "itens": [
+              ["Pacote 1", "Atingiu 100% de avanço físico em 14 de janeiro de 2024, aproximadamente duas semanas após o prazo original."],
+              ["Pacote 2", "Atingiu 100% de avanço físico em 23 de janeiro de 2024, dentro do prazo previsto."],
+              ["Segurança", "Os relatórios do período registraram zero acidentes e zero ocorrências de segurança."]
+            ],
+            "paragrafos": [
+              "Esses resultados foram observados durante a atuação conjunta das equipes envolvidas."
+            ]
+          },
+          {
+            "rotulo": "O QUE AINDA PRECISAVA MELHORAR",
+            "paragrafos": [
+              "A conclusão física não eliminou todas as pendências de entrega.",
+              "Em fevereiro de 2024, o cliente registrou 21 pendências, sendo 11 impeditivas, relacionadas principalmente a acabamentos e ajustes externos.",
+              "Esse registro demonstrou que o controle de qualidade e a verificação dos acabamentos precisavam estar mais bem integrados ao planejamento da entrega."
+            ],
+            "destaque": "Concluir fisicamente uma atividade não significa necessariamente concluir todas as condições necessárias ao recebimento da obra."
+          },
+          {
+            "rotulo": "A LIÇÃO",
+            "paragrafos": [
+              "Uma operação atrasada nem sempre precisa apenas de mais pessoas, equipamentos ou horas de trabalho.",
+              "Primeiro, é necessário identificar o que está impedindo o avanço.",
+              "Depois, avaliar alternativas, organizar prioridades, acompanhar as ações e verificar os resultados.",
+              "A experiência também demonstrou que é possível apoiar o planejamento e controle predominantemente à distância, quando existem informações confiáveis, participação das equipes e uma rotina consistente de acompanhamento."
+            ],
+            "destaque": "Prazo, qualidade e verificação precisam caminhar juntos."
+          }
+        ],
+        "representa": {
+          "antes": [
+            "A experiência reforçou uma forma de trabalhar baseada na compreensão da realidade antes da proposição de soluções.",
+            "Na CRIVIA, essa lógica está presente na investigação de problemas, no confronto de informações e na apresentação de alternativas para apoiar decisões."
+          ],
+          "destaque": "Encontrar a causa pode mudar o caminho da decisão.",
+          "depois": []
+        },
+        "nota": [
+          "Esta experiência foi desenvolvida profissionalmente por Bruno Malta antes da constituição da CRIVIA, no âmbito de outra empresa.",
+          "A atuação em planejamento e controle possui registros em proposta de consultoria, reuniões e entregáveis datados.",
+          "A execução das obras permaneceu sob responsabilidade da construtora contratada.",
+          "Não se trata de contrato executado diretamente pela CRIVIA."
+        ]
+      }
+    }
+  ]
+}
