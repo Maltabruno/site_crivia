@@ -696,7 +696,7 @@ body { --lx: 62%; --ly: 48%; }
 .expp-lead { max-width: 60ch; margin: 0; color: #d3dfe7; font-size: clamp(16px,1.3vw,19px); line-height: 1.6; }
 .expp-visual { position: relative; margin: 0; border: 1px solid var(--line-strong); box-shadow: 0 32px 90px rgba(0,0,0,.45); }
 .expp-visual .exp-visual { border-bottom: 0; }
-.expp-visual figcaption { padding: 10px 14px; border-top: 1px solid var(--line); background: rgba(2,9,18,.7); color: var(--muted); font: 700 10px/1 var(--text); letter-spacing: .12em; text-transform: uppercase; }
+.expp-visual figcaption { padding: 10px 14px; border-top: 1px solid var(--line); background: rgba(2,9,18,.7); color: var(--muted); font: 700 10px/1.5 var(--text); letter-spacing: .12em; text-transform: uppercase; }
 .expp-hero .section-code { line-height: 1.5; }
 .expp-body { max-width: 1180px; margin: 0 auto; padding: 22px clamp(22px,6vw,96px) 90px; }
 .expp-sec { display: grid; grid-template-columns: minmax(170px,250px) minmax(0,1fr); gap: clamp(20px,4vw,64px); padding: 46px 0; border-top: 1px solid var(--line); }
