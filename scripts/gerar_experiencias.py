@@ -93,6 +93,16 @@ def pagina(x, outras, v):
         f'<a class="expp-outra" href="{o["id"]}.html">OUTRA EXPERIÊNCIA: {e(titulo_corrido(o))} →</a>' for o in outras
     )
     url = f'{DOMINIO}/experiencias/{x["id"]}.html'
+    # marca d'água: imagem ilustrativa do assunto (opcional), atrás do título e no painel final
+    marca = marca_painel = ""
+    legenda = "Composição gráfica ilustrativa"
+    if x.get("imagem"):
+        caminho = f'../assets/experiencias/{x["imagem"]}'
+        if not (SITE / "assets" / "experiencias" / x["imagem"]).exists():
+            sys.exit(f'ERRO: imagem "{x["imagem"]}" não encontrada em site_crivia_padrao/assets/experiencias/.')
+        marca = f'<div class="expp-marca" aria-hidden="true"><img src="{caminho}" alt="" fetchpriority="high"></div>'
+        marca_painel = f'<div class="expp-marca expp-marca--painel" aria-hidden="true"><img src="{caminho}" alt="" loading="lazy"></div>'
+        legenda = "Composição gráfica e imagem de fundo ilustrativas"
     return f"""<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -119,6 +129,7 @@ def pagina(x, outras, v):
 
   <main id="conteudo">
     <header class="expp-hero">
+      {marca}
       <div class="expp-hero-wrap">
         <div>
           <p class="section-code">EXPERIÊNCIA · {e(x["categoria"])}</p>
@@ -129,7 +140,7 @@ def pagina(x, outras, v):
         </div>
         <figure class="expp-visual">
           <div class="exp-visual">{visual(x)}</div>
-          <figcaption>Composição gráfica ilustrativa</figcaption>
+          <figcaption>{legenda}</figcaption>
         </figure>
       </div>
     </header>
@@ -138,6 +149,7 @@ def pagina(x, outras, v):
 {secoes}
 
       <section class="expp-crivia" aria-labelledby="expp-crivia-t">
+        {marca_painel}
         <h2 id="expp-crivia-t">O QUE ESSA EXPERIÊNCIA REPRESENTA PARA A CRIVIA</h2>
         <div class="expp-txt">
           {antes}

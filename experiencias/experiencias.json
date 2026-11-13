@@ -20,6 +20,7 @@
       "origem": "Experiência profissional do fundador da CRIVIA.",
       "evidencia": "Atuação registrada em Certidão de Acervo Técnico do CREA.",
       "visual": "integracao.svg",
+      "imagem": "integracao.jpg",
       "pagina": {
         "seo_titulo": "Ampliação Industrial Multidisciplinar em Linhares | CRIVIA",
         "seo_descricao": "Conheça a experiência profissional que sustenta a atuação da CRIVIA em integração técnica, planejamento e gerenciamento de empreendimentos industriais.",
@@ -78,7 +79,7 @@
         "nota": [
           "Esta experiência foi desenvolvida por Bruno Malta antes da constituição da CRIVIA, no âmbito de outra empresa.",
           "A atuação profissional está registrada em Certidões de Acervo Técnico.",
-          "Não se trata de contrato executado diretamente pela CRIVIA."
+          "Experiência do fundador da CRIVIA ENGENHARIA CONSULTIVA."
         ]
       }
     },
@@ -96,6 +97,7 @@
       "origem": "Experiência profissional do fundador da CRIVIA.",
       "evidencia": "Proposta de consultoria, registros de reuniões e entregáveis datados.",
       "visual": "planejamento.svg",
+      "imagem": "planejamento.jpg",
       "pagina": {
         "seo_titulo": "Planejamento e Controle de Obras em Três Lagoas | CRIVIA",
         "seo_descricao": "Uma experiência em planejamento e controle de obras industriais, com análise de impedimentos, alternativas de recuperação e acompanhamento de resultados.",
@@ -107,7 +109,7 @@
             "paragrafos": [
               "Uma construtora local de Três Lagoas havia assumido a execução de dois pacotes de obras de um viveiro para uma grande indústria de celulose.",
               "A empresa possuía experiência em construção civil, mas precisava atender a exigências de planejamento, acompanhamento e documentação estabelecidas pelo cliente industrial.",
-              "Em outubro de 2023, a obra já apresentava atrasos.",
+              "Em outubro, a obra já apresentava atrasos.",
               "A perfuração do solo enfrentava dificuldades provocadas por camadas resistentes, pedras e entulho compactado.",
               "As brocas quebravam e o avanço não correspondia ao necessário.",
               "O aumento da quantidade de perfuradores não havia produzido o resultado esperado.",
@@ -122,7 +124,7 @@
               "Bruno Malta foi contratado para atuar no planejamento e controle do projeto.",
               "O trabalho foi executado predominantemente de forma remota, com reuniões e informações fornecidas pelas equipes envolvidas.",
               "Foram estruturados cronogramas, curvas de avanço físico, histogramas, controles de atividades críticas, mapas de suprimentos, relatórios gerenciais e planos de recuperação.",
-              "Entre outubro de 2023 e janeiro de 2024, foram desenvolvidos 16 ciclos semanais de cronogramas.",
+              "Entre outubro e janeiro, foram desenvolvidos 16 ciclos semanais de cronogramas.",
               "O acompanhamento permitiu comparar o avanço previsto com o realizado, identificar desvios e organizar prioridades.",
               "Os planos de ação contemplaram alternativas como utilização de equipamentos de perfuração adequados, mudanças na sequência de atividades, priorização de frentes críticas e programação de equipes em paralelo."
             ],
@@ -131,8 +133,8 @@
           {
             "rotulo": "OS RESULTADOS DOCUMENTADOS",
             "itens": [
-              ["Pacote 1", "Atingiu 100% de avanço físico em 14 de janeiro de 2024, aproximadamente duas semanas após o prazo original."],
-              ["Pacote 2", "Atingiu 100% de avanço físico em 23 de janeiro de 2024, dentro do prazo previsto."],
+              ["Pacote 1", "Atingiu 100% de avanço físico em janeiro, aproximadamente duas semanas após o prazo original."],
+              ["Pacote 2", "Atingiu 100% de avanço físico em janeiro, dentro do prazo previsto."],
               ["Segurança", "Os relatórios do período registraram zero acidentes e zero ocorrências de segurança."]
             ],
             "paragrafos": [
@@ -143,7 +145,7 @@
             "rotulo": "O QUE AINDA PRECISAVA MELHORAR",
             "paragrafos": [
               "A conclusão física não eliminou todas as pendências de entrega.",
-              "Em fevereiro de 2024, o cliente registrou 21 pendências, sendo 11 impeditivas, relacionadas principalmente a acabamentos e ajustes externos.",
+              "Em fevereiro, o cliente registrou 21 pendências, sendo 11 impeditivas, relacionadas principalmente a acabamentos e ajustes externos.",
               "Esse registro demonstrou que o controle de qualidade e a verificação dos acabamentos precisavam estar mais bem integrados ao planejamento da entrega."
             ],
             "destaque": "Concluir fisicamente uma atividade não significa necessariamente concluir todas as condições necessárias ao recebimento da obra."
@@ -171,7 +173,7 @@
           "Esta experiência foi desenvolvida profissionalmente por Bruno Malta antes da constituição da CRIVIA, no âmbito de outra empresa.",
           "A atuação em planejamento e controle possui registros em proposta de consultoria, reuniões e entregáveis datados.",
           "A execução das obras permaneceu sob responsabilidade da construtora contratada.",
-          "Não se trata de contrato executado diretamente pela CRIVIA."
+          "Experiência do fundador da CRIVIA ENGENHARIA CONSULTIVA."
         ]
       }
     }
