@@ -29,6 +29,7 @@ No VS Code: *Terminal*, *Executar tarefa*, **Rodar os testes**. O teste do site 
 | Pasta ou arquivo | Para que serve |
 |---|---|
 | `site_crivia_padrao/` | O site oficial (`index.html`, `aviso-privacidade.html`, `styles.css`, `app.js`, `assets/`). |
+| `site_crivia_padrao/catalogo-publico.json` e `scripts/gerar_catalogo.py` | Projeção pública do catálogo (21 ofertas: 18 cards em 4 frentes + entradas 18, 19 e 20). O bloco `CATALOGO` do `app.js` é gerado a partir dele: edite o JSON e rode `python -I scripts/gerar_catalogo.py`. |
 | `Site_crivia.py` | Serve o site padrão. Com `--antigo`, gera e serve o site anterior (modelo Auralis). |
 | `Abrir site.bat` | Atalho do Windows para abrir o site padrão. |
 | `index.html` (raiz) | Leva ao `site_crivia_padrao/`. Serve também para a página do GitHub. |
