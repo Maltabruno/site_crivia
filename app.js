@@ -186,7 +186,7 @@ const GRUPOS = [
         ['Escavação cotada 35,1% abaixo da referência', 'Preço abaixo da referência pode abrir espaço para pedido de aditivo de volume (hipótese a confirmar)', '− R$ 51.500', 'PREÇO ABAIXO DA REFERÊNCIA', 'bom']],
       como: { para: 'Donos de obra privada e empreiteiras que estão orçando serviços.', envia: 'A planilha da proposta em Excel (.xlsx).',
         passos: ['Os itens definidos no escopo, com prioridade para a Curva A, são pareados com referências técnicas como o SINAPI.', 'O BDI é aplicado e a Curva ABC mostra onde se concentra a maior parte do valor da proposta.', 'Itens acima ou abaixo da referência e possíveis omissões são sinalizados para avaliação.'],
-        recebe: ['Dossiê de 5 páginas', 'Gráfico comparativo e tabela da Curva A, em vermelho e verde', 'Roteiro de pontos de negociação para levar à reunião, a critério do cliente'] },
+        recebe: ['Dossiê técnico, impresso ou digital, no formato definido para o serviço', 'Gráfico comparativo e tabela da Curva A, em vermelho e verde', 'Roteiro de pontos de negociação para levar à reunião, a critério do cliente'] },
       fonte: 'Galpão de 2.800 m², Serra/ES. Referência SINAPI-ES com BDI de 25%. Diferenças estimadas, sujeitas a escopo, data-base, BDI, especificações e condições de contratação.'
     },
     sentinela: {
@@ -214,7 +214,7 @@ const GRUPOS = [
         ['Radar de 30 dias · decisão do cliente até 13/11', 'Compra do quadro geral e do transformador (prazo de fábrica de 45 dias)', '', 'CRÍTICO', 'ouro']],
       como: { para: 'Quem já contratou a obra e não quer voltar à incerteza.', envia: 'A planilha de medição da construtora, numa data de corte fixa (por exemplo, dia 25).',
         passos: ['Inspeção visual focada nos itens definidos no escopo, com fotos.', 'O que foi visto é cruzado com a planilha de medição.', 'Para os itens analisados, a CRIVIA aponta as condições técnicas e as pendências; a decisão permanece com o cliente.'],
-        recebe: ['Boletim de 4 páginas', 'Recomendação técnica e pendências segundo os critérios definidos, com a Curva S', 'Radar dos suprimentos críticos dos próximos 30 dias e os documentos que embasam a decisão do cliente'] },
+        recebe: ['Boletim informativo, impresso ou digital, no formato definido para o serviço', 'Recomendação técnica e pendências segundo os critérios definidos, com a Curva S', 'Radar dos suprimentos críticos dos próximos 30 dias e os documentos que embasam a decisão do cliente'] },
       fonte: 'Edifício comercial e clínica, Vitória/ES.'
     }
   };
