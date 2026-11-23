@@ -58,6 +58,14 @@ class SitePadrao(unittest.TestCase):
             self.assertTrue((SITE / "assets" / "produtos-s" / f"{n}.jpg").is_file(), f"imagem {n} declarada e ausente")
         self.assertTrue({f"{n:02d}" for n in range(1, 13)} <= set(re.findall(r"'(\d\d)'", declaradas)))
 
+    def test_versao_dos_arquivos_acompanha_o_conteudo(self):
+        """Evita cache antigo: o ?v= de styles.css e app.js no index.html deve ser o resumo atual do arquivo (rode scripts/versionar_assets.py)."""
+        import hashlib
+        html = (SITE / "index.html").read_text(encoding="utf-8")
+        for nome in ("styles.css", "app.js"):
+            esperado = hashlib.sha1((SITE / nome).read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:8]
+            self.assertIn(f"{nome}?v={esperado}", html, f"{nome} mudou sem atualizar a versão: rode python -I scripts/versionar_assets.py")
+
     def test_whatsapp_e_email_confirmados(self):
         js = (SITE / "app.js").read_text(encoding="utf-8")
         self.assertIn(f"const WHATS = '{WHATS}';", js)
