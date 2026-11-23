@@ -48,7 +48,6 @@
   "ofertas": [
     {
       "numero": "01",
-      "id_estavel": "01",
       "nome": "Viabilidade e implantação do terreno",
       "grupo": "antes-de-contratar",
       "tipo": "catalogo",
@@ -72,7 +71,6 @@
     },
     {
       "numero": "02",
-      "id_estavel": "02",
       "nome": "Diagnóstico ambiental e cartográfico",
       "grupo": "antes-de-contratar",
       "tipo": "catalogo",
@@ -96,7 +94,6 @@
     },
     {
       "numero": "03",
-      "id_estavel": "03",
       "nome": "Conferência do modelo 3D da obra",
       "grupo": "antes-de-contratar",
       "tipo": "catalogo",
@@ -120,7 +117,6 @@
     },
     {
       "numero": "04",
-      "id_estavel": "04",
       "nome": "Fiscalização 360°",
       "grupo": "durante-a-execucao",
       "tipo": "catalogo",
@@ -144,7 +140,6 @@
     },
     {
       "numero": "05",
-      "id_estavel": "05",
       "nome": "Equalização de propostas e pleitos",
       "grupo": "antes-de-contratar",
       "tipo": "catalogo",
@@ -168,7 +163,6 @@
     },
     {
       "numero": "06",
-      "id_estavel": "06",
       "nome": "Inspeção estrutural",
       "grupo": "ativos-e-estudos",
       "tipo": "catalogo",
@@ -192,7 +186,6 @@
     },
     {
       "numero": "07",
-      "id_estavel": "07",
       "nome": "Custo para concluir a obra",
       "grupo": "durante-a-execucao",
       "tipo": "catalogo",
@@ -216,7 +209,6 @@
     },
     {
       "numero": "08",
-      "id_estavel": "08",
       "nome": "Triagem técnica para compra de ativos",
       "grupo": "ativos-e-estudos",
       "tipo": "catalogo",
@@ -240,7 +232,6 @@
     },
     {
       "numero": "09",
-      "id_estavel": "09",
       "nome": "Conferência de notas fiscais e medição",
       "grupo": "durante-a-execucao",
       "tipo": "catalogo",
@@ -264,7 +255,6 @@
     },
     {
       "numero": "10",
-      "id_estavel": "10",
       "nome": "Análise técnica de licitações",
       "grupo": "antes-de-contratar",
       "tipo": "catalogo",
@@ -288,7 +278,6 @@
     },
     {
       "numero": "11",
-      "id_estavel": "11",
       "nome": "Gêmeo digital leve",
       "grupo": "durante-a-execucao",
       "tipo": "catalogo",
@@ -312,7 +301,6 @@
     },
     {
       "numero": "12",
-      "id_estavel": "12",
       "nome": "Carbono incorporado e custo",
       "grupo": "ativos-e-estudos",
       "tipo": "catalogo",
@@ -336,7 +324,6 @@
     },
     {
       "numero": "13",
-      "id_estavel": "ND",
       "nome": "Desempenho e requisitos",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -356,11 +343,11 @@
       "referencia": "Partes e métodos pertinentes da NBR 15575, quando aplicável, e normas específicas dos sistemas. A edição, a configuração e o alcance são definidos para o caso.",
       "cta": "Apresente o sistema, a exigência e o marco de compra ou entrega.",
       "anchor": "servico-13",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Sob demanda"
     },
     {
       "numero": "14",
-      "id_estavel": "ENT",
       "nome": "Organização da entrega documental",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -380,11 +367,11 @@
       "referencia": "Lista de entrega do contrato e normas das disciplinas. A NBR 14037 entra quando o escopo inclui manual de uso, operação e manutenção.",
       "cta": "Apresente a lista de entrega, uma amostra do acervo e o prazo.",
       "anchor": "servico-14",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Em estruturação"
     },
     {
       "numero": "15",
-      "id_estavel": "MAN",
       "nome": "Manutenção e registros de garantias",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -404,11 +391,11 @@
       "referencia": "NBR 5674, NBR 14037 e referências de garantias como a NBR 17170, conforme o objeto e a aplicação.",
       "cta": "Apresente o ativo, os registros existentes e a necessidade de operação.",
       "anchor": "servico-15",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Em estruturação"
     },
     {
       "numero": "16",
-      "id_estavel": "REF",
       "nome": "Documentação e interfaces de reformas",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -428,11 +415,11 @@
       "referencia": "NBR 16280 quando aplicável, normas dos sistemas e regras pertinentes ao imóvel e à intervenção.",
       "cta": "Descreva a intervenção, os sistemas e o marco previsto.",
       "anchor": "servico-16",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Em estruturação"
     },
     {
       "numero": "17",
-      "id_estavel": "ADE",
       "nome": "Adequações de redes e ativos",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -452,18 +439,18 @@
       "referencia": "Referências dos sistemas avaliados, como acessibilidade e saídas de emergência, e regulamentação competente de cada local.",
       "cta": "Informe as unidades, os sistemas e a exigência a tratar.",
       "anchor": "servico-17",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Em estruturação"
     },
     {
       "numero": "18",
-      "id_estavel": "RX",
       "nome": "Raio-X de Propostas e Orçamentos",
       "grupo": null,
       "tipo": "entrada",
       "dor": "O decisor não distingue diferença de escopo de diferença de preço e não sabe o que esclarecer.",
       "para_quem": {
         "decisor": "Decisor que recebeu proposta e precisa de base para negociar/contratar.",
-        "prestadora": "Prestadora ou assessora que analisa propostas recebidas pelo seu cliente; a apresentação visual da própria proposta comercial corresponde à oferta 21 (CV01)."
+        "prestadora": "Prestadora ou assessora que analisa propostas recebidas pelo seu cliente; a apresentação visual da própria proposta comercial corresponde à oferta 21."
       },
       "beneficios": [
         "Clareza para negociar",
@@ -480,7 +467,6 @@
     },
     {
       "numero": "19",
-      "id_estavel": "DS",
       "nome": "Diagnóstico Sentinela",
       "grupo": null,
       "tipo": "entrada",
@@ -504,7 +490,6 @@
     },
     {
       "numero": "20",
-      "id_estavel": "PM",
       "nome": "Planejamento e Medição",
       "grupo": null,
       "tipo": "entrada",
@@ -528,7 +513,6 @@
     },
     {
       "numero": "21",
-      "id_estavel": "CV01",
       "nome": "Visualização e comunicação técnica",
       "grupo": "requisitos-e-entrega",
       "tipo": "catalogo",
@@ -548,7 +532,8 @@
       "referencia": "Projeto, especificações e normas dos sistemas representados, com fidelidade e finalidade definidas para a comunicação.",
       "cta": "Apresente o conteúdo técnico e o objetivo da apresentação.",
       "anchor": "servico-21",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "estado_publico": "Em estruturação"
     }
   ]
 }

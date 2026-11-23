@@ -131,8 +131,7 @@ class Catalogo21(unittest.TestCase):
             self.assertTrue(o["limites"].lower().startswith(("não", "nao")) or "não" in o["limites"].lower(), o["numero"])
             self.assertEqual(o["disponibilidade"], "Consulte o escopo e a disponibilidade para o seu caso.", o["numero"])
 
-    def test_ids_e_ancoras_unicos_e_ancoras_legadas_preservadas(self):
-        self.assertEqual(len({o["id_estavel"] for o in self.ofertas}), 21)
+    def test_ancoras_unicas_e_ancoras_legadas_preservadas(self):
         self.assertEqual(len({o["anchor"] for o in self.ofertas}), 21)
         legadas = {"18": "produto-1", "19": "produto-2", "20": "produto-3"}
         for n, ancora in legadas.items():
@@ -141,8 +140,30 @@ class Catalogo21(unittest.TestCase):
         for o in self.ofertas:
             if o["tipo"] == "catalogo":
                 self.assertEqual(o["anchor"], f"servico-{o['numero']}")
-        self.assertEqual({o["numero"]: o["id_estavel"] for o in self.ofertas if int(o["numero"]) >= 13},
-                         {"13": "ND", "14": "ENT", "15": "MAN", "16": "REF", "17": "ADE", "18": "RX", "19": "DS", "20": "PM", "21": "CV01"})
+
+    def test_codigos_internos_nao_aparecem_no_site_publico(self):
+        """IDs históricos do Painel (ND, ENT, MAN, REF, ADE, RX, DS, PM, CV01) são internos."""
+        publico = "".join((SITE / n).read_text(encoding="utf-8") for n in ("catalogo-publico.json", "index.html", "app.js"))
+        for codigo in ("CV01", "id_estavel"):
+            self.assertNotIn(codigo, publico, codigo)
+        for o in self.ofertas:
+            self.assertNotIn("id_estavel", o)
+
+    def test_ofertas_nao_liberadas_aparecem_como_em_estruturacao(self):
+        """Catálogo R07: 14–17 e 21 inativas (preparação operacional); 13 sob demanda. O site não as apresenta como prontas."""
+        estados = {o["numero"]: o.get("estado_publico") for o in self.ofertas}
+        for n in ("14", "15", "16", "17", "21"):
+            self.assertEqual(estados[n], "Em estruturação", n)
+        self.assertEqual(estados["13"], "Sob demanda")
+        for n in [f"{i:02d}" for i in range(1, 13)] + ["18", "19", "20"]:
+            self.assertIsNone(estados[n], n)
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        self.assertIn("CONVERSAR SOBRE O INTERESSE", js)
+        self.assertIn("(em estruturação)", js)
+
+    def test_imagens_de_rascunho_fora_do_site(self):
+        for n in ("14", "15", "16", "17", "21"):
+            self.assertFalse((SITE / "assets" / "produtos-s" / f"{n}.jpg").exists(), n)
 
     def test_json_publico_sem_chaves_privadas(self):
         def chaves(x):
@@ -153,7 +174,7 @@ class Catalogo21(unittest.TestCase):
             elif isinstance(x, list):
                 for v in x:
                     yield from chaves(v)
-        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "id_estavel", "grupo", "tipo", "dor", "para_quem",
+        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "grupo", "tipo", "dor", "para_quem",
                       "decisor", "prestadora", "beneficios", "resultado_pratico", "entregas", "limites", "referencia", "cta", "anchor", "disponibilidade"}
         self.assertEqual(set(chaves(self.dados)) - permitidas, set())
         texto = json.dumps(self.dados, ensure_ascii=False)
@@ -188,7 +209,7 @@ class Catalogo21(unittest.TestCase):
 
     def test_ctas_do_catalogo_enviam_codigo_e_nome(self):
         js = (SITE / "app.js").read_text(encoding="utf-8")
-        self.assertIn("const assuntoDe = (o) => `${o.numero} — ${o.nome}`;", js)
+        self.assertIn("const assuntoDe = (o) => `${o.numero} — ${o.nome}${o.estado_publico", js)
         self.assertIn('data-assunto="${esc(assuntoDe(p))}"', js)
 
     def test_nao_ha_formulario_nem_backend_de_captacao(self):
