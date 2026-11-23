@@ -201,7 +201,7 @@ input[type="range"] { width: 100%; accent-color: var(--cyan); cursor: ew-resize;
 .catalog-head { display: grid; grid-template-columns: 1fr minmax(280px,520px); gap: clamp(24px,5vw,80px); align-items: end; margin-bottom: 40px; }
 .catalog-head .section-code { grid-column: 1/-1; margin-bottom: 0; }
 .catalog-head h2 { font-size: clamp(2.8rem,5.4vw,6.4rem); }
-.catalog-head > p:not(.section-code) { margin: 0; color: var(--soft); line-height: 1.6; font-size: 16px; }
+.catalog-head > p:not(.section-code) { margin: 0; color: var(--soft); line-height: 1.6; font-size: 16px; text-align: justify; text-justify: inter-word; hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
 .catalog-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
 .catalog-tabs button { cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border: 1px solid var(--line); background: rgba(5,16,28,.6); color: var(--soft); font: 600 13px/1 var(--text); letter-spacing: .02em; transition: all .25s; }
 .catalog-tabs button span { color: var(--gold); font: 600 11px/1 var(--text); }
