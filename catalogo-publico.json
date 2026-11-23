@@ -67,7 +67,15 @@
       "referencia": "Levantamento e implantação, projetos e regras urbanísticas pertinentes ao terreno e ao estudo.",
       "cta": "Apresente o terreno, as alternativas e a decisão necessária.",
       "anchor": "servico-01",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 13133",
+        "NBR 14645",
+        "NBR 12721",
+        "NBR 14653",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "02",
@@ -90,7 +98,12 @@
       "referencia": "Referências de cartografia, levantamento, hidrologia e investigação ambiental conforme o recorte contratado.",
       "cta": "Informe a localização, o uso pretendido e a dúvida sobre o terreno.",
       "anchor": "servico-02",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 13133",
+        "NBR 14645",
+        "NBR 15515"
+      ]
     },
     {
       "numero": "03",
@@ -113,7 +126,12 @@
       "referencia": "Referências de projeto e gestão da informação, além das normas dos sistemas examinados.",
       "cta": "Envie as disciplinas, as versões e a interface que precisa de resposta.",
       "anchor": "servico-03",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 16636",
+        "NBR 6492",
+        "ISO 19650"
+      ]
     },
     {
       "numero": "04",
@@ -136,7 +154,11 @@
       "referencia": "Critérios contratuais de medição e normas técnicas dos serviços verificados.",
       "cta": "Apresente o contrato, o boletim e a data de corte.",
       "anchor": "servico-04",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "Critérios contratuais de medição",
+        "Normas específicas dos sistemas examinados"
+      ]
     },
     {
       "numero": "05",
@@ -159,7 +181,13 @@
       "referencia": "Referências de custo e especificação dos serviços; método pericial apenas quando essa atividade estiver contratada.",
       "cta": "Informe se a questão é uma contratação ou um pleito e apresente a base disponível.",
       "anchor": "servico-05",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 12721",
+        "NBR 13752",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "06",
@@ -182,7 +210,12 @@
       "referencia": "Referências de inspeção, manutenção e sistemas, conforme finalidade e abrangência contratadas.",
       "cta": "Informe o ativo, a ocorrência e a finalidade da inspeção.",
       "anchor": "servico-06",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 16747",
+        "NBR 14037",
+        "NBR 5674"
+      ]
     },
     {
       "numero": "07",
@@ -205,7 +238,13 @@
       "referencia": "Metodologia de custos, critérios de avanço e referências dos serviços remanescentes.",
       "cta": "Apresente o saldo de serviços, os compromissos e a próxima decisão de aporte.",
       "anchor": "servico-07",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 12721",
+        "NBR 14653",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "08",
@@ -228,7 +267,12 @@
       "referencia": "Referências de inspeção, avaliação e sistemas apenas nas atividades efetivamente incluídas na triagem.",
       "cta": "Informe o ativo, o uso pretendido e o prazo da aquisição.",
       "anchor": "servico-08",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 14653",
+        "NBR 16747",
+        "NBR 15515"
+      ]
     },
     {
       "numero": "09",
@@ -251,7 +295,11 @@
       "referencia": "Critérios de conciliação, unidades e movimentos de materiais, com referências técnicas pertinentes à pergunta examinada.",
       "cta": "Apresente o período, os materiais e a divergência a esclarecer.",
       "anchor": "servico-09",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "Critérios de conciliação e medição",
+        "Normas específicas dos materiais"
+      ]
     },
     {
       "numero": "10",
@@ -274,7 +322,12 @@
       "referencia": "Edital, projetos, metodologia de custos e normas técnicas do objeto; questões jurídicas têm encaminhamento próprio.",
       "cta": "Apresente o edital, sua dúvida técnica e o prazo disponível.",
       "anchor": "servico-10",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 12721",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "11",
@@ -297,7 +350,12 @@
       "referencia": "Protocolo de acompanhamento e referências do sistema, da inspeção e da manutenção pertinentes.",
       "cta": "Informe o que precisa ser acompanhado e qual decisão depende da evolução.",
       "anchor": "servico-11",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 16747",
+        "NBR 14037",
+        "NBR 5674"
+      ]
     },
     {
       "numero": "12",
@@ -320,7 +378,14 @@
       "referencia": "Referências de ciclo de vida, como ISO 14040/14044 e adoções aplicáveis, conforme o método e o alcance definidos.",
       "cta": "Apresente as alternativas, a função e a exigência ambiental.",
       "anchor": "servico-12",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "ISO 14040",
+        "ISO 14044",
+        "NBR 12721",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "13",
@@ -344,7 +409,13 @@
       "cta": "Apresente o sistema, a exigência e o marco de compra ou entrega.",
       "anchor": "servico-13",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Sob demanda"
+      "estado_publico": "Sob demanda",
+      "normas": [
+        "NBR 15575",
+        "NBR 10151",
+        "NBR 10152",
+        "NBR ISO/IEC 17025"
+      ]
     },
     {
       "numero": "14",
@@ -368,7 +439,13 @@
       "cta": "Apresente a lista de entrega, uma amostra do acervo e o prazo.",
       "anchor": "servico-14",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação"
+      "estado_publico": "Em estruturação",
+      "normas": [
+        "NBR 14037",
+        "NBR 5674",
+        "NBR 15575",
+        "ISO 19650"
+      ]
     },
     {
       "numero": "15",
@@ -392,7 +469,13 @@
       "cta": "Apresente o ativo, os registros existentes e a necessidade de operação.",
       "anchor": "servico-15",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação"
+      "estado_publico": "Em estruturação",
+      "normas": [
+        "NBR 5674",
+        "NBR 14037",
+        "NBR 17170",
+        "NBR 16747"
+      ]
     },
     {
       "numero": "16",
@@ -416,7 +499,11 @@
       "cta": "Descreva a intervenção, os sistemas e o marco previsto.",
       "anchor": "servico-16",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação"
+      "estado_publico": "Em estruturação",
+      "normas": [
+        "NBR 16280",
+        "NBR 15575"
+      ]
     },
     {
       "numero": "17",
@@ -440,7 +527,12 @@
       "cta": "Informe as unidades, os sistemas e a exigência a tratar.",
       "anchor": "servico-17",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação"
+      "estado_publico": "Em estruturação",
+      "normas": [
+        "NBR 9050",
+        "NBR 9077",
+        "NBR 16747"
+      ]
     },
     {
       "numero": "18",
@@ -463,7 +555,12 @@
       "referencia": "Projeto, especificações, referências de custo pertinentes e normas dos serviços comparados.",
       "cta": "Envie a proposta e a data da decisão de contratação.",
       "anchor": "produto-1",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 12721",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "19",
@@ -486,7 +583,13 @@
       "referencia": "Referências técnicas e contratuais do objeto investigado; atividades especializadas têm método e responsabilidade próprios.",
       "cta": "Descreva o que não está funcionando e a decisão que precisa tomar.",
       "anchor": "produto-2",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 13752",
+        "NBR 12721",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "20",
@@ -509,7 +612,12 @@
       "referencia": "Projetos, contrato, critérios de medição e normas dos serviços incluídos; boas práticas de gestão apoiam a organização.",
       "cta": "Apresente as frentes, a rotina atual e os próximos marcos.",
       "anchor": "produto-3",
-      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso."
+      "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
+      "normas": [
+        "NBR 12721",
+        "SINAPI",
+        "SICRO"
+      ]
     },
     {
       "numero": "21",
@@ -533,7 +641,11 @@
       "cta": "Apresente o conteúdo técnico e o objetivo da apresentação.",
       "anchor": "servico-21",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação"
+      "estado_publico": "Em estruturação",
+      "normas": [
+        "NBR 16636",
+        "NBR 6492"
+      ]
     }
   ]
 }
