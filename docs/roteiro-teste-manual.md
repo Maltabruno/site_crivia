@@ -1,5 +1,7 @@
 # Roteiro de teste manual — "Apresentar meu cenário"
 
+> **Histórico:** documento do site anterior (formulário "Apresentar meu cenário" com servidor). O site padrão em `site_crivia_padrao/` não usa formulário nem servidor; o contato é por WhatsApp e e-mail.
+
 Use **dados fictícios** e uma planilha/servidor de TESTE. Nunca teste com leads reais nem contra a planilha de produção.
 Servidor local: `python -I servidor/servidor_leads.py` (porta 8787) e o site em `http://localhost:8080/assets/overview/apresentar-cenario.html`.
 

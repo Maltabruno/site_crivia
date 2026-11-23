@@ -1,5 +1,7 @@
 # Prontidão para publicação — "Apresentar meu cenário"
 
+> **Histórico:** documento do site anterior (formulário "Apresentar meu cenário" com servidor). O site padrão em `site_crivia_padrao/` não usa formulário nem servidor; o contato é por WhatsApp e e-mail.
+
 > **Armazenamento (atualizado):** a fonte oficial dos cenários passa a ser uma planilha privada no Google Sheets, gravada por um Google Apps Script (`google-apps-script/`, ver `google-apps-script-setup.md`). O servidor Python + SQLite descrito abaixo vira **apenas ambiente local de teste** (mesmo protocolo). Nada do Google foi criado nem implantado.
 
 **Nada foi publicado, commitado ou implantado.** Este documento lista como rodar, o que configurar, o que está bloqueado e o que falta antes de produção.

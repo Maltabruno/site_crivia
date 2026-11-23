@@ -46,3 +46,8 @@ O repositório do GitHub é o da pasta `site_crivia`. Existe uma pasta acima (`9
 - Aviso `LF will be replaced by CRLF`: é só sobre o fim de linha no Windows. O arquivo `.gitattributes` cuida disso. Pode seguir.
 - O `git push` foi recusado: rode `git pull origin main`, resolva o que aparecer e envie de novo.
 - Dúvida antes de enviar: pare e pergunte. O que foi enviado ao GitHub fica no histórico.
+
+## Publicar o site
+
+Enviar ao `main` não publica o site. O que está no ar vem do ramo `gh-pages`, gerado da pasta `site_crivia_padrao`. Com o OK de Bruno Malta, rode `Publicar site.bat` ou, no Git Bash: `git push origin main` e depois `git subtree push --prefix site_crivia_padrao origin gh-pages`. Confira em https://www.criviaengenharia.com.br (Ctrl+F5).
+

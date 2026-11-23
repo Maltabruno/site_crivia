@@ -177,7 +177,7 @@ def pagina(x, outras, v):
   <footer>
     <a class="brand" href="../index.html" aria-label="CRIVIA — página inicial"><img src="../assets/logo-icon.png" alt="" width="38" height="38"><span><b>CRIVIA</b><small>ENGENHARIA CONSULTIVA</small></span></a>
     <p>Engenharia para decisão.<br>Serra, Espírito Santo, Brasil</p>
-    <div class="footer-links"><a href="../index.html#produto-1">Trabalhos</a><a href="../index.html#catalogo">Catálogo</a><a href="../index.html#metodo">Método</a><a href="../aviso-privacidade.html">Aviso de Privacidade</a></div>
+    <div class="footer-links"><a href="../index.html#catalogo">Soluções</a><a href="../index.html#metodo">Como atuamos</a><a href="../index.html#experiencia">Experiência</a><a href="../index.html#sobre">Sobre</a><a href="../aviso-privacidade.html">Aviso de Privacidade</a></div>
     <img class="footer-seal" src="../assets/bni-160.png" srcset="../assets/bni-80.png 1x, ../assets/bni-160.png 2x, ../assets/bni-240.png 3x" alt="Selo Proud BNI Member" width="80" height="46" decoding="async">
     <small>© 2026 CRIVIA Engenharia Consultiva Ltda. · Site criado pela CRIVIA</small>
   </footer>

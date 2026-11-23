@@ -1,5 +1,7 @@
 # Modelo de ameaças e controles — "Apresentar meu cenário"
 
+> **Histórico:** documento do site anterior (formulário "Apresentar meu cenário" com servidor). O site padrão em `site_crivia_padrao/` não usa formulário nem servidor; o contato é por WhatsApp e e-mail.
+
 Escopo: página estática `apresentar-cenario.html` + servidor de leads (`servidor/servidor_leads.py`). O servidor é um **servidor de referência** (biblioteca padrão do Python, SQLite): serve para validar o fluxo e pode ser a base de uma publicação, mas a hospedagem, o HTTPS e o painel interno são decisões pendentes.
 
 ## Ativos

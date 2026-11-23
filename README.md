@@ -24,6 +24,10 @@ python -I -m unittest discover -s tests -v
 
 No VS Code: *Terminal*, *Executar tarefa*, **Rodar os testes**. O teste do site confere se todas as páginas, imagens e fontes existem, se o WhatsApp e o e-mail estão certos, se nada do que foi retirado voltou e se o servidor entrega as páginas.
 
+## Estrutura da página (revisão editorial de 23/11/2026)
+
+A ordem segue o estudo de Brecha de Mercado e Governante: início (`#inicio`), Como atuamos (`#metodo`, com `#visao` como âncora de compatibilidade), Experiência (`#experiencia`), Soluções (`#catalogo`, com as quatro frentes, a Frente 04 `#frente-entrega-cliente` e a busca `#busca-norma` no fim), entradas 18, 19 e 20 (`#produto-1`, `#produto-2`, `#produto-3`), Sobre (`#sobre`) e fechamento (`#contato`). Cada produto mostra quatro respostas: o que você recebe, como fazemos, o que melhora para você e por que escolher a CRIVIA (campo `apresentacao` do catálogo público). Entregas não citam número de páginas: são documentos e boletins, impressos ou digitais, no formato definido para cada serviço.
+
 ## Mapa das pastas
 
 | Pasta ou arquivo | Para que serve |
@@ -35,8 +39,15 @@ No VS Code: *Terminal*, *Executar tarefa*, **Rodar os testes**. O teste do site 
 | `index.html` (raiz) | Leva ao `site_crivia_padrao/`. Serve também para a página do GitHub. |
 | `site/`, `assets/`, `cenario/`, `servidor/`, `google-apps-script/` | Site anterior e o que ele usava (formulário e servidor de contatos). Não fazem parte do site padrão. |
 | `arquivo/` | Versões antigas guardadas (`index_antigo.html`, backup do `Site_crivia.py`). |
-| `docs/` | Documentos do site anterior e o fluxo de trabalho (`docs/fluxo-de-trabalho.md`). |
+| `docs/` | Fluxo de trabalho (`docs/fluxo-de-trabalho.md`). Os demais documentos tratam do formulário "Apresentar meu cenário" do site anterior e não valem para o site padrão. |
+| `experiencias/experiencias.json` e `scripts/gerar_experiencias.py` | Casos da dobra Experiência e páginas `site_crivia_padrao/experiencias/*.html`. Edite o JSON e rode `Gerar experiencias.bat`. Instruções em `experiencias/LEIA-ME.md`. |
+| `scripts/versionar_assets.py` | Atualiza o `?v=` de `styles.css` e `app.js` no `index.html`. Rode depois de editar CSS ou JS. |
+| `Publicar site.bat` | Publica: envia o `main` ao GitHub e a pasta `site_crivia_padrao` ao ramo `gh-pages`. Só funciona no ramo `main`. |
 | `tests/` | Testes automáticos. |
+
+## Como publicar
+
+O site é servido pelo GitHub Pages a partir do ramo `gh-pages`, com o domínio `www.criviaengenharia.com.br` (DNS no Registro.br). Depois do OK de Bruno Malta: rode os testes, `python -I scripts/versionar_assets.py` e dê dois cliques em `Publicar site.bat` (ou `git push origin main` e `git subtree push --prefix site_crivia_padrao origin gh-pages`). A mudança aparece em 1 a 2 minutos. Mudanças grandes são feitas antes numa cópia separada (`git worktree`), em outro ramo.
 
 ## Regras do projeto
 
