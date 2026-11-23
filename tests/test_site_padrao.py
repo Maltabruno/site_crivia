@@ -270,7 +270,10 @@ class Catalogo21(unittest.TestCase):
         permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "grupo", "tipo", "dor", "para_quem",
                       "decisor", "prestadora", "beneficios", "resultado_pratico", "entregas", "limites", "referencia", "cta", "anchor", "disponibilidade",
                       "normas_e_referencias", "palavras_chave_normativas", "titulo", "objetivo", "criterios_principais", "referencias", "alcance",
-                      "codigo", "papel_no_servico", "aplicacao", "condicao", "entrega_vinculada", "partes_para_selecao", "partes_detalhadas", "assunto"}
+                      "codigo", "papel_no_servico", "aplicacao", "condicao", "entrega_vinculada", "partes_para_selecao", "partes_detalhadas", "assunto",
+                      # revisão editorial (23/11/2026): as quatro respostas e o aprofundamento de cada oferta
+                      "apresentacao", "chamada", "quando", "resumo", "entrega", "como", "empresa", "profissional", "por_que_crivia",
+                      "detalhe", "destinatario", "frase_acao"}
         self.assertEqual(set(chaves(self.dados)) - permitidas, set())
         texto = json.dumps(self.dados, ensure_ascii=False)
         self.assertNotIn("R$", texto)
@@ -316,6 +319,155 @@ class Catalogo21(unittest.TestCase):
     def test_catalogo_menciona_dezoito_produtos(self):
         self.assertIn("Dezoito produtos em quatro frentes", self.html)
         self.assertNotIn("Doze produtos", self.html)
+
+
+class RevisaoEditorial(unittest.TestCase):
+    """Revisão editorial de 23/11/2026 (Brecha de Mercado e Governante): ordem das seções, quatro respostas, âncoras e fechamento."""
+
+    ORDEM = [("inicio", "00"), ("metodo", "01"), ("experiencia", "02"), ("catalogo", "03"), ("produto-1", "04"),
+             ("produto-2", "05"), ("produto-3", "06"), ("sobre", "07"), ("contato", "08")]
+    NOMES_FINAIS = {
+        "01": "Viabilidade e implantação do terreno", "02": "Diagnóstico ambiental e cartográfico", "03": "Conferência do modelo 3D da obra",
+        "04": "Fiscalização 360°", "05": "Equalização de propostas e pleitos", "06": "Inspeção estrutural", "07": "Custo para concluir a obra",
+        "08": "Triagem técnica para compra de ativos", "09": "Conferência de notas fiscais e medição", "10": "Análise técnica de licitações",
+        "11": "Gêmeo digital leve", "12": "Carbono incorporado e custo", "13": "Desempenho e requisitos", "14": "Organização da entrega documental",
+        "15": "Manutenção e registros de garantias", "16": "Documentação e interfaces de obras e reformas", "17": "Adequações de redes e ativos",
+        "18": "Raio-X de Propostas e Orçamentos", "19": "Diagnóstico Sentinela", "20": "Planejamento e Medição", "21": "Visualização e comunicação técnica",
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        cls.html = (SITE / "index.html").read_text(encoding="utf-8")
+        cls.js = (SITE / "app.js").read_text(encoding="utf-8")
+        cls.dados = json.loads((SITE / "catalogo-publico.json").read_text(encoding="utf-8"))
+        cls.ofertas = {o["numero"]: o for o in cls.dados["ofertas"]}
+
+    def test_ordem_final_das_secoes_e_data_chapter(self):
+        achadas = re.findall(r'<section[^>]*class="[^"]*\bchapter\b[^"]*"[^>]*id="([^"]+)"[^>]*data-chapter="(\d\d)"', self.html)
+        self.assertEqual(achadas, self.ORDEM)
+        self.assertEqual(self.html.count("class=\"chapter-rail\""), 1)
+        self.assertIn("<span>08</span>", self.html)
+
+    def test_visao_e_ancora_de_compatibilidade_sem_segunda_chapter(self):
+        self.assertIn('id="visao"', self.html)
+        self.assertNotRegex(self.html, r'<section[^>]*id="visao"')
+        self.assertLess(self.html.index('id="metodo"'), self.html.index('id="visao"'))
+        self.assertLess(self.html.index('id="visao"'), self.html.index('id="experiencia"'))
+
+    def test_inventario_de_ancoras_do_plano(self):
+        for destino in ("inicio", "conteudo", "visao", "metodo", "experiencia", "catalogo", "busca-norma", "frente-entrega-cliente",
+                        "produto-1", "produto-2", "produto-3", "sobre", "contato", "contato-dialog"):
+            self.assertEqual(self.html.count(f'id="{destino}"'), 1, destino)
+        ids = re.findall(r'\bid="([^"]+)"', self.html)
+        self.assertEqual(len(ids), len(set(ids)), "IDs duplicados no index.html")
+        for n, o in self.ofertas.items():
+            if o["tipo"] == "catalogo":
+                self.assertEqual(o["anchor"], f"servico-{n}")
+
+    def test_menu_e_rodape(self):
+        menu = re.search(r'<nav id="main-nav".*?</nav>', self.html, re.S).group(0)
+        alvos = re.findall(r'<a [^>]*href="(#[^"]+)"[^>]*>([^<]+)', menu)
+        self.assertEqual([a[0] for a in alvos], ["#catalogo", "#metodo", "#experiencia", "#sobre", "#contato"])
+        self.assertEqual([a[1].strip() for a in alvos][:4], ["SOLUÇÕES", "COMO ATUAMOS", "EXPERIÊNCIA", "SOBRE"])
+        self.assertIn("data-abrir-contato", menu)
+        self.assertIn("APRESENTAR MEU CENÁRIO", menu)
+        # todo destino interno do menu e do rodapé existe
+        rodape = re.search(r'<div class="footer-links">.*?</div>', self.html, re.S).group(0)
+        for alvo in re.findall(r'href="#([^"]+)"', menu + rodape):
+            self.assertIn(f'id="{alvo}"', self.html, alvo)
+
+    def test_navegacao_destaca_solucoes_nas_entradas_e_regua_termina_em_08(self):
+        self.assertIn("'produto-1': 'catalogo'", self.js)
+        self.assertIn("'produto-2': 'catalogo'", self.js)
+        self.assertIn("'produto-3': 'catalogo'", self.js)
+
+    def test_nada_do_controlador_antigo_de_visao_e_metodo_sobrou(self):
+        todos = self.html + self.js + (SITE / "styles.css").read_text(encoding="utf-8")
+        for resto in ("tri-steps", "tri-status", "tri-media", "tri-node", "tri-lines", "MOVS", "method-steps", "step-card", "method-order"):
+            self.assertNotIn(resto, todos, resto)
+
+    def test_hero_com_acao_principal_e_secundaria(self):
+        hero = re.search(r'<section class="xr chapter" id="inicio".*?</section>', self.html, re.S).group(0)
+        self.assertIn("Veja o que a obra<br><em>ainda não revelou.</em>", hero)
+        self.assertIn("Clareza para decidir. Prioridades para agir. Base para prestar contas.", hero)
+        self.assertRegex(hero, r'<a class="button button--primary" href="#contato" data-abrir-contato>APRESENTAR MEU CENÁRIO')
+        self.assertRegex(hero, r'<a class="button button--ghost" href="#catalogo">CONHECER AS SOLUÇÕES')
+        self.assertNotIn("wa.me", hero)
+
+    def test_21_ofertas_com_nome_final_e_apresentacao_completa(self):
+        self.assertEqual({n: o["nome"] for n, o in self.ofertas.items()}, self.NOMES_FINAIS)
+        for n, o in self.ofertas.items():
+            ap = o["apresentacao"]
+            for campo in ("chamada", "quando", "frase_acao"):
+                self.assertTrue(ap[campo].strip(), f"{n} sem {campo}")
+            self.assertEqual(set(ap["resumo"]), {"entrega", "como", "empresa", "profissional", "por_que_crivia"}, n)
+            self.assertTrue(all(v.strip() for v in ap["resumo"].values()), n)
+            self.assertEqual(set(ap["detalhe"]), {"entrega", "como", "empresa", "profissional", "destinatario", "por_que_crivia"}, n)
+            self.assertTrue(isinstance(ap["detalhe"]["como"], list) and len(ap["detalhe"]["como"]) >= 3, n)
+            self.assertTrue(o["cta"].strip(), n)
+            # a mesclagem não apagou o bloco normativo nem as palavras-chave
+            self.assertTrue(o["normas_e_referencias"]["objetivo"] and o["palavras_chave_normativas"] is not None, n)
+
+    def test_oferta_16_cobre_obras_novas_e_reformas_sem_perder_a_condicao_da_16280(self):
+        o = self.ofertas["16"]
+        self.assertEqual(o["normas_e_referencias"]["objetivo"], "Organizar requisitos, documentos, interfaces e alterações da obra ou reforma, conforme o enquadramento da intervenção.")
+        ref = next(r for r in o["normas_e_referencias"]["referencias"] if r["codigo"] == "ABNT NBR 16280")
+        self.assertIn("reforma", (ref["condicao"] + ref["aplicacao"]).lower())
+        self.assertEqual(self.ofertas["13"]["estado_publico"], "Sob demanda")
+
+    def test_quatro_respostas_nos_dois_caminhos_de_render(self):
+        for rotulo in ("O que você recebe", "Como fazemos", "O que melhora para você", "Por que escolher a CRIVIA", "<b>Empresa:</b>", "<b>Profissional:</b>"):
+            self.assertIn(rotulo, self.js, rotulo)
+        # cards (cardHtml) e entradas (data-respostas) usam a mesma função, alimentada pela fonte do catálogo
+        self.assertRegex(self.js, re.compile(r"const cardHtml = .*?\$\{respostasHtml\(p\)\}", re.S))
+        self.assertIn("rp.innerHTML = respostasHtml(o) + detalheHtml(o)", self.js)
+        self.assertEqual(self.html.count("data-respostas></div>"), 3)
+        for n in ("18", "19", "20"):
+            self.assertIn("resumo", self.ofertas[n]["apresentacao"])
+
+    def test_entradas_usam_o_nome_final_no_titulo_e_no_assunto(self):
+        for n, ancora in (("18", "produto-1"), ("19", "produto-2"), ("20", "produto-3")):
+            sec = re.search(r'<section[^>]*id="%s".*?</section>' % ancora, self.html, re.S).group(0)
+            titulo = re.sub(r"<[^>]+>", " ", re.search(r"<h2>(.*?)</h2>", sec, re.S).group(1))
+            self.assertEqual(" ".join(titulo.split()).rstrip("."), self.NOMES_FINAIS[n])
+            self.assertIn(f'data-assunto="{n} — {self.NOMES_FINAIS[n]}"', sec)
+
+    def test_demonstracoes_identificadas_como_exemplo(self):
+        for trecho in ("Uma aplicação ilustrativa deste trabalho", "Como funciona neste exemplo", "Exemplo ilustrativo",
+                       "Cobertura, formatos, quantidade de páginas, visitas e revisões são definidos na proposta."):
+            self.assertIn(trecho, self.js, trecho)
+        self.assertNotIn("nome: 'Raio-X de Propostas e Orçamentos'", self.js, "o título do painel vem do catálogo, não de LABS")
+
+    def test_atalhos_do_catalogo(self):
+        bloco = re.search(r'<nav class="catalog-atalhos".*?</nav>', self.html, re.S).group(0)
+        self.assertEqual(re.findall(r'href="([^"]+)"><b>(\d\d)</b>', bloco), [("#produto-1", "18"), ("#servico-14", "14"), ("#servico-13", "13"), ("#produto-3", "20")])
+        entradas = re.search(r'<nav class="catalog-entradas".*?</nav>', self.html, re.S).group(0)
+        self.assertEqual(re.findall(r'href="([^"]+)"><b>(\d\d)</b><span>([^<]+)', entradas),
+                         [("#produto-1", "18", self.NOMES_FINAIS["18"]), ("#produto-2", "19", self.NOMES_FINAIS["19"]), ("#produto-3", "20", self.NOMES_FINAIS["20"])])
+        self.assertNotIn("#servico-18", self.html)
+
+    def test_fechamento_e_dialogo(self):
+        for trecho in ("Traga o cenário. Vamos definir o próximo passo.", "O que sua empresa precisa<br><em>decidir ou entregar agora?</em>",
+                       "Apresente seu cenário.", "CONTINUAR NO WHATSAPP", "Não envie documentos confidenciais nesta etapa.",
+                       'maxlength="700"', "Preciso decidir ou entregar __.", "contato@criviaengenharia.com.br"):
+            self.assertIn(trecho, self.html, trecho)
+        contato = re.search(r'<section class="contact chapter".*?</section>', self.html, re.S).group(0)
+        self.assertEqual(len(re.findall(r'data-abrir-contato', contato)), 1, "um único CTA principal no fechamento")
+        self.assertIn("encodeURIComponent", self.js)
+        self.assertIn('rel="noopener"', contato)
+
+    def test_experiencia_vem_antes_do_catalogo_com_marcadores_e_links_seguros(self):
+        self.assertLess(self.html.index('id="experiencia"'), self.html.index('id="catalogo"'))
+        self.assertIn("<!-- EXPERIENCIAS:INICIO -->", self.html)
+        self.assertIn("<!-- EXPERIENCIAS:FIM -->", self.html)
+        for href in re.findall(r'<a class="exp-go" href="([^"]+)" target="_blank" rel="noopener"', self.html):
+            self.assertTrue((SITE / href).is_file(), href)
+        self.assertEqual(self.html.count('class="exp-go"'), 2)
+
+    def test_numeros_do_sobre_preservados(self):
+        sobre = re.search(r'<section class="about chapter".*?</section>', self.html, re.S).group(0)
+        for trecho in ("20<small>anos</small>", "35<small>projetos</small>", "R$ 380<small>mi</small>", "Bruno Malta", "Engenheiro e fundador da CRIVIA", "VISÃO", "MISSÃO", "FILOSOFIA"):
+            self.assertIn(trecho, sobre, trecho)
 
 
 class Servidor(unittest.TestCase):
