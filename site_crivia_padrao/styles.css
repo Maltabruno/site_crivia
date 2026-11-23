@@ -894,3 +894,16 @@ body { --lx: 62%; --ly: 48%; }
 .frente .frente-go { margin-top: auto; width: 100%; }
 @media (max-width: 900px) { .frente { grid-template-columns: 1fr; } .frente .frente-chamada { margin-top: 6px; } }
 
+/* Sobre: imagem "a peça que faltava" ao lado do título, ocupando o espaço da direita */
+.about-head { grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); align-items: center; }
+.about-head h2 { grid-column: 1; grid-row: 2; }
+.about-head > p:not(.section-code) { grid-column: 1; grid-row: 3; align-self: start; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+.about-visual { grid-column: 2; grid-row: 2 / span 2; position: relative; margin: 0; border: 1px solid var(--line-strong); box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 40px rgba(10,168,255,.12); overflow: hidden; }
+.about-visual img { width: 100%; height: auto; display: block; -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent 100%); mask-image: linear-gradient(180deg, #000 90%, transparent 100%); transition: transform 1.2s var(--ease); }
+.about-visual:hover img { transform: scale(1.03); }
+.about-visual figcaption { position: absolute; left: 12px; bottom: 10px; padding: 4px 8px; border: 1px dashed rgba(148,208,255,.45); background: rgba(2,9,18,.7); color: var(--soft); font: 700 10px/1 var(--text); letter-spacing: .1em; text-transform: uppercase; }
+@media (max-width: 800px) {
+  .about-head { grid-template-columns: 1fr; }
+  .about-head h2, .about-head > p:not(.section-code), .about-visual { grid-column: 1; grid-row: auto; }
+}
+
