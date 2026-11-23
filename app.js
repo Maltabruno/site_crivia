@@ -410,7 +410,7 @@ const GRUPOS = [
     grid.setAttribute('aria-labelledby', `aba-${gi}`);
     grid.innerHTML = GRUPOS[gi].ns.map((n, k) => cardHtml(PRODUTOS.find((x) => x.numero === n), k)).join('');
   };
-  tabs.innerHTML = GRUPOS.map((g, i) => `<button type="button" role="tab" id="aba-${i}" aria-controls="catalog-grid" aria-selected="false" tabindex="-1" data-g="${i}"><span>0${i + 1}</span>${esc(g.nome)}</button>`).join('');
+  tabs.innerHTML = GRUPOS.map((g, i) => `<button type="button" role="tab" id="aba-${i}" aria-controls="catalog-grid" aria-selected="false" tabindex="-1" data-g="${i}"><span>0${i + 1}</span><b>${esc(g.nome)}</b><em class="tab-qtd">${g.ns.length} serviços</em></button>`).join('');
   tabs.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => mostrarGrupo(+b.dataset.g)));
   tabs.addEventListener('keydown', (e) => {
     const atual = +document.activeElement.dataset.g;
