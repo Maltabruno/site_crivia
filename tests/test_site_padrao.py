@@ -239,7 +239,7 @@ class Catalogo21(unittest.TestCase):
         for trecho in ("normasHtml", "busca-q", "ehCondicional", "data-normas"):
             self.assertIn(trecho, js, trecho)
         self.assertIn('id="busca-norma"', self.html)
-        self.assertIn("Encontre o serviço pela norma", self.html)
+        self.assertIn("Procura um serviço por norma?", self.html)
         self.assertEqual(self.html.count("data-normas></div>"), 3)
 
     def test_gerador_preserva_campos_normativos(self):
