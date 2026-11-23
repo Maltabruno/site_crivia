@@ -456,7 +456,7 @@ const GRUPOS = [
     if (cta) { cta.dataset.assunto = assuntoDe(o); cta.textContent = rotuloCta(o); }
   });
 
-  /* ───────── "Encontre o serviço pela norma": índice norma → produtos, com busca local ─────────
+  /* ───────── busca "Procura um serviço por norma?": índice norma → produtos, com busca local ─────────
      Normaliza caixa, acentos, espaços, pontuação e hífens (NBR15.575, nbr 15575 e 15575 levam ao mesmo lugar). Sem backend. */
   const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
   const todas = PRODUTOS.concat(ENTRADAS).sort((x, y) => x.numero.localeCompare(y.numero));
@@ -479,6 +479,7 @@ const GRUPOS = [
     if (!q) { buscaRes.innerHTML = ''; return; }
     const achados = entradasDoIndice.filter((e) => casa(e, q));
     if (!achados.length) {
+      const lista = document.querySelector('#busca-lista'); if (lista) lista.open = true;
       buscaRes.innerHTML = `<p class="busca-vazio">Nenhuma norma ou referência encontrada para “${esc(q)}”. A lista abaixo mostra o que o catálogo cita; se a sua norma não está nela, descreva o seu caso.</p><a href="#contato" data-abrir-contato data-assunto="${esc('Norma procurada: ' + q)}">DESCREVER O MEU CASO ↗</a>`;
       return;
     }
@@ -494,8 +495,25 @@ const GRUPOS = [
     });
   }
 
-  /* ───────── como atuamos (#metodo): explicação estática; só o fundo reage à lente do cursor ───────── */
+  /* ───────── como atuamos (#metodo): as três etapas acendem em sequência; o fundo reage à lente do cursor ───────── */
   const metodo = document.querySelector('#metodo');
+  const etapas = [...metodo.querySelectorAll('.method-blocks li')];
+  const ETAPA_MS = 3600;
+  let etapaAtual = 0, etapaTimer = 0, etapaPausa = false;
+  metodo.style.setProperty('--etapa', ETAPA_MS + 'ms');
+  const acender = (i) => {
+    etapaAtual = i;
+    etapas.forEach((li, k) => { li.classList.toggle('is-on', k === i); li.classList.toggle('is-done', k < i); });
+    clearTimeout(etapaTimer);
+    if (!reducedMotion && !etapaPausa) etapaTimer = setTimeout(() => acender((etapaAtual + 1) % etapas.length), ETAPA_MS);
+  };
+  etapas.forEach((li, k) => {
+    li.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) { etapaPausa = true; metodo.classList.add('is-paused'); acender(k); } });
+  });
+  if (etapas.length) {
+    metodo.querySelector('.method-blocks').addEventListener('mouseleave', () => { etapaPausa = false; metodo.classList.remove('is-paused'); acender((etapaAtual + 1) % etapas.length); });
+    acender(0);
+  }
   metodo.addEventListener('pointerleave', () => { metodo.classList.remove('is-hover'); });
   metodo.addEventListener('pointermove', (event) => {
     const r = metodo.getBoundingClientRect();

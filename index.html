@@ -10,7 +10,7 @@
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/PlusJakartaSans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=5200be5b">
+  <link rel="stylesheet" href="styles.css?v=34a56e8f">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -228,14 +228,6 @@
             </ul>
           </nav>
         </div>
-        <section class="busca-norma" id="busca-norma" aria-labelledby="busca-titulo">
-          <h3 id="busca-titulo">Encontre o serviço pela norma</h3>
-          <p>Digite o número de uma norma (por exemplo <em>15575</em>, <em>NBR 5674</em> ou <em>ISO 14040</em>) ou um assunto, como acessibilidade. A busca mostra os serviços relacionados e o alcance de cada um.</p>
-          <label class="busca-label" for="busca-q">Norma ou assunto</label>
-          <input id="busca-q" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Ex.: NBR 15575, 14037, manutenção…">
-          <div class="busca-sug" id="busca-sug"></div>
-          <div class="busca-res" id="busca-res" aria-live="polite"></div>
-        </section>
         <div class="catalog-tabs" role="tablist" aria-label="Grupos de produtos" id="catalog-tabs"></div>
         <p class="catalog-nota">As normas citadas em cada produto são referências relacionadas ao objeto. A edição, as partes e os itens aplicáveis são definidos em cada proposta, e a citação não é declaração de conformidade nem certificação. Contorno tracejado indica referência condicional ou atividade adicional.</p>
         <div class="catalog-grid" id="catalog-grid" role="tabpanel"></div>
@@ -247,6 +239,20 @@
           <p class="frente-chamada">Conte o que você precisa entregar e qual é o prazo. A contratação começa pela necessidade e pelo escopo, não pela promessa de atendimento integral a toda norma.</p>
           <button type="button" class="frente-go" data-grupo="3">VER AS 6 OFERTAS DESTA FRENTE <span aria-hidden="true">→</span></button>
         </aside>
+        <section class="busca-norma" id="busca-norma" aria-labelledby="busca-titulo">
+          <div class="busca-topo">
+            <div>
+              <h3 id="busca-titulo">Procura um serviço por norma?</h3>
+              <p>Digite o número ou um assunto. A busca mostra os serviços relacionados e o alcance de cada um.</p>
+            </div>
+            <div class="busca-campo">
+              <label class="busca-label" for="busca-q">Norma ou assunto</label>
+              <input id="busca-q" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Ex.: NBR 15575, 14037, acessibilidade…">
+            </div>
+          </div>
+          <div class="busca-res" id="busca-res" aria-live="polite"></div>
+          <details class="busca-lista" id="busca-lista"><summary>Ver as normas e referências citadas no catálogo</summary><div class="busca-sug" id="busca-sug"></div></details>
+        </section>
       </div>
     </section>
 
@@ -386,6 +392,6 @@
   </dialog>
 
   <div class="chapter-rail" aria-hidden="true"><b>00</b><i></i><span>08</span></div>
-  <script src="app.js?v=41d17aa4"></script>
+  <script src="app.js?v=0c8ec097"></script>
 </body>
 </html>
