@@ -52,6 +52,11 @@ class SitePadrao(unittest.TestCase):
         """As 12 imagens aprovadas continuam existindo; as ofertas novas (13 a 17 e 21) não exigem imagem."""
         for n in range(1, 13):
             self.assertTrue((SITE / "assets" / "produtos-s" / f"{n:02d}.jpg").is_file(), n)
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        declaradas = re.search(r"const IMAGENS = new Set\(\[(.*?)\]\)", js).group(1)
+        for n in re.findall(r"'(\d\d)'", declaradas):
+            self.assertTrue((SITE / "assets" / "produtos-s" / f"{n}.jpg").is_file(), f"imagem {n} declarada e ausente")
+        self.assertTrue({f"{n:02d}" for n in range(1, 13)} <= set(re.findall(r"'(\d\d)'", declaradas)))
 
     def test_whatsapp_e_email_confirmados(self):
         js = (SITE / "app.js").read_text(encoding="utf-8")
