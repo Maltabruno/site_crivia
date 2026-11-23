@@ -65,7 +65,7 @@
       "entregas": "Quadro de alternativas; premissas e fontes; consequências técnicas e estimativas no nível contratado; recomendação e diligências.",
       "limites": "Projeto executivo, aprovação urbanística, topografia, geotecnia e viabilidade integral não são presumidos.",
       "referencia": "ABNT NBR 13133 — Levantamento topográfico: Conferir identificação e alcance do levantamento topográfico usado no estudo.; ABNT NBR 14645 (série) — Como construído, levantamentos e controle dimensional: Relacionar o estudo aos levantamentos/controles do imóvel pertinentes à parte selecionada.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Contextualizar CUB/quadros de incorporação usados na comparação.; SINAPI — CAIXA — Referências técnicas e custos da construção: Formar comparações de custos de serviços efetivamente quantificados.",
-      "cta": "Apresente o terreno, as alternativas e a decisão necessária.",
+      "cta": "Conversar sobre a escolha de implantação",
       "anchor": "servico-01",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -139,7 +139,32 @@
         "NBR 12721",
         "SINAPI — CAIXA",
         "Referências técnicas e custos da construção"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Compare as opções de implantação antes de comprometer o investimento.",
+        "quando": "Você tem alternativas de terreno ou implantação e precisa justificar uma escolha antes de contratar projetos, obras ou compras.",
+        "resumo": {
+          "entrega": "Comparação das implantações, com premissas, restrições e condições de escolha para orientar o investimento e o projeto.",
+          "como": "Definimos a necessidade, comparamos alternativas na mesma base e verificamos o que pode mudar a recomendação.",
+          "empresa": "Escolher conhecendo compromissos e incertezas.",
+          "profissional": "Apresentar à direção uma recomendação explicável e as confirmações necessárias.",
+          "por_que_crivia": "A CRIVIA relaciona as restrições à sua decisão. Compare a equivalência das alternativas, as fontes e a utilidade das condições de escolha."
+        },
+        "detalhe": {
+          "entrega": "Um quadro comparativo das alternativas, com restrições, premissas, estimativas no nível contratado e recomendação condicionada às informações disponíveis. Você usa esse material para decidir o próximo investimento e orientar o projetista.",
+          "como": [
+            "Definimos a necessidade que todas as alternativas devem atender e identificamos as bases disponíveis.",
+            "Comparamos as opções com os mesmos critérios e verificamos quais premissas podem mudar a escolha.",
+            "Apresentamos consequências, incertezas e confirmações necessárias antes do compromisso."
+          ],
+          "empresa": "Você passa a enxergar os compromissos de cada alternativa antes de escolher. Pode direcionar o capital e as próximas contratações com razões registradas, sem confundir a opção aparentemente mais barata com a mais adequada.",
+          "profissional": "Você leva à direção uma comparação explicável, sabe quais informações ainda precisa solicitar e registra as razões da recomendação. O trabalho facilita alinhar projetos e responder a perguntas sobre a escolha.",
+          "destinatario": "A prestadora pode apresentar uma escolha fundamentada ao cliente, com condições de uso da recomendação.",
+          "por_que_crivia": "A CRIVIA relaciona as restrições de implantação à decisão que você precisa tomar e entrega condições de escolha utilizáveis pela gestão e pelo projetista. Compare a qualidade da análise pelas fontes, pela equivalência das alternativas e pelas perguntas que ela resolve."
+        },
+        "frase_acao": "Conte sobre o terreno, as alternativas e a decisão necessária."
+      }
     },
     {
       "numero": "02",
@@ -160,7 +185,7 @@
       "entregas": "Inventário de fontes; quadro/mapa de condicionantes; incertezas; diligências e estudos necessários.",
       "limites": "Não presume licenciamento, laudo ambiental integral, estudo de inundação, sondagem ou regularidade integral do imóvel.",
       "referencia": "ABNT NBR 13133 — Levantamento topográfico: Conferir origem e condições da base topográfica usada para localizar o imóvel.; ABNT NBR 15515 (série) — Passivo ambiental em solo e água subterrânea: Enquadrar a avaliação/investigação de passivo em solo e água subterrânea.",
-      "cta": "Informe a localização, o uso pretendido e a dúvida sobre o terreno.",
+      "cta": "Conversar sobre as condicionantes do terreno",
       "anchor": "servico-02",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -204,7 +229,32 @@
         "Passivo ambiental em solo e água subterrânea",
         "15515",
         "NBR 15515"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Saiba o que precisa confirmar no terreno antes de assumir um compromisso.",
+        "quando": "Você considera comprar, projetar ou ocupar um imóvel, mas mapas e documentos não esclarecem suas condicionantes.",
+        "resumo": {
+          "entrega": "Quadro de condicionantes e diligências do terreno, com fontes, limites e próximos encaminhamentos.",
+          "como": "Conferimos mapas e documentos, localizamos alertas e separamos informação disponível de necessidade de investigação.",
+          "empresa": "Direcionar os próximos estudos antes de assumir o compromisso.",
+          "profissional": "Saber o que solicitar e explicar o que ainda precisa ser confirmado.",
+          "por_que_crivia": "A CRIVIA transforma as bases do terreno em perguntas para agir. Compare qualidade das fontes, limites e relevância das diligências."
+        },
+        "detalhe": {
+          "entrega": "Um inventário das fontes consultadas e um quadro de condicionantes, com localização dos alertas, limitações da informação e diligências necessárias. Você recebe perguntas e encaminhamentos para orientar o aprofundamento técnico.",
+          "como": [
+            "Identificamos imóvel, uso pretendido e documentos disponíveis.",
+            "Conferimos origem, data, escala e compatibilidade das bases e localizamos os alertas pertinentes.",
+            "Separamos o que a documentação sustenta do que exige confirmação em campo ou estudo especializado."
+          ],
+          "empresa": "Você evita assumir como confirmada uma condição que ainda não foi investigada. Consegue organizar o próximo investimento em levantamento ou estudo conforme as dúvidas relevantes para o negócio.",
+          "profissional": "Você recebe um roteiro de diligências com fonte e encaminhamento, para solicitar informações e explicar à chefia o que já se sabe e o que continua pendente.",
+          "destinatario": "A base entregue ao cliente distingue informação cartográfica, hipótese e confirmação necessária.",
+          "por_que_crivia": "A CRIVIA transforma mapas e documentos em um quadro de questões para a sua decisão, identificando a consequência de cada alerta e o próximo encaminhamento. A preferência deve ser verificada pela qualidade das fontes e pela utilidade das diligências propostas."
+        },
+        "frase_acao": "Informe a localização, o uso pretendido e a dúvida sobre o terreno."
+      }
     },
     {
       "numero": "03",
@@ -225,7 +275,7 @@
       "entregas": "Matriz de ocorrências validadas; localizações e imagens; questões aos autores; registro das respostas e situação do recorte.",
       "limites": "Não presume modelagem nova, projeto executivo, revisão integral de cálculo ou solução assinada em nome do projetista.",
       "referencia": "ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar versões, intercâmbio, ocorrências e respostas no fluxo BIM adotado.; ABNT NBR 6492 — Documentação e representação de projetos arquitetônicos e urbanísticos: Conferir a documentação/representação de arquitetura no recorte examinado.; ABNT NBR 16636 (série) — Serviços técnicos de projetos arquitetônicos e urbanísticos: Relacionar a conferência às etapas/documentos dos serviços de projeto pertinentes.",
-      "cta": "Envie as disciplinas, as versões e a interface que precisa de resposta.",
+      "cta": "Conversar sobre uma interface de projeto",
       "anchor": "servico-03",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -322,7 +372,32 @@
         "Serviços técnicos de projetos arquitetônicos e urbanísticos",
         "16636",
         "NBR 16636"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Transforme interferências entre projetos em questões com resposta e encaminhamento.",
+        "quando": "Uma dúvida entre disciplinas pode afetar uma compra ou a execução, e a lista de ocorrências do modelo ainda não produziu uma resposta dos responsáveis.",
+        "resumo": {
+          "entrega": "Matriz de interfaces verificadas, com localização, revisão, consequência e situação das respostas dos responsáveis.",
+          "como": "Fixamos versões, validamos ocorrências, consultamos os autores e conferimos as respostas na rodada incluída.",
+          "empresa": "Priorizar questões que afetam compra ou execução.",
+          "profissional": "Encaminhar perguntas e acompanhar respostas sem perder o histórico das versões.",
+          "por_que_crivia": "A CRIVIA conecta a ocorrência ao marco da obra e ao responsável. Compare a qualidade do tratamento e das respostas, além da detecção."
+        },
+        "detalhe": {
+          "entrega": "Uma matriz de ocorrências verificadas, com localização, versão dos projetos, consequência para a compra ou execução, responsáveis consultados e situação das respostas. O pacote mostra o que foi esclarecido e o que permanece pendente.",
+          "como": [
+            "Fixamos as versões e selecionamos as interfaces incluídas no trabalho.",
+            "Conferimos as ocorrências e distinguimos questões reais de falsos positivos.",
+            "Encaminhamos as perguntas aos autores e registramos a resposta e a revisão na rodada contratada."
+          ],
+          "empresa": "Você ganha visibilidade das interfaces que precisam de decisão antes de comprar ou executar. Pode orientar prioridades e evitar assumir que uma lista de conflitos representa problemas já resolvidos.",
+          "profissional": "Você sabe a quem encaminhar cada questão e consegue acompanhar respostas por versão. Leva à reunião uma lista de decisões necessárias, com registro do tratamento dado.",
+          "destinatario": "O cliente recebe uma apresentação localizável das interfaces examinadas e das pendências dos projetistas.",
+          "por_que_crivia": "A CRIVIA conecta a ocorrência do modelo à consequência prática e ao responsável pela resposta. Compare o serviço pela qualidade das ocorrências validadas e pelo tratamento das respostas, além da quantidade de conflitos detectados."
+        },
+        "frase_acao": "Descreva a interface, as disciplinas e o marco de compra ou execução."
+      }
     },
     {
       "numero": "04",
@@ -343,7 +418,7 @@
       "entregas": "Memória do ciclo; matriz item/evidência/diferença; diligências; recomendação técnica e pendências.",
       "limites": "Não presume fiscalização permanente, controle tecnológico, decisão de pagamento ou imagem capaz de medir sozinha.",
       "referencia": "Contrato, anexos de medição, projeto, especificações e normas do serviço medido. Não foi definida uma NBR única transversal para este produto.",
-      "cta": "Apresente o contrato, o boletim e a data de corte.",
+      "cta": "Conversar sobre a próxima medição",
       "anchor": "servico-04",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -353,7 +428,32 @@
         "referencias": [],
         "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
       },
-      "palavras_chave_normativas": []
+      "palavras_chave_normativas": [],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Tenha uma base verificável para apresentar ou decidir uma medição.",
+        "quando": "O fechamento da medição se aproxima e há divergência entre quantidade cobrada, critério contratual e comprovação disponível.",
+        "resumo": {
+          "entrega": "Memória da medição, diferenças, evidências e pendências para apresentar a cobrança ou subsidiar a decisão do contratante.",
+          "como": "Fixamos corte e critérios, confrontamos quantidades e registros e tratamos as exceções incluídas.",
+          "empresa": "Discutir a medição com suporte técnico.",
+          "profissional": "Explicar itens questionados, localizar a base e acompanhar a informação faltante.",
+          "por_que_crivia": "A CRIVIA relaciona cada diferença ao contrato e à evidência. Compare a memória, o fundamento da recomendação e a clareza dos encaminhamentos."
+        },
+        "detalhe": {
+          "entrega": "Uma memória da medição no corte acordado, com itens, critérios, quantidades, evidências, diferenças e pendências. Você recebe uma recomendação técnica para subsidiar a submissão ou a decisão da autoridade responsável.",
+          "como": [
+            "Definimos o corte, os itens e os critérios do contrato.",
+            "Confrontamos os registros e as verificações incluídas com o que foi apresentado na medição.",
+            "Tratamos as exceções e explicamos diferenças e pendências antes da recomendação."
+          ],
+          "empresa": "O contratante dispõe de suporte para decidir sobre a medição; a prestadora consegue apresentar o que sustenta sua cobrança. Ambas ganham clareza sobre a diferença em discussão, sem promessa de pagamento ou glosa.",
+          "profissional": "Você consegue explicar um item questionado, localizar o suporte e acompanhar a resposta necessária. A memória ajuda a prestar contas do fechamento e a preparar a próxima submissão.",
+          "destinatario": "Quem recebe a medição consegue identificar o critério usado, a base da quantidade e as pendências.",
+          "por_que_crivia": "A CRIVIA assume a conferência ou preparação do ciclo definido e relaciona cada diferença ao contrato e à evidência disponível. Compare a qualidade da memória e a clareza dos encaminhamentos que sustentam a recomendação."
+        },
+        "frase_acao": "Apresente o período da medição, os itens questionados e o próximo corte."
+      }
     },
     {
       "numero": "05",
@@ -374,7 +474,7 @@
       "entregas": "Aplicação contratação: mapa de equalização e questões. Aplicação pleito: cronologia, matriz de suporte, memória de impacto e questões para negociação.",
       "limites": "Não presume orçamento do zero, defesa jurídica, perícia integral ou procedência do pedido.",
       "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Comparar itens orçados com referência contextualizada, quando pertinente.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Conferir referências de CUB/custos/quadros no campo de incorporação.; ABNT NBR 13752 — Perícias de engenharia na construção civil: Aplicar procedimento pericial quando houver contratação de natureza pericial.",
-      "cta": "Informe se a questão é uma contratação ou um pleito e apresente a base disponível.",
+      "cta": "Conversar sobre propostas ou um pleito",
       "anchor": "servico-05",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -432,7 +532,32 @@
         "Perícias de engenharia na construção civil",
         "13752",
         "NBR 13752"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Compare propostas equivalentes ou organize a base técnica de um pleito.",
+        "quando": "Você precisa escolher entre propostas com escopos diferentes ou discutir um evento que alterou preço, prazo ou condições do contrato.",
+        "resumo": {
+          "entrega": "Mapa de propostas equivalentes ou cronologia e suporte técnico de um pleito, conforme a aplicação contratada.",
+          "como": "Equalizamos bases de contratação ou reconstruímos evento, evidências e impacto para organizar as questões de negociação.",
+          "empresa": "Negociar conhecendo diferenças e condições do compromisso.",
+          "profissional": "Apresentar fontes, perguntas e premissas à direção e às áreas envolvidas.",
+          "por_que_crivia": "A CRIVIA estrutura a análise para a negociação concreta. Compare a ligação entre fonte, diferença, impacto e encaminhamento de cada aplicação."
+        },
+        "detalhe": {
+          "entrega": "Na contratação, um mapa de equalização com inclusões, exclusões, diferenças de base e perguntas aos fornecedores. No pleito, uma cronologia do evento, evidências, análise técnica do impacto no alcance contratado e questões para negociação.",
+          "como": [
+            "Identificamos qual aplicação será contratada e fixamos versões, período e cobertura.",
+            "Na equalização, colocamos as propostas na mesma base; no pleito, reconstruímos evento, suporte e causas concorrentes.",
+            "Apresentamos diferenças, limites e perguntas utilizáveis na decisão comercial, com encaminhamento jurídico quando necessário."
+          ],
+          "empresa": "Você negocia conhecendo as diferenças de escopo ou a sustentação técnica do pedido. Pode avaliar o compromisso com mais clareza, sem tratar diferença de preço como diferença automática de vantagem.",
+          "profissional": "Você leva à diretoria ou à negociação um mapa ou uma cronologia com fontes, registra os pontos esclarecidos e distingue a questão técnica da decisão jurídica ou comercial.",
+          "destinatario": "A prestadora consegue apresentar um pedido técnico organizado, com o que está fundamentado e o que depende de confirmação.",
+          "por_que_crivia": "A CRIVIA organiza a análise ao redor da negociação concreta e entrega uma base que pode ser discutida item a item. A escolha deve considerar a coerência entre fonte, diferença, impacto e encaminhamento, no escopo acordado."
+        },
+        "frase_acao": "Conte se precisa comparar propostas ou examinar um evento do contrato e qual é o prazo."
+      }
     },
     {
       "numero": "06",
@@ -453,7 +578,7 @@
       "entregas": "Registro da cobertura e das condições; manifestações localizadas; limitações; encaminhamentos e plano de investigação no alcance.",
       "limites": "Não presume declaração de estabilidade, diagnóstico estrutural integral, ensaio, cálculo ou projeto de recuperação.",
       "referencia": "ABNT NBR 16747 — Inspeção predial: Definir o alcance de inspeção predial quando esse serviço for contratado.; ABNT NBR 5674 — Gestão da manutenção de edificações: Relacionar as constatações com programa/histórico de manutenção.",
-      "cta": "Informe o ativo, a ocorrência e a finalidade da inspeção.",
+      "cta": "Conversar sobre a inspeção necessária",
       "anchor": "servico-06",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -497,7 +622,32 @@
         "Gestão da manutenção de edificações",
         "5674",
         "NBR 5674"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Organize o que foi observado e saiba quais verificações precisam vir depois.",
+        "quando": "Existe uma manifestação aparente ou uma necessidade de inspeção, mas faltam registros localizáveis e encaminhamento técnico no alcance pretendido.",
+        "resumo": {
+          "entrega": "Registro das condições examinadas, com manifestações localizadas, cobertura, limitações e encaminhamentos técnicos.",
+          "como": "Definimos finalidade e método, observamos a cobertura contratada e revisamos as constatações e necessidades de aprofundamento.",
+          "empresa": "Organizar o próximo investimento em avaliação ou intervenção.",
+          "profissional": "Encaminhar ao especialista uma pergunta acompanhada de localização e registros.",
+          "por_que_crivia": "A CRIVIA prepara uma base utilizável por gestão e especialistas. Compare adequação do método, cobertura e fundamento das conclusões."
+        },
+        "detalhe": {
+          "entrega": "Um registro das áreas e condições examinadas, com manifestações localizadas, imagens, limitações de acesso e encaminhamentos técnicos. A investigação complementar é indicada conforme a pergunta e o método utilizados.",
+          "como": [
+            "Definimos finalidade, cobertura, acesso e competência necessários ao trabalho.",
+            "Observamos e registramos as condições no método e na cobertura contratados.",
+            "Revisamos as constatações e indicamos prioridades e aprofundamentos com seus fundamentos."
+          ],
+          "empresa": "Você dispõe de uma base organizada para decidir o próximo investimento em investigação ou intervenção. Consegue distinguir o que foi examinado do que ainda precisa de avaliação especializada.",
+          "profissional": "Você localiza a ocorrência, explica a cobertura da verificação e encaminha ao especialista uma pergunta acompanhada de registros. Facilita acompanhar a providência solicitada.",
+          "destinatario": "O destinatário recebe constatações com localização e limites que ajudam a organizar o próximo passo técnico.",
+          "por_que_crivia": "A CRIVIA organiza o registro para que ele seja utilizável pela gestão e pelos especialistas, relacionando constatação, limitação e encaminhamento. Compare o serviço pela adequação do método e pela qualidade da cobertura e das conclusões."
+        },
+        "frase_acao": "Descreva a ocorrência, o local e a finalidade da inspeção."
+      }
     },
     {
       "numero": "07",
@@ -518,7 +668,7 @@
       "entregas": "Mapa do saldo e sua base; cenários; premissas e riscos; decisões e marcos; atualização no ciclo contratado.",
       "limites": "Não presume rating, autorização de crédito, auditoria financeira ou garantia de preço final.",
       "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Contextualizar custos do saldo por serviço, UF e data-base.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Contextualizar itens de infraestrutura de transportes, quando pertinentes.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Identificar limites de referência baseada em CUB/quadros de incorporação.",
-      "cta": "Apresente o saldo de serviços, os compromissos e a próxima decisão de aporte.",
+      "cta": "Conversar sobre o saldo para concluir",
       "anchor": "servico-07",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -574,7 +724,32 @@
         "Custos de construção para incorporação e condomínios",
         "12721",
         "NBR 12721"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Veja o saldo da obra e as condições para financiar sua conclusão.",
+        "quando": "Você precisa decidir um novo aporte ou reordenar frentes, mas custos, pagamentos, compromissos e serviços restantes estão misturados.",
+        "resumo": {
+          "entrega": "Mapa do saldo para concluir, com compromissos, premissas e cenários para avaliar aporte e continuidade.",
+          "como": "Fixamos o corte, reconciliamos avanço e compromissos e estimamos os serviços remanescentes com suas incertezas.",
+          "empresa": "Decidir recursos e prioridades com o saldo explicado.",
+          "profissional": "Justificar a previsão e mostrar por que ela mudou entre revisões.",
+          "por_que_crivia": "A CRIVIA conecta saldo físico, compromissos e condições de conclusão. Compare as bases dos pacotes e a explicação das diferenças."
+        },
+        "detalhe": {
+          "entrega": "Um mapa do que falta concluir por pacote, com bases da estimativa, compromissos existentes, cenários e riscos. Você usa a síntese para avaliar necessidade de recursos, prioridades e condições de continuidade.",
+          "como": [
+            "Fixamos a data de corte, o escopo e a qualidade das informações.",
+            "Reconciliamos avanço físico, custos e compromissos e estimamos os serviços remanescentes no nível possível.",
+            "Explicamos os cenários, as premissas sensíveis e os marcos em que a previsão deve ser atualizada."
+          ],
+          "empresa": "Você passa a discutir o aporte com o saldo explicado, diferenciando custo de conclusão e momento do desembolso. Pode direcionar recursos e negociar prioridades conhecendo incertezas e compromissos.",
+          "profissional": "Você consegue explicar à direção de onde veio a previsão, atualizar as premissas e registrar por que o saldo mudou. A memória oferece uma base comum para planejamento e controladoria.",
+          "destinatario": "A prestadora pode demonstrar o saldo e as condições necessárias para concluir o recorte do contrato.",
+          "por_que_crivia": "A CRIVIA relaciona saldo físico, compromissos financeiros e hipóteses de conclusão em uma síntese para decidir. Compare a proposta pela rastreabilidade dos pacotes e pela explicação das diferenças, e não apenas pelo valor final estimado."
+        },
+        "frase_acao": "Conte o estágio da obra, a dúvida sobre o saldo e a próxima decisão de aporte."
+      }
     },
     {
       "numero": "08",
@@ -595,7 +770,7 @@
       "entregas": "Matriz de alertas; fontes/cobertura; investimento preliminar quando incluído; diligências e condições a verificar.",
       "limites": "Não presume avaliação integral, diligência jurídica/ambiental completa ou ausência de vícios.",
       "referencia": "ABNT NBR 16747 — Inspeção predial: Relacionar a triagem ao alcance de inspeção física efetivamente incluído.; ABNT NBR 14653 (série) — Avaliação de bens: Orientar avaliação de valor do bem quando contratada separadamente.; ABNT NBR 15515 (série) — Passivo ambiental em solo e água subterrânea: Enquadrar diligências de passivo ambiental se a tese de compra exigir.",
-      "cta": "Informe o ativo, o uso pretendido e o prazo da aquisição.",
+      "cta": "Conversar sobre a compra do ativo",
       "anchor": "servico-08",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -655,7 +830,32 @@
         "Passivo ambiental em solo e água subterrânea",
         "15515",
         "NBR 15515"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Leve os alertas técnicos relevantes para a negociação de compra do ativo.",
+        "quando": "A negociação está aberta e uma dúvida sobre o imóvel ou seus sistemas pode mudar a decisão, a condição de compra ou o próximo estudo.",
+        "resumo": {
+          "entrega": "Matriz de alertas e diligências técnicas para a compra do ativo, com cobertura e limitações explícitas.",
+          "como": "Definimos a pergunta da aquisição, examinamos documentos e acessos incluídos e encaminhamos os aprofundamentos necessários.",
+          "empresa": "Levar questões técnicas relevantes à negociação.",
+          "profissional": "Coordenar perguntas da engenharia e justificar as diligências à equipe de aquisição.",
+          "por_que_crivia": "A CRIVIA organiza a triagem para o marco da negociação. Compare materialidade dos alertas, fontes e utilidade das condições a verificar."
+        },
+        "detalhe": {
+          "entrega": "Uma matriz de alertas técnicos com fontes, cobertura, limitações e diligências. Quando contratado e sustentado pela base, inclui uma estimativa preliminar do investimento técnico identificado.",
+          "como": [
+            "Definimos uso pretendido, pergunta de compra e sistemas incluídos.",
+            "Examinamos os documentos e os acessos contratados e distinguimos condição observada, estimativa e informação ausente.",
+            "Apresentamos os alertas relevantes, as condições a verificar e o aprofundamento necessário para a transação."
+          ],
+          "empresa": "Você inclui as questões técnicas pertinentes na conta da aquisição e pode negociar condições ou solicitar diligências antes do compromisso. A cobertura explícita evita uma falsa sensação de análise integral.",
+          "profissional": "Você reúne as perguntas de engenharia para a equipe de aquisição, justifica a contratação de especialistas e presta contas do que foi examinado e do que continua em aberto.",
+          "destinatario": "A assessora consegue entregar ao comprador um recorte técnico com fontes e limites claros.",
+          "por_que_crivia": "A CRIVIA concentra a triagem nas questões que podem mudar a negociação e entrega um caminho de diligência utilizável. Compare a qualidade dos alertas, suas fontes e sua relação com a decisão de compra."
+        },
+        "frase_acao": "Informe o ativo, o uso pretendido e o marco da negociação."
+      }
     },
     {
       "numero": "09",
@@ -676,7 +876,7 @@
       "entregas": "Mapa de conciliação; critérios de associação/conversão; exceções e justificativas; pendências e recomendações.",
       "limites": "Não presume validação fiscal, prova de fraude, inventário físico ou integração de sistemas.",
       "referencia": "Contrato, documentos de compra, critérios de associação/conversão e registros de estoque/consumo. Não foi definida uma NBR única transversal para este produto.",
-      "cta": "Apresente o período, os materiais e a divergência a esclarecer.",
+      "cta": "Conversar sobre uma divergência de materiais",
       "anchor": "servico-09",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -686,7 +886,32 @@
         "referencias": [],
         "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
       },
-      "palavras_chave_normativas": []
+      "palavras_chave_normativas": [],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Explique as diferenças entre material comprado, movimentado e medido.",
+        "quando": "Compras, estoque, consumo e medição não fecham no período e a equipe precisa entender a divergência e prestar contas.",
+        "resumo": {
+          "entrega": "Conciliação dos materiais e do período incluídos, com diferenças explicadas, fontes e pendências.",
+          "como": "Relacionamos cadastros e unidades, confrontamos compras e movimentos e diligenciamos as exceções contratadas.",
+          "empresa": "Entender a divergência e direcionar correções ou apuração.",
+          "profissional": "Prestar contas mostrando a origem da diferença e a informação ainda necessária.",
+          "por_que_crivia": "A CRIVIA busca uma explicação verificável para cada exceção. Compare a consistência do balanço e o tratamento dos dados faltantes."
+        },
+        "detalhe": {
+          "entrega": "Um mapa de conciliação do período e dos materiais incluídos, com critérios de associação e conversão, divergências explicadas, exceções e pendências ligadas às fontes.",
+          "como": [
+            "Fixamos o período, o saldo inicial e os materiais e movimentos incluídos.",
+            "Relacionamos cadastros e unidades e confrontamos documentos de compra, movimentação e medição.",
+            "Investigamos as exceções no alcance contratado e registramos explicações, dados faltantes e providências."
+          ],
+          "empresa": "Você ganha uma visão explicável das diferenças de materiais e uma base para corrigir registros ou direcionar apuração. Pode separar falha cadastral, movimento não registrado e questão ainda não esclarecida.",
+          "profissional": "Você deixa de responder apenas com totais desconectados: consegue mostrar o caminho do item, a fonte da diferença e quem precisa fornecer a informação faltante.",
+          "destinatario": "A prestadora pode apresentar uma prestação de contas acompanhada da memória de conciliação.",
+          "por_que_crivia": "A CRIVIA trata a divergência até uma explicação verificável ou uma pendência identificada, no período contratado. Compare o serviço pela consistência do balanço e pelo tratamento das exceções, além do processamento das notas."
+        },
+        "frase_acao": "Descreva os materiais, o período e a diferença que precisa esclarecer."
+      }
     },
     {
       "numero": "10",
@@ -707,7 +932,7 @@
       "entregas": "Nota técnica com fonte, questão, consequência e premissas; matriz para esclarecimento e validação jurídica.",
       "limites": "Não presume advocacia, protocolo, habilitação, acervo ou vitória.",
       "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Conferir referência de custos usada no orçamento analisado.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Conferir referência de infraestrutura quando adotada no objeto.",
-      "cta": "Apresente o edital, sua dúvida técnica e o prazo disponível.",
+      "cta": "Conversar sobre uma questão do edital",
       "anchor": "servico-10",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -747,7 +972,32 @@
         "Referências técnicas e custos da construção",
         "SICRO — DNIT",
         "Custos referenciais de infraestrutura de transportes"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Entenda a exigência técnica que pode mudar sua proposta antes do prazo do edital.",
+        "quando": "A empresa está decidindo participar ou formar preço, mas uma obrigação, quantidade ou condição técnica relevante ainda não está clara.",
+        "resumo": {
+          "entrega": "Nota técnica com item do edital, fonte, consequência e perguntas para apoiar participação e formação da proposta.",
+          "como": "Definimos questão e prazo, confrontamos os anexos e organizamos os esclarecimentos e encaminhamentos pertinentes.",
+          "empresa": "Revisar obrigações e premissas antes do compromisso.",
+          "profissional": "Levar pontos priorizados à direção e coordenar as validações técnica e jurídica.",
+          "por_que_crivia": "A CRIVIA concentra a análise na questão material e no prazo útil. Compare precisão das fontes e relevância do encaminhamento para sua proposta."
+        },
+        "detalhe": {
+          "entrega": "Uma nota técnica com item e versão do edital, evidências, questão identificada, consequência para a proposta e premissas da análise. Inclui uma matriz de pontos para esclarecimento e encaminhamento jurídico quando pertinente.",
+          "como": [
+            "Definimos a questão material e o prazo útil para a empresa agir.",
+            "Confrontamos edital, anexos, projetos, orçamento e referências pertinentes ao objeto.",
+            "Explicamos o efeito técnico e organizamos as perguntas e validações necessárias antes do compromisso."
+          ],
+          "empresa": "Você pode decidir participar, esclarecer uma exigência ou revisar premissas do preço com melhor compreensão das obrigações. A análise ajuda a identificar o que pode consumir capacidade ou margem, sem prometer vitória.",
+          "profissional": "Você apresenta à direção pontos priorizados e vinculados ao edital, coordena a consulta às áreas técnica e jurídica e mantém registro do fundamento usado na proposta.",
+          "destinatario": "A consultora pode entregar ao seu cliente questões técnicas com fonte e consequência identificadas.",
+          "por_que_crivia": "A CRIVIA concentra a análise na questão que precisa ser resolvida dentro do prazo de decisão e entrega um encaminhamento revisável. Compare a precisão e a relevância dos pontos levantados para a proposta."
+        },
+        "frase_acao": "Informe o edital, a dúvida técnica e o prazo para decidir ou pedir esclarecimento."
+      }
     },
     {
       "numero": "11",
@@ -768,7 +1018,7 @@
       "entregas": "Protocolo; séries revisadas; comparabilidade e limitações; alertas e encaminhamentos.",
       "limites": "Não presume monitoramento contínuo, vigilância estrutural, estabilidade ou diagnóstico da causa.",
       "referencia": "ABNT NBR 16747 — Inspeção predial: Vincular registros de campanha às informações de inspeção no alcance incluído.; ABNT NBR 5674 — Gestão da manutenção de edificações: Organizar o histórico para apoiar gestão de manutenção.; ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar a informação do ativo quando adotado processo de gestão BIM.",
-      "cta": "Informe o que precisa ser acompanhado e qual decisão depende da evolução.",
+      "cta": "Conversar sobre o acompanhamento necessário",
       "anchor": "servico-11",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -865,7 +1115,32 @@
         "Segurança na gestão da informação",
         "19650",
         "NBR 19650"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Acompanhe registros comparáveis e saiba quando aprofundar a investigação.",
+        "quando": "Uma condição já identificada precisa ser acompanhada em campanhas, mas fotos e registros avulsos não permitem uma comparação confiável.",
+        "resumo": {
+          "entrega": "Histórico por campanhas, protocolo, comparabilidade e alertas revisados para orientar o próximo passo de avaliação.",
+          "como": "Definimos pergunta e método, registramos os pontos nas campanhas incluídas e verificamos diferenças e limitações.",
+          "empresa": "Decidir o aprofundamento com um histórico utilizável.",
+          "profissional": "Recuperar registros comparáveis e explicar o fundamento do encaminhamento.",
+          "por_que_crivia": "A CRIVIA relaciona os registros à pergunta de gestão. Compare repetibilidade, revisão técnica e utilidade do histórico para a decisão."
+        },
+        "detalhe": {
+          "entrega": "Um protocolo de registro, séries identificadas por data e ponto, análise de comparabilidade, limitações e alertas revisados. A entrega apoia a decisão de continuar acompanhando ou solicitar investigação adicional.",
+          "como": [
+            "Definimos a pergunta, os pontos, o método, a frequência e a condição inicial.",
+            "Realizamos as campanhas incluídas e verificamos se os registros são comparáveis.",
+            "Revisamos as diferenças e encaminhamos o que precisa de investigação, considerando as limitações do método."
+          ],
+          "empresa": "Você mantém um histórico utilizável para decidir sobre o próximo passo e priorizar avaliação. Pode distinguir mudança observável de diferença causada pelo modo de registrar.",
+          "profissional": "Você recupera o histórico de cada ponto, compara campanhas pelo mesmo critério e apresenta ao gestor o fundamento do encaminhamento. A rotina facilita a continuidade quando a equipe muda.",
+          "destinatario": "A prestadora consegue entregar campanhas organizadas e alertas acompanhados do protocolo utilizado.",
+          "por_que_crivia": "A CRIVIA relaciona a série de registros a uma pergunta de gestão e a critérios de encaminhamento. Compare a repetibilidade do método, a revisão técnica e a utilidade do histórico para a decisão."
+        },
+        "frase_acao": "Descreva o que precisa acompanhar e qual decisão depende desse histórico."
+      }
     },
     {
       "numero": "12",
@@ -886,7 +1161,7 @@
       "entregas": "Memória de cálculo; dados/fontes/qualidade; comparação e sensibilidade; condições de uso da conclusão.",
       "limites": "Não presume neutralidade, crédito de carbono, certificação, EPD ou ACV completa.",
       "referencia": "ISO 14040 — Avaliação do ciclo de vida — princípios e estrutura: Definir objetivo, função, fronteira e estrutura de comparação.; ISO 14044 — Avaliação do ciclo de vida — requisitos e diretrizes: Fundamentar inventário, cálculos, interpretação e revisão no alcance contratado.",
-      "cta": "Apresente as alternativas, a função e a exigência ambiental.",
+      "cta": "Conversar sobre uma comparação de custo e carbono",
       "anchor": "servico-12",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -928,7 +1203,32 @@
         "ISO 14044",
         "Avaliação do ciclo de vida — requisitos e diretrizes",
         "14044"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Compare custo e carbono de alternativas que atendem à mesma necessidade.",
+        "quando": "Você precisa escolher ou justificar um material ou sistema, incluindo uma exigência ambiental, e as comparações disponíveis usam bases diferentes.",
+        "resumo": {
+          "entrega": "Comparação de custo e carbono, com memória, fontes e limites para apoiar a escolha de alternativas equivalentes.",
+          "como": "Definimos função e fronteira, qualificamos os dados e testamos as premissas sensíveis da comparação.",
+          "empresa": "Justificar a escolha com investimento e exigência ambiental na mesma base.",
+          "profissional": "Explicar os dados e revisar a conclusão quando as premissas mudarem.",
+          "por_que_crivia": "A CRIVIA liga a comparação à compra ou à exigência do cliente. Compare equivalência funcional, rastreabilidade dos dados e condições de uso."
+        },
+        "detalhe": {
+          "entrega": "Uma comparação de custo e carbono do recorte, com função, fronteiras, unidades, fontes, qualidade dos dados e memória de cálculo. A síntese explica em quais condições a conclusão pode ser usada.",
+          "como": [
+            "Definimos a função que as alternativas devem cumprir e o limite da comparação.",
+            "Qualificamos os dados e calculamos custo e carbono com bases compatíveis.",
+            "Testamos premissas sensíveis e explicamos a escolha, as incertezas e as condições de uso."
+          ],
+          "empresa": "Você pode avaliar uma alternativa considerando investimento e exigência ambiental na mesma base. Ganha uma justificativa rastreável para a especificação ou proposta, evitando comparações sem equivalência.",
+          "profissional": "Você consegue explicar os dados usados, responder à área de compras ou sustentabilidade e revisar a conclusão quando uma premissa muda.",
+          "destinatario": "O fornecedor pode apresentar ao cliente a base da alternativa proposta, com limites explícitos para as alegações ambientais.",
+          "por_que_crivia": "A CRIVIA conecta a comparação técnica à decisão de compra ou à exigência do cliente e entrega uma memória examinável. Compare equivalência funcional, fontes e transparência das hipóteses antes de comparar o número final."
+        },
+        "frase_acao": "Conte quais alternativas precisa comparar e qual exigência precisa atender."
+      }
     },
     {
       "numero": "13",
@@ -949,7 +1249,7 @@
       "entregas": "Ficha de aplicabilidade; matriz por requisito/configuração; diligências; conclusões e pendências; pasta de comprovação do recorte.",
       "limites": "Não presume certificação integral, ensaios/simulações incluídos ou conclusão sobre edificação inteira.",
       "referencia": "ABNT NBR 15575 — Desempenho de edificações habitacionais: Analisar requisitos e evidências dos sistemas habitacionais contratados.; ABNT NBR 10151 — Avaliação de ruído em áreas habitadas: Enquadrar perguntas de ruído em áreas habitadas.; ABNT NBR 10152 — Níveis de pressão sonora em ambientes internos: Enquadrar perguntas de condições acústicas internas.; ABNT NBR 10821 (série) — Esquadrias para edificações: Conferir referências da esquadria/configuração pertinente.; ABNT NBR ISO/IEC 17025 — Competência de laboratórios de ensaio e calibração: Conferir pertinência da evidência laboratorial e do escopo exigido.",
-      "cta": "Apresente o sistema, a exigência e o marco de compra ou entrega.",
+      "cta": "Conversar sobre a comprovação de um sistema",
       "anchor": "servico-13",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Sob demanda",
@@ -1086,7 +1386,31 @@
         "Competência de laboratórios de ensaio e calibração",
         "17025",
         "NBR 17025"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Saiba quais requisitos estão demonstrados e o que falta comprovar no sistema contratado.",
+        "quando": "Você vai comprar, substituir ou entregar um sistema e precisa relacionar uma exigência às evidências da configuração efetivamente proposta ou instalada.",
+        "resumo": {
+          "entrega": "Matriz por requisito e configuração, com evidências, conclusões delimitadas, lacunas e responsáveis pelo encaminhamento.",
+          "como": "Definimos aplicabilidade e método, examinamos a pertinência das evidências e conduzimos as diligências incluídas.",
+          "empresa": "Decidir compras e apresentar a comprovação do recorte com clareza sobre lacunas.",
+          "profissional": "Saber qual evidência solicitar e explicar a situação ao gestor ou cliente.",
+          "por_que_crivia": "A CRIVIA conecta requisito, configuração e evidência. Compare o fundamento de cada conclusão e o tratamento das lacunas do sistema contratado."
+        },
+        "detalhe": {
+          "entrega": "Uma matriz por requisito e configuração, com evidências examinadas, conclusões no alcance contratado, lacunas, responsáveis e encaminhamentos. Você recebe a pasta de comprovação do recorte e sabe o que está demonstrado, o que não está e o que exige aprofundamento.",
+          "como": [
+            "Enquadramos objeto, uso, sistemas e requisitos aplicáveis e definimos o método e a profundidade da análise.",
+            "Relacionamos cada evidência à configuração e à condição analisada, verificando sua pertinência e suficiência no alcance contratado.",
+            "Conduzimos as diligências incluídas, registramos conclusões e pendências e indicamos especialistas ou ensaios necessários."
+          ],
+          "empresa": "Você ganha uma base para decidir uma compra ou substituição e para apresentar a comprovação do seu escopo ao cliente. Pode agir sobre lacunas antes do compromisso ou da entrega, sem confundir catálogo de fabricante com evidência suficiente para qualquer aplicação.",
+          "profissional": "Você sabe qual documento solicitar, a qual fornecedor ou projetista encaminhar a pendência e por que uma evidência foi considerada pertinente ou insuficiente. Consegue apresentar à direção e ao cliente uma situação de comprovação explicável.",
+          "destinatario": "Quem recebe consegue localizar a relação entre requisito, sistema, evidência e conclusão, com as limitações e pendências identificadas.",
+          "por_que_crivia": "A CRIVIA organiza a comprovação ao redor do sistema e da configuração que você precisa decidir ou entregar, incluindo diligências e revisão no alcance contratado. Compare a correspondência entre requisito, evidência e conclusão e a clareza sobre quem precisa resolver cada lacuna."
+        },
+        "frase_acao": "Apresente o sistema, a exigência e o marco de compra ou entrega."
+      }
     },
     {
       "numero": "14",
@@ -1107,7 +1431,7 @@
       "entregas": "Índice mestre e estrutura; matriz de completude; arquivos organizados; instrumentos próprios contratados; diligências, pendências e protocolo.",
       "limites": "Não presume emissão por terceiros, validação integral de disciplinas, aceite garantido, comando da obra ou entrega que a contratante não executou.",
       "referencia": "ABNT NBR 14037 — Manuais de uso, operação e manutenção: Organizar/conferir o manual de uso, operação e manutenção que integrar o pacote.; ABNT NBR 5674 — Gestão da manutenção de edificações: Organizar programa/registros de manutenção exigidos na passagem à operação.; ABNT NBR 15575 — Desempenho de edificações habitacionais: Relacionar evidências de desempenho às exigências do pacote habitacional.; ABNT NBR 14645 (série) — Como construído, levantamentos e controle dimensional: Organizar registros de levantamento/controle pertinentes ao como construído.; ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar informações de entrega do ativo no processo BIM adotado.",
-      "cta": "Apresente a lista de entrega, uma amostra do acervo e o prazo.",
+      "cta": "Conversar sobre minha entrega",
       "anchor": "servico-14",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": null,
@@ -1281,7 +1605,31 @@
         "Segurança na gestão da informação",
         "19650",
         "NBR 19650"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Prepare uma entrega documental que seu cliente consiga conferir e utilizar.",
+        "quando": "A entrega se aproxima, os arquivos estão dispersos e ninguém tem uma visão confiável do que existe, do que falta e de quem deve fornecer cada documento.",
+        "resumo": {
+          "entrega": "Pacote documental com índice, versões, situação dos documentos exigidos, pendências e registro de entrega do pacote, no alcance acordado.",
+          "como": "Definimos a lista, organizamos e conferimos o acervo, conduzimos as solicitações incluídas e testamos a localização.",
+          "empresa": "Enxergar o que falta e conduzir a entrega ao cliente.",
+          "profissional": "Saber o que cobrar, de quem e qual revisão apresentar.",
+          "por_que_crivia": "A CRIVIA assume a preparação do recorte, com diligências e verificação de uso. Compare profundidade, responsabilidades e pacote efetivamente previsto."
+        },
+        "detalhe": {
+          "entrega": "Um pacote documental com índice mestre, arquivos organizados por sistema e versão, situação dos documentos exigidos, pendências com responsáveis e registro de entrega do pacote. Esse registro não equivale ao aceite do destinatário; protocolo externo somente quando incluído. A profundidade de conferência e a produção de instrumentos próprios são definidas na proposta.",
+          "como": [
+            "Definimos com você a lista exigida pelo destinatário, os sistemas incluídos e a profundidade de organização e conferência.",
+            "Inventariamos o acervo, identificamos revisões e faltantes e conduzimos as solicitações aos responsáveis nas rodadas contratadas.",
+            "Conferimos o pacote no alcance definido, testamos a localização das informações e registramos a entrega e suas pendências."
+          ],
+          "empresa": "Você ganha uma visão de fechamento da documentação e uma entrega que demonstra o trabalho efetivamente executado. Pode orientar cobranças aos emissores e dar continuidade ao atendimento ao cliente com um acervo utilizável; aceite e liberação financeira dependem das condições do contrato.",
+          "profissional": "Você sabe o que cobrar, de quem e até quando; localiza a revisão correta e apresenta a situação à chefia e ao cliente sem reconstruir toda a história a cada reunião. O pacote facilita a passagem do trabalho para outra pessoa.",
+          "destinatario": "Quem recebe encontra os documentos, identifica as pendências e entende como usar o acervo na operação e no atendimento posterior.",
+          "por_que_crivia": "A CRIVIA assume a organização e o fechamento do recorte contratado: relaciona exigência, arquivo, versão e responsável, conduz as diligências incluídas e verifica o uso do pacote. Compare o serviço pela entrega efetivamente preparada e pela qualidade da conferência, da tratativa de pendências e do teste de localização."
+        },
+        "frase_acao": "Conte o que precisa entregar, quem vai receber e qual é o prazo."
+      }
     },
     {
       "numero": "15",
@@ -1302,7 +1650,7 @@
       "entregas": "Plano/estrutura de registros no alcance; matriz de responsabilidades; histórico organizado; pendências e encaminhamentos.",
       "limites": "Não presume execução diária da manutenção, reparos, parecer jurídico ou garantia preservada automaticamente.",
       "referencia": "ABNT NBR 5674 — Gestão da manutenção de edificações: Estruturar programa, responsáveis e registros de manutenção no alcance contratado.; ABNT NBR 14037 — Manuais de uso, operação e manutenção: Relacionar o programa às instruções do manual específico da edificação.; ABNT NBR 17170 — Garantias de edificações: Organizar referências, datas, condições e registros das ocorrências.",
-      "cta": "Apresente o ativo, os registros existentes e a necessidade de operação.",
+      "cta": "Conversar sobre a rotina e os registros de manutenção",
       "anchor": "servico-15",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": null,
@@ -1363,7 +1711,31 @@
         "Garantias de edificações",
         "17170",
         "NBR 17170"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Saiba o que manter, quem deve agir e onde consultar o histórico.",
+        "quando": "A operação começou, a equipe mudou ou uma ocorrência precisa ser tratada, mas atividades, responsáveis e registros não estão conectados.",
+        "resumo": {
+          "entrega": "Plano e registros de manutenção do recorte, com responsáveis, histórico, pendências e encaminhamento de ocorrências.",
+          "como": "Identificamos sistemas e referências, organizamos a rotina e acompanhamos os registros e ações incluídos.",
+          "empresa": "Manter continuidade e visibilidade das providências.",
+          "profissional": "Saber o que acompanhar e recuperar o histórico para responder ou passar o trabalho à próxima equipe.",
+          "por_que_crivia": "A CRIVIA relaciona plano, ativo e uso dos registros. Compare aplicabilidade, clareza das responsabilidades e recuperação do histórico."
+        },
+        "detalhe": {
+          "entrega": "Um plano e uma estrutura de registros no alcance contratado, com atividades, referências, responsáveis, histórico organizado, pendências e encaminhamentos de ocorrências.",
+          "como": [
+            "Identificamos o ativo, os sistemas, os documentos e a rotina existente.",
+            "Relacionamos atividades e responsáveis às referências pertinentes e organizamos os registros e o histórico.",
+            "Tratamos as ocorrências e verificamos as ações incluídas no ciclo contratado, distinguindo relato de execução e evidência conferida."
+          ],
+          "empresa": "Você ganha continuidade de gestão e visibilidade da rotina e das pendências. Pode planejar recursos e explicar as providências adotadas, sem depender exclusivamente da memória de uma pessoa.",
+          "profissional": "Você sabe o que acompanhar, onde registrar e como recuperar o histórico ao responder a uma ocorrência. A organização ajuda na passagem de turno ou de equipe e na prestação de contas.",
+          "destinatario": "O proprietário ou operador recebe informação utilizável para orientar a rotina do recorte e acompanhar ocorrências.",
+          "por_que_crivia": "A CRIVIA relaciona o plano ao ativo, aos registros e ao uso pela equipe, com encaminhamentos documentados. Compare a aplicabilidade do plano, a recuperação do histórico e a clareza das responsabilidades."
+        },
+        "frase_acao": "Apresente o ativo, os registros existentes e a necessidade de operação."
+      }
     },
     {
       "numero": "16",
@@ -1384,13 +1756,13 @@
       "entregas": "Matriz de requisitos/documentos; interfaces; diligências; responsabilidades; alterações e pacote de entrega no alcance.",
       "limites": "Não presume projeto integral, autorização formal, execução, aprovação do condomínio/órgão ou ausência de risco.",
       "referencia": "ABNT NBR 16280 — Gestão de reformas em edificações: Estruturar a documentação e as responsabilidades da reforma no recorte contratado.; ABNT NBR 14037 — Manuais de uso, operação e manutenção: Organizar instruções/manuais das partes executadas ou reformadas quando exigidos e incluídos.; ABNT NBR 17170 — Garantias de edificações: Relacionar registros e termos pertinentes às partes executadas ou reformadas.; ABNT NBR 15575 — Desempenho de edificações habitacionais: Examinar interface com requisitos de desempenho quando o caso justificar.",
-      "cta": "Descreva a intervenção, os sistemas e o marco previsto.",
+      "cta": "Conversar sobre os documentos da obra",
       "anchor": "servico-16",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
-        "objetivo": "Organizar requisitos, documentos, interfaces e alterações da reforma.",
+        "objetivo": "Organizar requisitos, documentos, interfaces e alterações da obra ou reforma, conforme o enquadramento da intervenção.",
         "criterios_principais": "Intervenção, sistemas afetados, responsáveis e regras do imóvel/órgãos.",
         "referencias": [
           {
@@ -1505,7 +1877,31 @@
         "Sistemas hidrossanitários",
         "15575",
         "NBR 15575"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Organize documentos e responsabilidades da obra ou reforma antes dos marcos de execução e entrega.",
+        "quando": "Uma obra nova ou uma reforma exige coordenar escopo, interfaces, documentos e responsáveis nos marcos do contrato.",
+        "resumo": {
+          "entrega": "Matriz de requisitos e documentos da obra ou reforma, interfaces, responsáveis, alterações e pacote incluído na proposta.",
+          "como": "Enquadramos a intervenção, confrontamos o plano, diligenciamos os envolvidos e registramos respostas e mudanças.",
+          "empresa": "Coordenar providências nos marcos de execução e entrega.",
+          "profissional": "Apresentar a situação documental e acompanhar decisões entre projetistas, executor e cliente.",
+          "por_que_crivia": "A CRIVIA conecta documentos aos marcos do contrato. Compare aderência ao objeto e clareza das responsabilidades, alterações e pendências."
+        },
+        "detalhe": {
+          "entrega": "Uma matriz dos requisitos e documentos do recorte da obra ou reforma, com interfaces, responsáveis, alterações e pendências, acompanhada do pacote de entrega incluído na proposta.",
+          "como": [
+            "Enquadramos a obra nova ou reforma, os sistemas, os marcos e as exigências pertinentes ao caso.",
+            "Confrontamos plano e documentos, identificamos interfaces e encaminhamos questões aos responsáveis.",
+            "Registramos alterações e respostas e preparamos o conjunto documental no alcance contratado."
+          ],
+          "empresa": "Você ganha clareza sobre as providências necessárias nos marcos de execução e entrega, tanto em obra nova como em reforma. Pode coordenar responsabilidades e acompanhar as pendências do recorte.",
+          "profissional": "Você dispõe de uma lista de documentos, interfaces e responsáveis para organizar a comunicação com projetistas, executor e cliente ou gestão do imóvel. Consegue explicar a situação e acompanhar as decisões que faltam.",
+          "destinatario": "A prestadora pode apresentar ao cliente o processo documentado da obra ou reforma, com interfaces, alterações e pendências registradas.",
+          "por_que_crivia": "A CRIVIA conecta documentação, interfaces e marcos do contrato em um conjunto utilizável para conduzir o trabalho. Compare a aderência ao objeto, o tratamento das mudanças e a clareza das responsabilidades e encaminhamentos."
+        },
+        "frase_acao": "Descreva a obra ou reforma, os sistemas envolvidos e o próximo marco."
+      }
     },
     {
       "numero": "17",
@@ -1526,7 +1922,7 @@
       "entregas": "Protocolo; diagnóstico por unidade; matriz de prioridades; plano e estimativas incluídas; pendências e verificação por etapa.",
       "limites": "Não presume alvará, licença, projeto/obra incluídos ou adequação integral de toda a rede.",
       "referencia": "ABNT NBR 9050 — Acessibilidade: Conferir condições de acessibilidade do recorte da unidade.; ABNT NBR 9077 — Projeto de saídas de emergência: Examinar requisitos pertinentes das saídas de emergência.; Normas Técnicas do CBMES — Segurança contra incêndio e pânico no Espírito Santo: Relacionar a unidade às NTs de incêndio pertinentes no Espírito Santo.; ABNT NBR 16280 — Gestão de reformas em edificações: Organizar a gestão documental das reformas decorrentes da adequação.",
-      "cta": "Informe as unidades, os sistemas e a exigência a tratar.",
+      "cta": "Conversar sobre a prioridade das adequações",
       "anchor": "servico-17",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": null,
@@ -1601,7 +1997,31 @@
         "Gestão de reformas em edificações",
         "16280",
         "NBR 16280"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Priorize adequações de várias unidades com critérios que possam ser explicados.",
+        "quando": "A rede tem necessidades concorrentes e informações desiguais, e a direção precisa decidir o que fazer primeiro e como acompanhar cada unidade.",
+        "resumo": {
+          "entrega": "Diagnóstico e carteira de prioridades por unidade, com critérios, responsáveis, estimativas e verificações incluídas.",
+          "como": "Começamos pelo piloto, aplicamos um protocolo comum e registramos as diferenças locais nas prioridades.",
+          "empresa": "Direcionar recursos entre unidades com razões explícitas.",
+          "profissional": "Explicar critérios e acompanhar o programa com informações comparáveis.",
+          "por_que_crivia": "A CRIVIA transforma avaliações em decisões por unidade. Compare a consistência da priorização, as exceções locais e o resultado do piloto."
+        },
+        "detalhe": {
+          "entrega": "Um protocolo de avaliação, diagnóstico por unidade no alcance contratado, matriz de prioridades, plano e estimativas incluídas, além de pendências e verificações por etapa.",
+          "como": [
+            "Definimos tipologias, sistemas, critérios e uma unidade ou grupo piloto.",
+            "Avaliamos cada unidade pelo protocolo, identificando suas particularidades e requisitos locais.",
+            "Organizamos prioridades, decisões, responsáveis e comprovações do programa incluído."
+          ],
+          "empresa": "Você consegue comparar necessidades e direcionar recursos com razões visíveis, mantendo as diferenças locais na decisão. A carteira mostra o que foi priorizado, o que está pendente e qual é a base de cada escolha.",
+          "profissional": "Você apresenta às lideranças e às unidades um critério comum, registra exceções e acompanha entregas sem depender de planilhas com classificações incompatíveis.",
+          "destinatario": "A prestadora pode demonstrar ao cliente da rede o protocolo aplicado, as prioridades e a situação de cada unidade examinada.",
+          "por_que_crivia": "A CRIVIA transforma avaliações em uma carteira de decisões por unidade e sistema, com critérios comuns e exceções explícitas. Compare a consistência da priorização e a rastreabilidade dos encaminhamentos, começando pelo piloto."
+        },
+        "frase_acao": "Informe as unidades, os sistemas e a decisão de prioridade necessária."
+      }
     },
     {
       "numero": "18",
@@ -1622,7 +2042,7 @@
       "entregas": "Questões priorizadas; quadro de diferenças/omissões; referências e limites; roteiro para negociação.",
       "limites": "Não presume auditoria integral, preço justo, detecção de fraude ou negociação em nome do cliente.",
       "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Confrontar itens selecionados com composições/referências contextualizadas.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Confrontar serviços pertinentes de infraestrutura de transportes.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Contextualizar CUB/quadros de incorporação presentes na proposta.",
-      "cta": "Envie a proposta e a data da decisão de contratação.",
+      "cta": "Conversar antes de contratar",
       "anchor": "produto-1",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -1678,7 +2098,32 @@
         "Custos de construção para incorporação e condomínios",
         "12721",
         "NBR 12721"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Saiba o que esclarecer na proposta antes de assinar.",
+        "quando": "Você recebeu uma proposta ou orçamento e precisa entender diferenças relevantes de escopo, quantidade e referência antes da contratação.",
+        "resumo": {
+          "entrega": "Quadro de diferenças e possíveis omissões nos itens analisados, com referências e perguntas para esclarecer antes de assinar.",
+          "como": "Definimos cobertura, pareamos os itens com bases compatíveis e priorizamos as questões de negociação.",
+          "empresa": "Avaliar o compromisso conhecendo diferenças de preço e escopo.",
+          "profissional": "Conduzir a reunião com uma pauta fundamentada e registrar as respostas.",
+          "por_que_crivia": "A CRIVIA transforma diferenças materiais em perguntas utilizáveis. Avalie as fontes previstas, a cobertura e a clareza das perguntas de negociação."
+        },
+        "detalhe": {
+          "entrega": "Um quadro dos itens analisados, diferenças e possíveis omissões, com referências, limites e perguntas priorizadas. Você recebe um roteiro para esclarecer os pontos com o fornecedor e apoiar a negociação.",
+          "como": [
+            "Definimos a cobertura da leitura, a versão da proposta e a decisão que precisa ser tomada.",
+            "Relacionamos os itens selecionados às especificações e referências compatíveis, tratando prioridades e possíveis omissões.",
+            "Explicamos o que pode ser comparado e organizamos as perguntas e condições que precisam ser esclarecidas."
+          ],
+          "empresa": "Você negocia com perguntas fundamentadas e pode rever o compromisso antes de assinar. A análise ajuda a distinguir diferença de preço, diferença de escopo e item ainda não comparável; eventual economia depende da ação e do resultado da negociação.",
+          "profissional": "Você chega à reunião com uma pauta objetiva, consegue justificar o pedido de esclarecimento e registra as respostas que sustentam a recomendação de contratação.",
+          "destinatario": "Uma assessora ou prestadora que analisa propostas recebidas pelo cliente consegue entregar uma base organizada para a decisão dele.",
+          "por_que_crivia": "A CRIVIA liga as diferenças materiais a fontes e perguntas utilizáveis antes da assinatura, com revisão técnica do recorte. Avalie as referências previstas, a cobertura e a qualidade das perguntas que apoiam sua contratação."
+        },
+        "frase_acao": "Conte qual proposta você recebeu e quando precisa decidir."
+      }
     },
     {
       "numero": "19",
@@ -1699,7 +2144,7 @@
       "entregas": "Diagnóstico com achados/fontes; causas fundamentadas e hipóteses; impedimentos; alternativas/prioridades e devolutiva.",
       "limites": "Não presume causa sempre conclusiva, prazo fixo universal, plano detalhado de recuperação, execução ou perícia integral.",
       "referencia": "ABNT NBR 13752 — Perícias de engenharia na construção civil: Aplicar procedimento pericial quando a finalidade contratada exigir perícia.; ABNT NBR 16747 — Inspeção predial: Incluir inspeção predial quando o diagnóstico exigir esse serviço.",
-      "cta": "Descreva o que não está funcionando e a decisão que precisa tomar.",
+      "cta": "Conversar sobre o que está impedindo o resultado",
       "anchor": "produto-2",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -1743,7 +2188,32 @@
         "Inspeção predial",
         "16747",
         "NBR 16747"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Entenda o impedimento e organize as condições para agir.",
+        "quando": "A obra ou o contrato não avança como esperado e as ações tentadas ainda não explicam suficientemente a causa ou a interface que impede o resultado.",
+        "resumo": {
+          "entrega": "Diagnóstico com fatos, hipóteses, evidências, alternativas e condições para agir sobre o impedimento.",
+          "como": "Definimos o problema, confrontamos informações e testamos explicações para propor caminhos no alcance contratado.",
+          "empresa": "Escolher onde agir e mobilizar os responsáveis.",
+          "profissional": "Apresentar o impasse com base e coordenar as decisões e dependências da resposta.",
+          "por_que_crivia": "A CRIVIA integra as interfaces à investigação. Compare a trilha entre achado, evidência, explicação testada e recomendação aplicável."
+        },
+        "detalhe": {
+          "entrega": "Um diagnóstico com achados ligados às fontes, fatos, hipóteses, lacunas, alternativas e prioridades. A devolutiva mostra o que sustenta cada recomendação e quais condições precisam ser atendidas para o próximo passo.",
+          "como": [
+            "Definimos o problema, o alcance, os envolvidos e as informações necessárias.",
+            "Observamos a situação, confrontamos versões e testamos explicações, integrando as interfaces pertinentes.",
+            "Apresentamos caminhos, condições e investigações adicionais, com apoio e verificação dos efeitos quando incluídos."
+          ],
+          "empresa": "Você ganha uma base para escolher onde agir, mobilizar responsáveis e direcionar recursos ao problema identificado. Pode distinguir uma causa sustentada de uma hipótese que ainda exige confirmação.",
+          "profissional": "Você organiza as informações da equipe, apresenta o impasse com evidências e encaminha à direção as decisões e dependências necessárias. O diagnóstico ajuda a coordenar a resposta e registrar por que uma ação foi proposta.",
+          "destinatario": "A prestadora consegue explicar ao cliente o problema, as evidências e os caminhos possíveis sem apresentar hipótese como conclusão comprovada.",
+          "por_que_crivia": "A CRIVIA conecta a investigação das interfaces à decisão que precisa ser tomada e entrega explicações examináveis e alternativas condicionadas à realidade. Compare a trilha entre achado, evidência, hipótese testada e encaminhamento."
+        },
+        "frase_acao": "Descreva o que está impedindo o resultado e o que precisa ser esclarecido."
+      }
     },
     {
       "numero": "20",
@@ -1764,7 +2234,7 @@
       "entregas": "Base de planejamento incluída; instrumentos por ciclo; memória de medição no alcance; restrições e ações; decisões e efeitos verificados.",
       "limites": "Não presume presença contínua, comando diário, disponibilidade ilimitada, garantia de prazo ou resultado financeiro.",
       "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Contextualizar itens de custo quando essa análise integrar o planejamento.",
-      "cta": "Apresente as frentes, a rotina atual e os próximos marcos.",
+      "cta": "Conversar sobre o próximo ciclo",
       "anchor": "produto-3",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "normas_e_referencias": {
@@ -1790,7 +2260,32 @@
       "palavras_chave_normativas": [
         "SINAPI — CAIXA",
         "Referências técnicas e custos da construção"
-      ]
+      ],
+      "estado_publico": null,
+      "apresentacao": {
+        "chamada": "Conecte plano, avanço, compras e medição às decisões de cada ciclo.",
+        "quando": "A execução tem várias frentes e compromissos, mas o plano e os registros não mostram com clareza o que deve ser decidido no próximo período.",
+        "resumo": {
+          "entrega": "Rotina por ciclos com plano, avanço, medição, restrições e compras críticas para orientar as próximas decisões.",
+          "como": "Fixamos bases e cortes, confrontamos os registros e acompanhamos as prioridades e atualizações incluídas.",
+          "empresa": "Coordenar frentes e compromissos com uma referência comum.",
+          "profissional": "Preparar reuniões, acompanhar pendências e prestar contas do planejado e realizado.",
+          "por_que_crivia": "A CRIVIA conecta programação, suprimentos e medição. Compare coerência dos instrumentos, clareza das prioridades e acompanhamento dos encaminhamentos."
+        },
+        "detalhe": {
+          "entrega": "Uma rotina contratada de planejamento e análise por ciclo, com base do plano, avanço e medição no alcance incluído, restrições, compras críticas, responsáveis e recomendações para as próximas decisões.",
+          "como": [
+            "Definimos as bases, datas de corte, fontes, frequência e responsabilidades da rotina.",
+            "Confrontamos plano, avanço e medição e integramos restrições de campo e suprimentos.",
+            "Devolvemos prioridades e encaminhamentos e verificamos os efeitos e atualizações incluídos no ciclo seguinte."
+          ],
+          "empresa": "Você passa a enxergar os próximos compromissos e impedimentos junto do avanço e dos recursos do período. Pode coordenar prioridades e decidir sobre frentes e medição com uma referência comum.",
+          "profissional": "Você ganha uma pauta recorrente com informações atualizadas, decisões necessárias e responsáveis. Consegue preparar reuniões, acompanhar pendências e prestar contas do planejado e do realizado.",
+          "destinatario": "A prestadora pode apresentar avanço, restrições, providências e medição ao seu contratante com consistência entre os instrumentos do ciclo.",
+          "por_que_crivia": "A CRIVIA relaciona programação, suprimentos e medição em uma devolutiva utilizável por quem decide, no ciclo contratado. Compare a coerência entre os instrumentos e o acompanhamento dos encaminhamentos; a experiência do fundador deve ser identificada como tal."
+        },
+        "frase_acao": "Apresente a rotina atual, as frentes e o próximo ciclo da obra."
+      }
     },
     {
       "numero": "21",
@@ -1811,7 +2306,7 @@
       "entregas": "Roteiro e quadros de validação; imagens, vídeo ou apresentação; formatos e revisões incluídos na proposta.",
       "limites": "Não substitui projeto executivo, cálculo ou simulação validada; arquivos nativos/BIM só se efetivamente produzidos e contratados.",
       "referencia": "ABNT NBR 6492 — Documentação e representação de projetos arquitetônicos e urbanísticos: Referenciar peças de arquitetura/urbanismo efetivamente representadas.; ABNT NBR 16636 (série) — Serviços técnicos de projetos arquitetônicos e urbanísticos: Relacionar a representação às etapas/documentos do projeto de origem.",
-      "cta": "Apresente o conteúdo técnico e o objetivo da apresentação.",
+      "cta": "Conversar sobre a apresentação da solução",
       "anchor": "servico-21",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": null,
@@ -1856,7 +2351,31 @@
         "Serviços técnicos de projetos arquitetônicos e urbanísticos",
         "16636",
         "NBR 16636"
-      ]
+      ],
+      "apresentacao": {
+        "chamada": "Apresente sua solução técnica de um jeito que o destinatário consiga compreender.",
+        "quando": "Uma proposta, projeto ou processo precisa ser explicado ao cliente ou à direção, e o material disponível não evidencia com clareza escopo, etapas e solução.",
+        "resumo": {
+          "entrega": "Roteiro e peças de apresentação da solução, nos formatos e revisões contratados, com conteúdo técnico validado no alcance definido.",
+          "como": "Definimos público e mensagem, validamos roteiro e fontes e produzimos e revisamos as peças incluídas.",
+          "empresa": "Explicar sua solução e seu escopo ao cliente com clareza.",
+          "profissional": "Conduzir apresentações e controlar as revisões do conteúdo aprovado.",
+          "por_que_crivia": "A CRIVIA relaciona engenharia e comunicação da solução. Compare fidelidade às fontes, clareza para o destinatário e revisão técnica, além do acabamento visual."
+        },
+        "detalhe": {
+          "entrega": "Roteiro e quadros de validação, seguidos das imagens, vídeo ou apresentação nos formatos e revisões contratados. As peças identificam sua finalidade e são conferidas em relação às fontes e ao conteúdo aprovado.",
+          "como": [
+            "Definimos público, mensagem, decisão, fontes e formatos necessários.",
+            "Organizamos o roteiro e validamos o conteúdo técnico antes do acabamento visual.",
+            "Produzimos e revisamos as peças incluídas, verificando clareza e fidelidade ao que foi efetivamente proposto."
+          ],
+          "empresa": "Você apresenta ao cliente sua solução e seu escopo de maneira mais compreensível e profissional. O material pode apoiar uma proposta ou decisão, sem promessa de venda ou aprovação.",
+          "profissional": "Você ganha um material coerente com a base técnica para conduzir apresentações, alinhar áreas e responder a dúvidas. As fontes e aprovações ajudam a controlar as revisões.",
+          "destinatario": "Quem recebe consegue entender a solução, suas etapas e limites sem precisar reconstruir a explicação a partir de documentos dispersos.",
+          "por_que_crivia": "A CRIVIA relaciona engenharia e comunicação da solução em um conteúdo revisado para a finalidade definida. Compare fidelidade às fontes, clareza para o público e controle das revisões, além do acabamento visual."
+        },
+        "frase_acao": "Apresente o conteúdo técnico, o destinatário e o objetivo da comunicação."
+      }
     }
   ]
 }
