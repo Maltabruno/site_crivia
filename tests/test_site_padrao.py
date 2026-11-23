@@ -240,9 +240,17 @@ class Catalogo21(unittest.TestCase):
         for campo in ("normas_e_referencias", "palavras_chave_normativas"):
             self.assertTrue(all(campo in o for o in bloco_js("PRODUTOS") + bloco_js("ENTRADAS")), campo)
 
-    def test_imagens_de_rascunho_fora_do_site(self):
-        for n in ("14", "15", "16", "17", "21"):
-            self.assertFalse((SITE / "assets" / "produtos-s" / f"{n}.jpg").exists(), n)
+    def test_selo_de_estado_aparece_com_e_sem_imagem(self):
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        self.assertEqual(js.count("card-estado"), 2, "o selo precisa existir nas duas variantes do cabeçalho do card")
+
+    def test_todos_os_18_cards_tem_imagem(self):
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        declaradas = set(re.findall(r"'(\d\d)'", re.search(r"const IMAGENS = new Set\(\[(.*?)\]\)", js).group(1)))
+        cards = {o["numero"] for o in self.ofertas if o["tipo"] == "catalogo"}
+        self.assertEqual(declaradas, cards)
+        for n in cards:
+            self.assertTrue((SITE / "assets" / "produtos-s" / f"{n}.jpg").is_file(), n)
 
     def test_json_publico_sem_chaves_privadas(self):
         def chaves(x):

@@ -356,8 +356,8 @@ const GRUPOS = [
   {"id": "requisitos-e-entrega", "nome": "Requisitos, documentação e entrega ao cliente", "ns": ["13", "14", "15", "16", "17", "21"]}
 ];
 /* CATALOGO:FIM */
-  // cards com imagem aprovada em assets/produtos-s/; os demais usam o cabeçalho em CSS (o 13 aguarda a imagem)
-  const IMAGENS = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']);
+  // cards com imagem aprovada em assets/produtos-s/; todas as 18 ofertas têm imagem
+  const IMAGENS = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '21']);
   const TIPOS = { norma_ABNT_ou_serie: 'Norma ABNT', norma_ISO_internacional: 'Norma ISO', referencia_tecnica_ou_regulamentar: 'Referência técnica (não é NBR)' };
   const ehCondicional = (r) => /^modulo_/.test(r.papel_no_servico) || ['complementar_condicional', 'servico_adicional', 'atividade_delimitada', 'escopo_de_inspecao_a_enquadrar', 'regulamentacao_local', 'sistema_especifico', 'qualificacao_da_evidencia'].includes(r.papel_no_servico);
   const normasHtml = (o) => {
@@ -372,7 +372,7 @@ const GRUPOS = [
   const cardHtml = (p, k) => {
     const grupo = GRUPOS.find((g) => g.ns.includes(p.numero));
     const img = IMAGENS.has(p.numero)
-      ? `<div class="card-img"><img src="assets/produtos-s/${esc(p.numero)}.jpg" alt="" width="960" height="536" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="card-cod">${esc(p.numero)}</span></div>`
+      ? `<div class="card-img"><img src="assets/produtos-s/${esc(p.numero)}.jpg" alt="" width="960" height="536" loading="lazy" decoding="async" onerror="this.style.display='none'"><span class="card-cod">${esc(p.numero)}</span>${p.estado_publico ? `<span class="card-estado">${esc(p.estado_publico)}</span>` : ''}</div>`
       : `<div class="card-img card-img--sem"><span class="card-cod">${esc(p.numero)}</span>${p.estado_publico ? `<span class="card-estado">${esc(p.estado_publico)}</span>` : ''}</div>`;
     const mais = `<details class="mais"><summary>Para quem é, benefícios e disponibilidade</summary><dl>`
       + `<dt>Se você decide</dt><dd>${esc(p.para_quem.decisor)}</dd>`
