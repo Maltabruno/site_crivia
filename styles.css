@@ -907,3 +907,6 @@ body { --lx: 62%; --ly: 48%; }
   .about-head h2, .about-head > p:not(.section-code), .about-visual { grid-column: 1; grid-row: auto; }
 }
 
+
+/* celular: em colunas estreitas o texto justificado abre buracos entre as palavras; volta ao alinhamento à esquerda */
+@media (max-width: 600px) { .frente-texto p:not(.section-code), .about-head > p:not(.section-code) { text-align: left; hyphens: manual; -webkit-hyphens: manual; } }
