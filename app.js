@@ -356,7 +356,8 @@ const GRUPOS = [
   {"id": "requisitos-e-entrega", "nome": "Requisitos, documentação e entrega ao cliente", "ns": ["13", "14", "15", "16", "17", "21"]}
 ];
 /* CATALOGO:FIM */
-  const IMAGENS = new Set(Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')));
+  // cards com imagem aprovada em assets/produtos-s/; os demais usam o cabeçalho em CSS (o 13 aguarda a imagem)
+  const IMAGENS = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '14', '15', '16', '17', '21']);
   const assuntoDe = (o) => `${o.numero} — ${o.nome}`;
   const cardHtml = (p, k) => {
     const grupo = GRUPOS.find((g) => g.ns.includes(p.numero));
