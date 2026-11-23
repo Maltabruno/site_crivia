@@ -157,17 +157,15 @@ class Catalogo21(unittest.TestCase):
         for o in self.ofertas:
             self.assertNotIn("id_estavel", o)
 
-    def test_ofertas_nao_liberadas_aparecem_como_em_estruturacao(self):
-        """Catálogo R07: 14–17 e 21 inativas (preparação operacional); 13 sob demanda. O site não as apresenta como prontas."""
+    def test_ofertas_adotadas_sem_selo_em_estruturacao(self):
+        """23/11/2026: o Bruno adotou 14–17 e 21; nenhuma oferta mostra "Em estruturação". 13 segue sob demanda."""
         estados = {o["numero"]: o.get("estado_publico") for o in self.ofertas}
-        for n in ("14", "15", "16", "17", "21"):
-            self.assertEqual(estados[n], "Em estruturação", n)
+        self.assertNotIn("Em estruturação", estados.values())
         self.assertEqual(estados["13"], "Sob demanda")
-        for n in [f"{i:02d}" for i in range(1, 13)] + ["18", "19", "20"]:
+        for n in [f"{i:02d}" for i in range(1, 13)] + ["14", "15", "16", "17", "18", "19", "20", "21"]:
             self.assertIsNone(estados[n], n)
-        js = (SITE / "app.js").read_text(encoding="utf-8")
-        self.assertIn("CONVERSAR SOBRE O INTERESSE", js)
-        self.assertIn("(em estruturação)", js)
+        bloco = (SITE / "app.js").read_text(encoding="utf-8").split("CATALOGO:INICIO")[1].split("CATALOGO:FIM")[0]
+        self.assertNotIn("Em estruturação", bloco)
 
     # ---- Normas por produto (R03) e busca por norma ----
     @staticmethod

@@ -1110,7 +1110,7 @@
       "cta": "Apresente a lista de entrega, uma amostra do acervo e o prazo.",
       "anchor": "servico-14",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação",
+      "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
         "objetivo": "Fechar um pacote documental utilizável, com exigências, versões e faltantes controlados.",
@@ -1305,7 +1305,7 @@
       "cta": "Apresente o ativo, os registros existentes e a necessidade de operação.",
       "anchor": "servico-15",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação",
+      "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
         "objetivo": "Organizar programa, responsabilidades, histórico de manutenção e registros de garantias.",
@@ -1387,7 +1387,7 @@
       "cta": "Descreva a intervenção, os sistemas e o marco previsto.",
       "anchor": "servico-16",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação",
+      "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
         "objetivo": "Organizar requisitos, documentos, interfaces e alterações da reforma.",
@@ -1529,7 +1529,7 @@
       "cta": "Informe as unidades, os sistemas e a exigência a tratar.",
       "anchor": "servico-17",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação",
+      "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
         "objetivo": "Diagnosticar unidades de uma rede e priorizar adequações por sistema e local.",
@@ -1814,7 +1814,7 @@
       "cta": "Apresente o conteúdo técnico e o objetivo da apresentação.",
       "anchor": "servico-21",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "estado_publico": "Em estruturação",
+      "estado_publico": null,
       "normas_e_referencias": {
         "titulo": "Normas e aplicação no serviço",
         "objetivo": "Explicar solução, escopo e etapas com representação técnica coerente.",
