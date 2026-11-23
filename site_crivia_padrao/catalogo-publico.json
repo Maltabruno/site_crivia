@@ -1,5 +1,5 @@
 {
-  "versao": "R02",
+  "versao": "R03",
   "estado": "preparada_para_implementacao",
   "grupos": [
     {
@@ -64,17 +64,81 @@
       "resultado_pratico": "Fixar o programa, explicitar restrições, comparar alternativas na mesma base e testar as premissas que poderiam inverter a recomendação.",
       "entregas": "Quadro de alternativas; premissas e fontes; consequências técnicas e estimativas no nível contratado; recomendação e diligências.",
       "limites": "Projeto executivo, aprovação urbanística, topografia, geotecnia e viabilidade integral não são presumidos.",
-      "referencia": "Levantamento e implantação, projetos e regras urbanísticas pertinentes ao terreno e ao estudo.",
+      "referencia": "ABNT NBR 13133 — Levantamento topográfico: Conferir identificação e alcance do levantamento topográfico usado no estudo.; ABNT NBR 14645 (série) — Como construído, levantamentos e controle dimensional: Relacionar o estudo aos levantamentos/controles do imóvel pertinentes à parte selecionada.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Contextualizar CUB/quadros de incorporação usados na comparação.; SINAPI — CAIXA — Referências técnicas e custos da construção: Formar comparações de custos de serviços efetivamente quantificados.",
       "cta": "Apresente o terreno, as alternativas e a decisão necessária.",
       "anchor": "servico-01",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Analisar a implantação usando bases físicas identificadas e referências de custo adequadas.",
+        "criterios_principais": "Contrato, programa do empreendimento e regras urbanísticas locais.",
+        "referencias": [
+          {
+            "id": "N13133",
+            "codigo": "ABNT NBR 13133",
+            "nome": "Levantamento topográfico",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "base_tecnica",
+            "aplicacao": "Conferir identificação e alcance do levantamento topográfico usado no estudo.",
+            "condicao": "Quando houver levantamento topográfico como entrada; execução de campo é atividade própria.",
+            "entrega_vinculada": "Registro da base física e de suas limitações.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N14645",
+            "codigo": "ABNT NBR 14645 (série)",
+            "nome": "Como construído, levantamentos e controle dimensional",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "base_tecnica",
+            "aplicacao": "Relacionar o estudo aos levantamentos/controles do imóvel pertinentes à parte selecionada.",
+            "condicao": "Somente a parte aplicável ao objeto; não presume levantamento ou as built novo.",
+            "entrega_vinculada": "Quadro de referências e diligências sobre a base.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N12721",
+            "codigo": "ABNT NBR 12721",
+            "nome": "Custos de construção para incorporação e condomínios",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Contextualizar CUB/quadros de incorporação usados na comparação.",
+            "condicao": "Quando a contratação envolver finalidade coberta pela norma; não substitui orçamento completo.",
+            "entrega_vinculada": "Premissas da estimativa no campo correspondente.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Formar comparações de custos de serviços efetivamente quantificados.",
+            "condicao": "Selecionar UF, data-base, composição e condições.",
+            "entrega_vinculada": "Memória de custos de alternativas.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 13133",
+        "Levantamento topográfico",
+        "13133",
         "NBR 13133",
+        "ABNT NBR 14645 (série)",
+        "Como construído, levantamentos e controle dimensional",
+        "14645",
         "NBR 14645",
+        "ABNT NBR 12721",
+        "Custos de construção para incorporação e condomínios",
+        "12721",
         "NBR 12721",
-        "NBR 14653",
-        "SINAPI",
-        "SICRO"
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção"
       ]
     },
     {
@@ -95,13 +159,50 @@
       "resultado_pratico": "Inventariar camadas e documentos, conferir escala/data/origem, localizar alertas e encaminhar os estudos que exigem confirmação física.",
       "entregas": "Inventário de fontes; quadro/mapa de condicionantes; incertezas; diligências e estudos necessários.",
       "limites": "Não presume licenciamento, laudo ambiental integral, estudo de inundação, sondagem ou regularidade integral do imóvel.",
-      "referencia": "Referências de cartografia, levantamento, hidrologia e investigação ambiental conforme o recorte contratado.",
+      "referencia": "ABNT NBR 13133 — Levantamento topográfico: Conferir origem e condições da base topográfica usada para localizar o imóvel.; ABNT NBR 15515 (série) — Passivo ambiental em solo e água subterrânea: Enquadrar a avaliação/investigação de passivo em solo e água subterrânea.",
       "cta": "Informe a localização, o uso pretendido e a dúvida sobre o terreno.",
       "anchor": "servico-02",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Localizar condicionantes e definir o alcance das investigações ambientais/cartográficas necessárias.",
+        "criterios_principais": "Identificação do imóvel, fontes cartográficas e regras dos órgãos competentes.",
+        "referencias": [
+          {
+            "id": "N13133",
+            "codigo": "ABNT NBR 13133",
+            "nome": "Levantamento topográfico",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "base_tecnica",
+            "aplicacao": "Conferir origem e condições da base topográfica usada para localizar o imóvel.",
+            "condicao": "Não substitui levantamento de campo quando necessário.",
+            "entrega_vinculada": "Inventário de bases e limites de precisão.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N15515",
+            "codigo": "ABNT NBR 15515 (série)",
+            "nome": "Passivo ambiental em solo e água subterrânea",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_especializado",
+            "aplicacao": "Enquadrar a avaliação/investigação de passivo em solo e água subterrânea.",
+            "condicao": "Somente se a etapa ambiental correspondente for contratada com competência específica.",
+            "entrega_vinculada": "Matriz de indícios/diligências; relatório da etapa apenas quando incluída.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 13133",
+        "Levantamento topográfico",
+        "13133",
         "NBR 13133",
-        "NBR 14645",
+        "ABNT NBR 15515 (série)",
+        "Passivo ambiental em solo e água subterrânea",
+        "15515",
         "NBR 15515"
       ]
     },
@@ -123,14 +224,104 @@
       "resultado_pratico": "Congelar versões, validar ocorrências, localizar consequência, diligenciar o autor e verificar a resposta na rodada incluída.",
       "entregas": "Matriz de ocorrências validadas; localizações e imagens; questões aos autores; registro das respostas e situação do recorte.",
       "limites": "Não presume modelagem nova, projeto executivo, revisão integral de cálculo ou solução assinada em nome do projetista.",
-      "referencia": "Referências de projeto e gestão da informação, além das normas dos sistemas examinados.",
+      "referencia": "ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar versões, intercâmbio, ocorrências e respostas no fluxo BIM adotado.; ABNT NBR 6492 — Documentação e representação de projetos arquitetônicos e urbanísticos: Conferir a documentação/representação de arquitetura no recorte examinado.; ABNT NBR 16636 (série) — Serviços técnicos de projetos arquitetônicos e urbanísticos: Relacionar a conferência às etapas/documentos dos serviços de projeto pertinentes.",
       "cta": "Envie as disciplinas, as versões e a interface que precisa de resposta.",
       "anchor": "servico-03",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 16636",
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Conferir interfaces de modelos e documentação com versões e respostas rastreáveis.",
+        "criterios_principais": "Requisitos de informação do contrato e normas dos sistemas/disciplinas examinados.",
+        "referencias": [
+          {
+            "id": "N19650",
+            "codigo": "ABNT NBR ISO 19650 (série)",
+            "nome": "Gestão da informação usando BIM",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "gestao_da_informacao",
+            "aplicacao": "Organizar versões, intercâmbio, ocorrências e respostas no fluxo BIM adotado.",
+            "condicao": "Selecionar partes pertinentes e requisitos de informação acordados.",
+            "entrega_vinculada": "Matriz de ocorrências, responsáveis e revisões.",
+            "partes_para_selecao": [
+              "ABNT NBR ISO 19650-1",
+              "ABNT NBR ISO 19650-2",
+              "ABNT NBR ISO 19650-3",
+              "ABNT NBR ISO 19650-4",
+              "ABNT NBR ISO 19650-5"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR ISO 19650-1",
+                "assunto": "Conceitos e princípios"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-2",
+                "assunto": "Fase de entrega de ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-3",
+                "assunto": "Fase operacional dos ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-4",
+                "assunto": "Troca de informação"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-5",
+                "assunto": "Segurança na gestão da informação"
+              }
+            ]
+          },
+          {
+            "id": "N6492",
+            "codigo": "ABNT NBR 6492",
+            "nome": "Documentação e representação de projetos arquitetônicos e urbanísticos",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "documentacao_de_projeto",
+            "aplicacao": "Conferir a documentação/representação de arquitetura no recorte examinado.",
+            "condicao": "Quando a documentação arquitetônica/urbanística integrar o serviço.",
+            "entrega_vinculada": "Registro de divergências documentais e representação.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N16636",
+            "codigo": "ABNT NBR 16636 (série)",
+            "nome": "Serviços técnicos de projetos arquitetônicos e urbanísticos",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Relacionar a conferência às etapas/documentos dos serviços de projeto pertinentes.",
+            "condicao": "Não constitui elaboração ou revisão integral de projeto.",
+            "entrega_vinculada": "Quadro de entregas e interfaces de projeto.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR ISO 19650 (série)",
+        "Gestão da informação usando BIM",
+        "ABNT NBR ISO 19650-1",
+        "ABNT NBR ISO 19650-2",
+        "ABNT NBR ISO 19650-3",
+        "ABNT NBR ISO 19650-4",
+        "ABNT NBR ISO 19650-5",
+        "Conceitos e princípios",
+        "Fase de entrega de ativos",
+        "Fase operacional dos ativos",
+        "Troca de informação",
+        "Segurança na gestão da informação",
+        "19650",
+        "NBR 19650",
+        "ABNT NBR 6492",
+        "Documentação e representação de projetos arquitetônicos e urbanísticos",
+        "6492",
         "NBR 6492",
-        "ISO 19650"
+        "ABNT NBR 16636 (série)",
+        "Serviços técnicos de projetos arquitetônicos e urbanísticos",
+        "16636",
+        "NBR 16636"
       ]
     },
     {
@@ -151,14 +342,18 @@
       "resultado_pratico": "Fixar critérios e corte, reconciliar itens/registros, conferir quantidades e diligenciar as exceções antes da recomendação.",
       "entregas": "Memória do ciclo; matriz item/evidência/diferença; diligências; recomendação técnica e pendências.",
       "limites": "Não presume fiscalização permanente, controle tecnológico, decisão de pagamento ou imagem capaz de medir sozinha.",
-      "referencia": "Critérios contratuais de medição e normas técnicas dos serviços verificados.",
+      "referencia": "Contrato, anexos de medição, projeto, especificações e normas do serviço medido. Não foi definida uma NBR única transversal para este produto.",
       "cta": "Apresente o contrato, o boletim e a data de corte.",
       "anchor": "servico-04",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "Critérios contratuais de medição",
-        "Normas específicas dos sistemas examinados"
-      ]
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Confrontar medição, critério contratual, quantidade e evidência de execução.",
+        "criterios_principais": "Contrato, anexos de medição, projeto, especificações e normas do serviço medido.",
+        "referencias": [],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": []
     },
     {
       "numero": "05",
@@ -178,15 +373,65 @@
       "resultado_pratico": "Contratação: equalizar escopo/unidades/bases. Pleitos: reconstruir evento/período, evidências, causas concorrentes e impacto, com encaminhamento jurídico próprio.",
       "entregas": "Aplicação contratação: mapa de equalização e questões. Aplicação pleito: cronologia, matriz de suporte, memória de impacto e questões para negociação.",
       "limites": "Não presume orçamento do zero, defesa jurídica, perícia integral ou procedência do pedido.",
-      "referencia": "Referências de custo e especificação dos serviços; método pericial apenas quando essa atividade estiver contratada.",
+      "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Comparar itens orçados com referência contextualizada, quando pertinente.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Conferir referências de CUB/custos/quadros no campo de incorporação.; ABNT NBR 13752 — Perícias de engenharia na construção civil: Aplicar procedimento pericial quando houver contratação de natureza pericial.",
       "cta": "Informe se a questão é uma contratação ou um pleito e apresente a base disponível.",
       "anchor": "servico-05",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Comparar propostas equivalentes ou fundamentar tecnicamente um pleito delimitado.",
+        "criterios_principais": "Escopo contratual, bases de preço e registros do evento analisado.",
+        "referencias": [
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Comparar itens orçados com referência contextualizada, quando pertinente.",
+            "condicao": "Não constitui preço obrigatório nem economia já obtida.",
+            "entrega_vinculada": "Mapa de equalização e memória das diferenças.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N12721",
+            "codigo": "ABNT NBR 12721",
+            "nome": "Custos de construção para incorporação e condomínios",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Conferir referências de CUB/custos/quadros no campo de incorporação.",
+            "condicao": "Apenas se essa finalidade integrar a comparação.",
+            "entrega_vinculada": "Premissas e limites da referência de custos.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N13752",
+            "codigo": "ABNT NBR 13752",
+            "nome": "Perícias de engenharia na construção civil",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "servico_adicional",
+            "aplicacao": "Aplicar procedimento pericial quando houver contratação de natureza pericial.",
+            "condicao": "Não incluído automaticamente na análise comercial de proposta/pleito.",
+            "entrega_vinculada": "Peça pericial própria apenas se contratada e enquadrada.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção",
+        "ABNT NBR 12721",
+        "Custos de construção para incorporação e condomínios",
+        "12721",
         "NBR 12721",
-        "NBR 13752",
-        "SINAPI",
-        "SICRO"
+        "ABNT NBR 13752",
+        "Perícias de engenharia na construção civil",
+        "13752",
+        "NBR 13752"
       ]
     },
     {
@@ -207,13 +452,50 @@
       "resultado_pratico": "Definir finalidade/cobertura, observar e identificar ocorrências, registrar limitações e propor investigação/prioridade pertinente.",
       "entregas": "Registro da cobertura e das condições; manifestações localizadas; limitações; encaminhamentos e plano de investigação no alcance.",
       "limites": "Não presume declaração de estabilidade, diagnóstico estrutural integral, ensaio, cálculo ou projeto de recuperação.",
-      "referencia": "Referências de inspeção, manutenção e sistemas, conforme finalidade e abrangência contratadas.",
+      "referencia": "ABNT NBR 16747 — Inspeção predial: Definir o alcance de inspeção predial quando esse serviço for contratado.; ABNT NBR 5674 — Gestão da manutenção de edificações: Relacionar as constatações com programa/histórico de manutenção.",
       "cta": "Informe o ativo, a ocorrência e a finalidade da inspeção.",
       "anchor": "servico-06",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Registrar manifestações, cobertura e encaminhamentos de investigação no alcance contratado.",
+        "criterios_principais": "Escopo de inspeção, histórico e normas dos sistemas efetivamente examinados.",
+        "referencias": [
+          {
+            "id": "N16747",
+            "codigo": "ABNT NBR 16747",
+            "nome": "Inspeção predial",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "escopo_de_inspecao_a_enquadrar",
+            "aplicacao": "Definir o alcance de inspeção predial quando esse serviço for contratado.",
+            "condicao": "Vistoria visual localizada não equivale, por si, à inspeção predial abrangida pela norma.",
+            "entrega_vinculada": "Relatório de cobertura, constatações, limitações e prioridades no método adotado.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N5674",
+            "codigo": "ABNT NBR 5674",
+            "nome": "Gestão da manutenção de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "interface_de_manutencao",
+            "aplicacao": "Relacionar as constatações com programa/histórico de manutenção.",
+            "condicao": "Somente registros e avaliações incluídos; não comprova manutenção passada.",
+            "entrega_vinculada": "Pendências e encaminhamentos de manutenção.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 16747",
+        "Inspeção predial",
+        "16747",
         "NBR 16747",
-        "NBR 14037",
+        "ABNT NBR 5674",
+        "Gestão da manutenção de edificações",
+        "5674",
         "NBR 5674"
       ]
     },
@@ -235,15 +517,63 @@
       "resultado_pratico": "Fixar corte, reconciliar avanço/custos/compromissos, estimar remanescentes por pacote e explicitar cenários e decisões.",
       "entregas": "Mapa do saldo e sua base; cenários; premissas e riscos; decisões e marcos; atualização no ciclo contratado.",
       "limites": "Não presume rating, autorização de crédito, auditoria financeira ou garantia de preço final.",
-      "referencia": "Metodologia de custos, critérios de avanço e referências dos serviços remanescentes.",
+      "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Contextualizar custos do saldo por serviço, UF e data-base.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Contextualizar itens de infraestrutura de transportes, quando pertinentes.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Identificar limites de referência baseada em CUB/quadros de incorporação.",
       "cta": "Apresente o saldo de serviços, os compromissos e a próxima decisão de aporte.",
       "anchor": "servico-07",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 12721",
-        "NBR 14653",
-        "SINAPI",
-        "SICRO"
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Estimar o saldo de serviços e distinguir custo, compromissos e desembolso.",
+        "criterios_principais": "Quantidades do saldo, compromissos, escopo vigente e condições de execução.",
+        "referencias": [
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Contextualizar custos do saldo por serviço, UF e data-base.",
+            "condicao": "Conferir adequação da composição ao saldo real.",
+            "entrega_vinculada": "Memória de custo para concluir e cenários.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "R_SICRO",
+            "codigo": "SICRO — DNIT",
+            "nome": "Custos referenciais de infraestrutura de transportes",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Contextualizar itens de infraestrutura de transportes, quando pertinentes.",
+            "condicao": "Somente serviços cobertos e condições comparáveis.",
+            "entrega_vinculada": "Memória específica de itens de infraestrutura.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N12721",
+            "codigo": "ABNT NBR 12721",
+            "nome": "Custos de construção para incorporação e condomínios",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Identificar limites de referência baseada em CUB/quadros de incorporação.",
+            "condicao": "Não é método universal para fechar saldo de obra.",
+            "entrega_vinculada": "Premissas e maturidade da estimativa.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção",
+        "SICRO — DNIT",
+        "Custos referenciais de infraestrutura de transportes",
+        "ABNT NBR 12721",
+        "Custos de construção para incorporação e condomínios",
+        "12721",
+        "NBR 12721"
       ]
     },
     {
@@ -264,13 +594,66 @@
       "resultado_pratico": "Fixar uso pretendido e cobertura, examinar documentos/acesso, localizar alertas e encaminhar aprofundamento.",
       "entregas": "Matriz de alertas; fontes/cobertura; investimento preliminar quando incluído; diligências e condições a verificar.",
       "limites": "Não presume avaliação integral, diligência jurídica/ambiental completa ou ausência de vícios.",
-      "referencia": "Referências de inspeção, avaliação e sistemas apenas nas atividades efetivamente incluídas na triagem.",
+      "referencia": "ABNT NBR 16747 — Inspeção predial: Relacionar a triagem ao alcance de inspeção física efetivamente incluído.; ABNT NBR 14653 (série) — Avaliação de bens: Orientar avaliação de valor do bem quando contratada separadamente.; ABNT NBR 15515 (série) — Passivo ambiental em solo e água subterrânea: Enquadrar diligências de passivo ambiental se a tese de compra exigir.",
       "cta": "Informe o ativo, o uso pretendido e o prazo da aquisição.",
       "anchor": "servico-08",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 14653",
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Identificar alertas e diligências antes da aquisição de um ativo.",
+        "criterios_principais": "Finalidade da aquisição, documentação do imóvel e sistemas incluídos.",
+        "referencias": [
+          {
+            "id": "N16747",
+            "codigo": "ABNT NBR 16747",
+            "nome": "Inspeção predial",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "atividade_delimitada",
+            "aplicacao": "Relacionar a triagem ao alcance de inspeção física efetivamente incluído.",
+            "condicao": "Inspeção predial completa exige contratação correspondente.",
+            "entrega_vinculada": "Relatório de alertas e cobertura da visita.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N14653",
+            "codigo": "ABNT NBR 14653 (série)",
+            "nome": "Avaliação de bens",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "servico_adicional",
+            "aplicacao": "Orientar avaliação de valor do bem quando contratada separadamente.",
+            "condicao": "Triagem técnica não é laudo de avaliação imobiliária.",
+            "entrega_vinculada": "Laudo de avaliação apenas se incluído e enquadrado.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N15515",
+            "codigo": "ABNT NBR 15515 (série)",
+            "nome": "Passivo ambiental em solo e água subterrânea",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_especializado",
+            "aplicacao": "Enquadrar diligências de passivo ambiental se a tese de compra exigir.",
+            "condicao": "Investigação ambiental depende de etapa/competência/recursos específicos.",
+            "entrega_vinculada": "Lista de diligências e evidências ambientais contratadas.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 16747",
+        "Inspeção predial",
+        "16747",
         "NBR 16747",
+        "ABNT NBR 14653 (série)",
+        "Avaliação de bens",
+        "14653",
+        "NBR 14653",
+        "ABNT NBR 15515 (série)",
+        "Passivo ambiental em solo e água subterrânea",
+        "15515",
         "NBR 15515"
       ]
     },
@@ -292,14 +675,18 @@
       "resultado_pratico": "Fixar corte/saldo inicial, mapear itens/unidades, incorporar movimentos e diligenciar as exceções com fonte.",
       "entregas": "Mapa de conciliação; critérios de associação/conversão; exceções e justificativas; pendências e recomendações.",
       "limites": "Não presume validação fiscal, prova de fraude, inventário físico ou integração de sistemas.",
-      "referencia": "Critérios de conciliação, unidades e movimentos de materiais, com referências técnicas pertinentes à pergunta examinada.",
+      "referencia": "Contrato, documentos de compra, critérios de associação/conversão e registros de estoque/consumo. Não foi definida uma NBR única transversal para este produto.",
       "cta": "Apresente o período, os materiais e a divergência a esclarecer.",
       "anchor": "servico-09",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "Critérios de conciliação e medição",
-        "Normas específicas dos materiais"
-      ]
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Conciliar documentos, unidades e movimentos de materiais com a medição.",
+        "criterios_principais": "Contrato, documentos de compra, critérios de associação/conversão e registros de estoque/consumo.",
+        "referencias": [],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": []
     },
     {
       "numero": "10",
@@ -319,14 +706,47 @@
       "resultado_pratico": "Confrontar anexos, referências e orçamento, formular a questão, estimar consequência no nível possível e encaminhar aspectos jurídicos.",
       "entregas": "Nota técnica com fonte, questão, consequência e premissas; matriz para esclarecimento e validação jurídica.",
       "limites": "Não presume advocacia, protocolo, habilitação, acervo ou vitória.",
-      "referencia": "Edital, projetos, metodologia de custos e normas técnicas do objeto; questões jurídicas têm encaminhamento próprio.",
+      "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Conferir referência de custos usada no orçamento analisado.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Conferir referência de infraestrutura quando adotada no objeto.",
       "cta": "Apresente o edital, sua dúvida técnica e o prazo disponível.",
       "anchor": "servico-10",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 12721",
-        "SINAPI",
-        "SICRO"
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Identificar exigências e divergências técnicas que afetam a proposta do licitante.",
+        "criterios_principais": "Edital e retificações, anexos, projetos, especificações e normas expressamente pertinentes ao objeto.",
+        "referencias": [
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Conferir referência de custos usada no orçamento analisado.",
+            "condicao": "Quando pertinente ao edital, serviço e regime de referência.",
+            "entrega_vinculada": "Nota técnica com memória de divergências.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "R_SICRO",
+            "codigo": "SICRO — DNIT",
+            "nome": "Custos referenciais de infraestrutura de transportes",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Conferir referência de infraestrutura quando adotada no objeto.",
+            "condicao": "Não se aplica automaticamente a qualquer edital.",
+            "entrega_vinculada": "Memória técnica contextualizada.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção",
+        "SICRO — DNIT",
+        "Custos referenciais de infraestrutura de transportes"
       ]
     },
     {
@@ -347,14 +767,104 @@
       "resultado_pratico": "Definir pergunta, protocolo e condição inicial; coletar campanhas; verificar comparabilidade/incerteza e encaminhar o que exige investigação.",
       "entregas": "Protocolo; séries revisadas; comparabilidade e limitações; alertas e encaminhamentos.",
       "limites": "Não presume monitoramento contínuo, vigilância estrutural, estabilidade ou diagnóstico da causa.",
-      "referencia": "Protocolo de acompanhamento e referências do sistema, da inspeção e da manutenção pertinentes.",
+      "referencia": "ABNT NBR 16747 — Inspeção predial: Vincular registros de campanha às informações de inspeção no alcance incluído.; ABNT NBR 5674 — Gestão da manutenção de edificações: Organizar o histórico para apoiar gestão de manutenção.; ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar a informação do ativo quando adotado processo de gestão BIM.",
       "cta": "Informe o que precisa ser acompanhado e qual decisão depende da evolução.",
       "anchor": "servico-11",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Produzir registros comparáveis de manifestações entre campanhas.",
+        "criterios_principais": "Protocolo de observação, pontos, método, condições e frequência contratados.",
+        "referencias": [
+          {
+            "id": "N16747",
+            "codigo": "ABNT NBR 16747",
+            "nome": "Inspeção predial",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "interface_de_inspecao",
+            "aplicacao": "Vincular registros de campanha às informações de inspeção no alcance incluído.",
+            "condicao": "Série visual não substitui inspeção integral ou diagnóstico causal.",
+            "entrega_vinculada": "Histórico localizado, comparabilidade e encaminhamentos.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N5674",
+            "codigo": "ABNT NBR 5674",
+            "nome": "Gestão da manutenção de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "registros_de_manutencao",
+            "aplicacao": "Organizar o histórico para apoiar gestão de manutenção.",
+            "condicao": "Não comprova segurança nem execução de manutenção.",
+            "entrega_vinculada": "Séries e registros com versão/data/ponto.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N19650",
+            "codigo": "ABNT NBR ISO 19650 (série)",
+            "nome": "Gestão da informação usando BIM",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Organizar a informação do ativo quando adotado processo de gestão BIM.",
+            "condicao": "Modelo digital leve não atende automaticamente à série.",
+            "entrega_vinculada": "Cadastro informacional conforme recorte acordado.",
+            "partes_para_selecao": [
+              "ABNT NBR ISO 19650-1",
+              "ABNT NBR ISO 19650-2",
+              "ABNT NBR ISO 19650-3",
+              "ABNT NBR ISO 19650-4",
+              "ABNT NBR ISO 19650-5"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR ISO 19650-1",
+                "assunto": "Conceitos e princípios"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-2",
+                "assunto": "Fase de entrega de ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-3",
+                "assunto": "Fase operacional dos ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-4",
+                "assunto": "Troca de informação"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-5",
+                "assunto": "Segurança na gestão da informação"
+              }
+            ]
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 16747",
+        "Inspeção predial",
+        "16747",
         "NBR 16747",
-        "NBR 14037",
-        "NBR 5674"
+        "ABNT NBR 5674",
+        "Gestão da manutenção de edificações",
+        "5674",
+        "NBR 5674",
+        "ABNT NBR ISO 19650 (série)",
+        "Gestão da informação usando BIM",
+        "ABNT NBR ISO 19650-1",
+        "ABNT NBR ISO 19650-2",
+        "ABNT NBR ISO 19650-3",
+        "ABNT NBR ISO 19650-4",
+        "ABNT NBR ISO 19650-5",
+        "Conceitos e princípios",
+        "Fase de entrega de ativos",
+        "Fase operacional dos ativos",
+        "Troca de informação",
+        "Segurança na gestão da informação",
+        "19650",
+        "NBR 19650"
       ]
     },
     {
@@ -375,16 +885,49 @@
       "resultado_pratico": "Definir função, fronteira e método; qualificar dados; calcular alternativas; testar sensibilidade e explicar limites.",
       "entregas": "Memória de cálculo; dados/fontes/qualidade; comparação e sensibilidade; condições de uso da conclusão.",
       "limites": "Não presume neutralidade, crédito de carbono, certificação, EPD ou ACV completa.",
-      "referencia": "Referências de ciclo de vida, como ISO 14040/14044 e adoções aplicáveis, conforme o método e o alcance definidos.",
+      "referencia": "ISO 14040 — Avaliação do ciclo de vida — princípios e estrutura: Definir objetivo, função, fronteira e estrutura de comparação.; ISO 14044 — Avaliação do ciclo de vida — requisitos e diretrizes: Fundamentar inventário, cálculos, interpretação e revisão no alcance contratado.",
       "cta": "Apresente as alternativas, a função e a exigência ambiental.",
       "anchor": "servico-12",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Comparar carbono e custo de alternativas na mesma função e fronteira.",
+        "criterios_principais": "Objetivo, unidade funcional, fronteira, dados de materiais e fontes de fatores.",
+        "referencias": [
+          {
+            "id": "I14040",
+            "codigo": "ISO 14040",
+            "nome": "Avaliação do ciclo de vida — princípios e estrutura",
+            "tipo": "norma_ISO_internacional",
+            "papel_no_servico": "referencia_metodologica",
+            "aplicacao": "Definir objetivo, função, fronteira e estrutura de comparação.",
+            "condicao": "Adoção nacional e método do estudo são confirmados no enquadramento.",
+            "entrega_vinculada": "Objetivo/escopo e inventário de fontes.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "I14044",
+            "codigo": "ISO 14044",
+            "nome": "Avaliação do ciclo de vida — requisitos e diretrizes",
+            "tipo": "norma_ISO_internacional",
+            "papel_no_servico": "referencia_metodologica",
+            "aplicacao": "Fundamentar inventário, cálculos, interpretação e revisão no alcance contratado.",
+            "condicao": "Comparação simplificada não se torna ACV integral, EPD ou crédito.",
+            "entrega_vinculada": "Memória, sensibilidade, interpretação e limites.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
         "ISO 14040",
+        "Avaliação do ciclo de vida — princípios e estrutura",
+        "14040",
         "ISO 14044",
-        "NBR 12721",
-        "SINAPI",
-        "SICRO"
+        "Avaliação do ciclo de vida — requisitos e diretrizes",
+        "14044"
       ]
     },
     {
@@ -405,16 +948,144 @@
       "resultado_pratico": "Verificar aplicabilidade, identificar requisitos/métodos, vincular evidência à configuração, tratar lacunas e emitir conclusão humana delimitada.",
       "entregas": "Ficha de aplicabilidade; matriz por requisito/configuração; diligências; conclusões e pendências; pasta de comprovação do recorte.",
       "limites": "Não presume certificação integral, ensaios/simulações incluídos ou conclusão sobre edificação inteira.",
-      "referencia": "Partes e métodos pertinentes da NBR 15575, quando aplicável, e normas específicas dos sistemas. A edição, a configuração e o alcance são definidos para o caso.",
+      "referencia": "ABNT NBR 15575 — Desempenho de edificações habitacionais: Analisar requisitos e evidências dos sistemas habitacionais contratados.; ABNT NBR 10151 — Avaliação de ruído em áreas habitadas: Enquadrar perguntas de ruído em áreas habitadas.; ABNT NBR 10152 — Níveis de pressão sonora em ambientes internos: Enquadrar perguntas de condições acústicas internas.; ABNT NBR 10821 (série) — Esquadrias para edificações: Conferir referências da esquadria/configuração pertinente.; ABNT NBR ISO/IEC 17025 — Competência de laboratórios de ensaio e calibração: Conferir pertinência da evidência laboratorial e do escopo exigido.",
       "cta": "Apresente o sistema, a exigência e o marco de compra ou entrega.",
       "anchor": "servico-13",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Sob demanda",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Relacionar requisito de desempenho, configuração instalada e evidência pertinente.",
+        "criterios_principais": "Uso habitacional, sistemas, configurações, partes e métodos aplicáveis.",
+        "referencias": [
+          {
+            "id": "N15575",
+            "codigo": "ABNT NBR 15575",
+            "nome": "Desempenho de edificações habitacionais",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "requisito_do_objeto",
+            "aplicacao": "Analisar requisitos e evidências dos sistemas habitacionais contratados.",
+            "condicao": "Selecionar partes 1 a 6, sistemas/requisitos e método; não declarar desempenho integral por uma análise parcial.",
+            "entrega_vinculada": "Matriz requisito/configuração/método/evidência, relatório e pasta de comprovação.",
+            "partes_para_selecao": [
+              "ABNT NBR 15575-1",
+              "ABNT NBR 15575-2",
+              "ABNT NBR 15575-3",
+              "ABNT NBR 15575-4",
+              "ABNT NBR 15575-5",
+              "ABNT NBR 15575-6"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR 15575-1",
+                "assunto": "Requisitos gerais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-2",
+                "assunto": "Sistemas estruturais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-3",
+                "assunto": "Sistemas de pisos"
+              },
+              {
+                "codigo": "ABNT NBR 15575-4",
+                "assunto": "Vedações verticais internas e externas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-5",
+                "assunto": "Sistemas de coberturas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-6",
+                "assunto": "Sistemas hidrossanitários"
+              }
+            ]
+          },
+          {
+            "id": "N10151",
+            "codigo": "ABNT NBR 10151",
+            "nome": "Avaliação de ruído em áreas habitadas",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_acustico",
+            "aplicacao": "Enquadrar perguntas de ruído em áreas habitadas.",
+            "condicao": "Somente quando essa grandeza responder à pergunta contratada.",
+            "entrega_vinculada": "Análise da evidência de ruído ambiental; medição própria só quando incluída.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N10152",
+            "codigo": "ABNT NBR 10152",
+            "nome": "Níveis de pressão sonora em ambientes internos",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_acustico",
+            "aplicacao": "Enquadrar perguntas de condições acústicas internas.",
+            "condicao": "Não é método intercambiável de isolamento de sistema.",
+            "entrega_vinculada": "Análise de evidências internas ou relatório específico contratado.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N10821",
+            "codigo": "ABNT NBR 10821 (série)",
+            "nome": "Esquadrias para edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "sistema_especifico",
+            "aplicacao": "Conferir referências da esquadria/configuração pertinente.",
+            "condicao": "Selecionar parte, sistema e método; documento de produto diferente não comprova a instalação.",
+            "entrega_vinculada": "Quadro configuração/evidência e diligências da esquadria.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N17025",
+            "codigo": "ABNT NBR ISO/IEC 17025",
+            "nome": "Competência de laboratórios de ensaio e calibração",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "qualificacao_da_evidencia",
+            "aplicacao": "Conferir pertinência da evidência laboratorial e do escopo exigido.",
+            "condicao": "Acreditação é conferida por laboratório/atividade/método; CRIVIA não se torna laboratório acreditado.",
+            "entrega_vinculada": "Registro de conferência da evidência/escopo do laboratório.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 15575",
+        "Desempenho de edificações habitacionais",
+        "ABNT NBR 15575-1",
+        "ABNT NBR 15575-2",
+        "ABNT NBR 15575-3",
+        "ABNT NBR 15575-4",
+        "ABNT NBR 15575-5",
+        "ABNT NBR 15575-6",
+        "Requisitos gerais",
+        "Sistemas estruturais",
+        "Sistemas de pisos",
+        "Vedações verticais internas e externas",
+        "Sistemas de coberturas",
+        "Sistemas hidrossanitários",
+        "15575",
         "NBR 15575",
+        "ABNT NBR 10151",
+        "Avaliação de ruído em áreas habitadas",
+        "10151",
         "NBR 10151",
+        "ABNT NBR 10152",
+        "Níveis de pressão sonora em ambientes internos",
+        "10152",
         "NBR 10152",
-        "NBR ISO/IEC 17025"
+        "ABNT NBR 10821 (série)",
+        "Esquadrias para edificações",
+        "10821",
+        "NBR 10821",
+        "ABNT NBR ISO/IEC 17025",
+        "Competência de laboratórios de ensaio e calibração",
+        "17025",
+        "NBR 17025"
       ]
     },
     {
@@ -435,16 +1106,181 @@
       "resultado_pratico": "Fixar lista e profundidade, inventariar, organizar, atribuir faltantes, conduzir diligências, conferir, produzir índice e submeter o pacote.",
       "entregas": "Índice mestre e estrutura; matriz de completude; arquivos organizados; instrumentos próprios contratados; diligências, pendências e protocolo.",
       "limites": "Não presume emissão por terceiros, validação integral de disciplinas, aceite garantido, comando da obra ou entrega que a contratante não executou.",
-      "referencia": "Lista de entrega do contrato e normas das disciplinas. A NBR 14037 entra quando o escopo inclui manual de uso, operação e manutenção.",
+      "referencia": "ABNT NBR 14037 — Manuais de uso, operação e manutenção: Organizar/conferir o manual de uso, operação e manutenção que integrar o pacote.; ABNT NBR 5674 — Gestão da manutenção de edificações: Organizar programa/registros de manutenção exigidos na passagem à operação.; ABNT NBR 15575 — Desempenho de edificações habitacionais: Relacionar evidências de desempenho às exigências do pacote habitacional.; ABNT NBR 14645 (série) — Como construído, levantamentos e controle dimensional: Organizar registros de levantamento/controle pertinentes ao como construído.; ABNT NBR ISO 19650 (série) — Gestão da informação usando BIM: Organizar informações de entrega do ativo no processo BIM adotado.",
       "cta": "Apresente a lista de entrega, uma amostra do acervo e o prazo.",
       "anchor": "servico-14",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Em estruturação",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Fechar um pacote documental utilizável, com exigências, versões e faltantes controlados.",
+        "criterios_principais": "Lista de entrega do contrato, profundidade de conferência e documentos dos sistemas.",
+        "referencias": [
+          {
+            "id": "N14037",
+            "codigo": "ABNT NBR 14037",
+            "nome": "Manuais de uso, operação e manutenção",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "documento_de_entrega",
+            "aplicacao": "Organizar/conferir o manual de uso, operação e manutenção que integrar o pacote.",
+            "condicao": "Elaboração própria e validação técnica precisam estar expressamente incluídas.",
+            "entrega_vinculada": "Manual no alcance contratado, índice e matriz de pendências.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N5674",
+            "codigo": "ABNT NBR 5674",
+            "nome": "Gestão da manutenção de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "documento_de_entrega",
+            "aplicacao": "Organizar programa/registros de manutenção exigidos na passagem à operação.",
+            "condicao": "Não presume implantar ou executar toda a gestão de manutenção.",
+            "entrega_vinculada": "Programa/registros incluídos e responsabilidades.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N15575",
+            "codigo": "ABNT NBR 15575",
+            "nome": "Desempenho de edificações habitacionais",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "comprovacao_documental",
+            "aplicacao": "Relacionar evidências de desempenho às exigências do pacote habitacional.",
+            "condicao": "Suficiência técnica é conferida no alcance; organização não equivale a desempenho comprovado.",
+            "entrega_vinculada": "Pasta de evidências indexada e pendências por requisito.",
+            "partes_para_selecao": [
+              "ABNT NBR 15575-1",
+              "ABNT NBR 15575-2",
+              "ABNT NBR 15575-3",
+              "ABNT NBR 15575-4",
+              "ABNT NBR 15575-5",
+              "ABNT NBR 15575-6"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR 15575-1",
+                "assunto": "Requisitos gerais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-2",
+                "assunto": "Sistemas estruturais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-3",
+                "assunto": "Sistemas de pisos"
+              },
+              {
+                "codigo": "ABNT NBR 15575-4",
+                "assunto": "Vedações verticais internas e externas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-5",
+                "assunto": "Sistemas de coberturas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-6",
+                "assunto": "Sistemas hidrossanitários"
+              }
+            ]
+          },
+          {
+            "id": "N14645",
+            "codigo": "ABNT NBR 14645 (série)",
+            "nome": "Como construído, levantamentos e controle dimensional",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Organizar registros de levantamento/controle pertinentes ao como construído.",
+            "condicao": "A série não é norma universal para todo as built de todas as disciplinas.",
+            "entrega_vinculada": "Registros identificados por parte, disciplina e autoria.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N19650",
+            "codigo": "ABNT NBR ISO 19650 (série)",
+            "nome": "Gestão da informação usando BIM",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "gestao_da_informacao",
+            "aplicacao": "Organizar informações de entrega do ativo no processo BIM adotado.",
+            "condicao": "Requisitos informacionais/partes aplicáveis precisam estar acordados.",
+            "entrega_vinculada": "Índice de informações, versões e protocolo de entrega.",
+            "partes_para_selecao": [
+              "ABNT NBR ISO 19650-1",
+              "ABNT NBR ISO 19650-2",
+              "ABNT NBR ISO 19650-3",
+              "ABNT NBR ISO 19650-4",
+              "ABNT NBR ISO 19650-5"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR ISO 19650-1",
+                "assunto": "Conceitos e princípios"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-2",
+                "assunto": "Fase de entrega de ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-3",
+                "assunto": "Fase operacional dos ativos"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-4",
+                "assunto": "Troca de informação"
+              },
+              {
+                "codigo": "ABNT NBR ISO 19650-5",
+                "assunto": "Segurança na gestão da informação"
+              }
+            ]
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 14037",
+        "Manuais de uso, operação e manutenção",
+        "14037",
         "NBR 14037",
+        "ABNT NBR 5674",
+        "Gestão da manutenção de edificações",
+        "5674",
         "NBR 5674",
+        "ABNT NBR 15575",
+        "Desempenho de edificações habitacionais",
+        "ABNT NBR 15575-1",
+        "ABNT NBR 15575-2",
+        "ABNT NBR 15575-3",
+        "ABNT NBR 15575-4",
+        "ABNT NBR 15575-5",
+        "ABNT NBR 15575-6",
+        "Requisitos gerais",
+        "Sistemas estruturais",
+        "Sistemas de pisos",
+        "Vedações verticais internas e externas",
+        "Sistemas de coberturas",
+        "Sistemas hidrossanitários",
+        "15575",
         "NBR 15575",
-        "ISO 19650"
+        "ABNT NBR 14645 (série)",
+        "Como construído, levantamentos e controle dimensional",
+        "14645",
+        "NBR 14645",
+        "ABNT NBR ISO 19650 (série)",
+        "Gestão da informação usando BIM",
+        "ABNT NBR ISO 19650-1",
+        "ABNT NBR ISO 19650-2",
+        "ABNT NBR ISO 19650-3",
+        "ABNT NBR ISO 19650-4",
+        "ABNT NBR ISO 19650-5",
+        "Conceitos e princípios",
+        "Fase de entrega de ativos",
+        "Fase operacional dos ativos",
+        "Troca de informação",
+        "Segurança na gestão da informação",
+        "19650",
+        "NBR 19650"
       ]
     },
     {
@@ -465,16 +1301,68 @@
       "resultado_pratico": "Identificar ativo/sistemas e referências, estruturar plano/evidência, conferir histórico e acompanhar ações no ciclo contratado.",
       "entregas": "Plano/estrutura de registros no alcance; matriz de responsabilidades; histórico organizado; pendências e encaminhamentos.",
       "limites": "Não presume execução diária da manutenção, reparos, parecer jurídico ou garantia preservada automaticamente.",
-      "referencia": "NBR 5674, NBR 14037 e referências de garantias como a NBR 17170, conforme o objeto e a aplicação.",
+      "referencia": "ABNT NBR 5674 — Gestão da manutenção de edificações: Estruturar programa, responsáveis e registros de manutenção no alcance contratado.; ABNT NBR 14037 — Manuais de uso, operação e manutenção: Relacionar o programa às instruções do manual específico da edificação.; ABNT NBR 17170 — Garantias de edificações: Organizar referências, datas, condições e registros das ocorrências.",
       "cta": "Apresente o ativo, os registros existentes e a necessidade de operação.",
       "anchor": "servico-15",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Em estruturação",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Organizar programa, responsabilidades, histórico de manutenção e registros de garantias.",
+        "criterios_principais": "Ativo, sistemas, fontes das atividades/frequências e fatos das ocorrências.",
+        "referencias": [
+          {
+            "id": "N5674",
+            "codigo": "ABNT NBR 5674",
+            "nome": "Gestão da manutenção de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "requisito_de_gestao",
+            "aplicacao": "Estruturar programa, responsáveis e registros de manutenção no alcance contratado.",
+            "condicao": "Execução declarada e execução verificada têm estados separados.",
+            "entrega_vinculada": "Programa, calendário, matriz de responsabilidades e histórico.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N14037",
+            "codigo": "ABNT NBR 14037",
+            "nome": "Manuais de uso, operação e manutenção",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "interface_documental",
+            "aplicacao": "Relacionar o programa às instruções do manual específico da edificação.",
+            "condicao": "Revisão/elaboração de manual só se incluída.",
+            "entrega_vinculada": "Lista de instruções/fontes e pendências do manual.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N17170",
+            "codigo": "ABNT NBR 17170",
+            "nome": "Garantias de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "registro_de_garantias",
+            "aplicacao": "Organizar referências, datas, condições e registros das ocorrências.",
+            "condicao": "Não determina automaticamente direito ou perda de garantia.",
+            "entrega_vinculada": "Histórico das ocorrências e encaminhamento técnico/jurídico pertinente.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 5674",
+        "Gestão da manutenção de edificações",
+        "5674",
         "NBR 5674",
+        "ABNT NBR 14037",
+        "Manuais de uso, operação e manutenção",
+        "14037",
         "NBR 14037",
-        "NBR 17170",
-        "NBR 16747"
+        "ABNT NBR 17170",
+        "Garantias de edificações",
+        "17170",
+        "NBR 17170"
       ]
     },
     {
@@ -495,13 +1383,127 @@
       "resultado_pratico": "Enquadrar intervenção, selecionar requisitos, confrontar plano e registros, diligenciar responsáveis e preparar a entrega do recorte.",
       "entregas": "Matriz de requisitos/documentos; interfaces; diligências; responsabilidades; alterações e pacote de entrega no alcance.",
       "limites": "Não presume projeto integral, autorização formal, execução, aprovação do condomínio/órgão ou ausência de risco.",
-      "referencia": "NBR 16280 quando aplicável, normas dos sistemas e regras pertinentes ao imóvel e à intervenção.",
+      "referencia": "ABNT NBR 16280 — Gestão de reformas em edificações: Estruturar a documentação e as responsabilidades da reforma no recorte contratado.; ABNT NBR 14037 — Manuais de uso, operação e manutenção: Organizar instruções/manuais das partes reformadas quando exigidos e incluídos.; ABNT NBR 17170 — Garantias de edificações: Relacionar registros e termos pertinentes às partes reformadas.; ABNT NBR 15575 — Desempenho de edificações habitacionais: Examinar interface com requisitos de desempenho quando o caso justificar.",
       "cta": "Descreva a intervenção, os sistemas e o marco previsto.",
       "anchor": "servico-16",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Em estruturação",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Organizar requisitos, documentos, interfaces e alterações da reforma.",
+        "criterios_principais": "Intervenção, sistemas afetados, responsáveis e regras do imóvel/órgãos.",
+        "referencias": [
+          {
+            "id": "N16280",
+            "codigo": "ABNT NBR 16280",
+            "nome": "Gestão de reformas em edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "requisito_de_gestao",
+            "aplicacao": "Estruturar a documentação e as responsabilidades da reforma no recorte contratado.",
+            "condicao": "Gestão documental não equivale à aprovação integral nem substitui projetos/execução.",
+            "entrega_vinculada": "Matriz documental, interfaces, alterações e protocolo.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N14037",
+            "codigo": "ABNT NBR 14037",
+            "nome": "Manuais de uso, operação e manutenção",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "documento_de_encerramento",
+            "aplicacao": "Organizar instruções/manuais das partes reformadas quando exigidos e incluídos.",
+            "condicao": "Autoria/atualização técnica devem ser definidas por disciplina.",
+            "entrega_vinculada": "Documentos de uso/manutenção das partes modificadas.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N17170",
+            "codigo": "ABNT NBR 17170",
+            "nome": "Garantias de edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "interface_de_garantias",
+            "aplicacao": "Relacionar registros e termos pertinentes às partes reformadas.",
+            "condicao": "Prazo/direito dependem de fatos e enquadramento; não são automatizados.",
+            "entrega_vinculada": "Registro de garantias e pendências do encerramento.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N15575",
+            "codigo": "ABNT NBR 15575",
+            "nome": "Desempenho de edificações habitacionais",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Examinar interface com requisitos de desempenho quando o caso justificar.",
+            "condicao": "Não aplicar automaticamente todos os requisitos de obra nova à reforma.",
+            "entrega_vinculada": "Enquadramento e diligências de desempenho no recorte.",
+            "partes_para_selecao": [
+              "ABNT NBR 15575-1",
+              "ABNT NBR 15575-2",
+              "ABNT NBR 15575-3",
+              "ABNT NBR 15575-4",
+              "ABNT NBR 15575-5",
+              "ABNT NBR 15575-6"
+            ],
+            "partes_detalhadas": [
+              {
+                "codigo": "ABNT NBR 15575-1",
+                "assunto": "Requisitos gerais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-2",
+                "assunto": "Sistemas estruturais"
+              },
+              {
+                "codigo": "ABNT NBR 15575-3",
+                "assunto": "Sistemas de pisos"
+              },
+              {
+                "codigo": "ABNT NBR 15575-4",
+                "assunto": "Vedações verticais internas e externas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-5",
+                "assunto": "Sistemas de coberturas"
+              },
+              {
+                "codigo": "ABNT NBR 15575-6",
+                "assunto": "Sistemas hidrossanitários"
+              }
+            ]
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 16280",
+        "Gestão de reformas em edificações",
+        "16280",
         "NBR 16280",
+        "ABNT NBR 14037",
+        "Manuais de uso, operação e manutenção",
+        "14037",
+        "NBR 14037",
+        "ABNT NBR 17170",
+        "Garantias de edificações",
+        "17170",
+        "NBR 17170",
+        "ABNT NBR 15575",
+        "Desempenho de edificações habitacionais",
+        "ABNT NBR 15575-1",
+        "ABNT NBR 15575-2",
+        "ABNT NBR 15575-3",
+        "ABNT NBR 15575-4",
+        "ABNT NBR 15575-5",
+        "ABNT NBR 15575-6",
+        "Requisitos gerais",
+        "Sistemas estruturais",
+        "Sistemas de pisos",
+        "Vedações verticais internas e externas",
+        "Sistemas de coberturas",
+        "Sistemas hidrossanitários",
+        "15575",
         "NBR 15575"
       ]
     },
@@ -523,15 +1525,82 @@
       "resultado_pratico": "Definir uso e sistemas, avaliar condição local por protocolo, priorizar, dimensionar ações e conferir comprovação no alcance.",
       "entregas": "Protocolo; diagnóstico por unidade; matriz de prioridades; plano e estimativas incluídas; pendências e verificação por etapa.",
       "limites": "Não presume alvará, licença, projeto/obra incluídos ou adequação integral de toda a rede.",
-      "referencia": "Referências dos sistemas avaliados, como acessibilidade e saídas de emergência, e regulamentação competente de cada local.",
+      "referencia": "ABNT NBR 9050 — Acessibilidade: Conferir condições de acessibilidade do recorte da unidade.; ABNT NBR 9077 — Projeto de saídas de emergência: Examinar requisitos pertinentes das saídas de emergência.; Normas Técnicas do CBMES — Segurança contra incêndio e pânico no Espírito Santo: Relacionar a unidade às NTs de incêndio pertinentes no Espírito Santo.; ABNT NBR 16280 — Gestão de reformas em edificações: Organizar a gestão documental das reformas decorrentes da adequação.",
       "cta": "Informe as unidades, os sistemas e a exigência a tratar.",
       "anchor": "servico-17",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Em estruturação",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Diagnosticar unidades de uma rede e priorizar adequações por sistema e local.",
+        "criterios_principais": "Tipologias, unidades, uso, município e disciplinas efetivamente incluídas.",
+        "referencias": [
+          {
+            "id": "N9050",
+            "codigo": "ABNT NBR 9050",
+            "nome": "Acessibilidade",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_de_acessibilidade",
+            "aplicacao": "Conferir condições de acessibilidade do recorte da unidade.",
+            "condicao": "Amostra de pontos não comprova acessibilidade integral; projeto é atividade própria.",
+            "entrega_vinculada": "Diagnóstico localizado e plano de adequação no alcance.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N9077",
+            "codigo": "ABNT NBR 9077",
+            "nome": "Projeto de saídas de emergência",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_de_saidas",
+            "aplicacao": "Examinar requisitos pertinentes das saídas de emergência.",
+            "condicao": "Projeto, verificação e licenciamento têm responsabilidades próprias.",
+            "entrega_vinculada": "Quadro de condições, referências e providências.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "R_CBMES",
+            "codigo": "Normas Técnicas do CBMES",
+            "nome": "Segurança contra incêndio e pânico no Espírito Santo",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "regulamentacao_local",
+            "aplicacao": "Relacionar a unidade às NTs de incêndio pertinentes no Espírito Santo.",
+            "condicao": "Selecionar NT/parte por uso/local; obtenção de licença não é automática.",
+            "entrega_vinculada": "Matriz de requisitos locais e diligências por unidade.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N16280",
+            "codigo": "ABNT NBR 16280",
+            "nome": "Gestão de reformas em edificações",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_de_intervencao",
+            "aplicacao": "Organizar a gestão documental das reformas decorrentes da adequação.",
+            "condicao": "Somente se a gestão da intervenção integrar o escopo.",
+            "entrega_vinculada": "Documentação da intervenção por unidade.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 9050",
+        "Acessibilidade",
+        "9050",
         "NBR 9050",
+        "ABNT NBR 9077",
+        "Projeto de saídas de emergência",
+        "9077",
         "NBR 9077",
-        "NBR 16747"
+        "Normas Técnicas do CBMES",
+        "Segurança contra incêndio e pânico no Espírito Santo",
+        "ABNT NBR 16280",
+        "Gestão de reformas em edificações",
+        "16280",
+        "NBR 16280"
       ]
     },
     {
@@ -552,14 +1621,63 @@
       "resultado_pratico": "Fixar cobertura e referência, parear itens, analisar prioridades, tratar omissões e devolver roteiro de negociação.",
       "entregas": "Questões priorizadas; quadro de diferenças/omissões; referências e limites; roteiro para negociação.",
       "limites": "Não presume auditoria integral, preço justo, detecção de fraude ou negociação em nome do cliente.",
-      "referencia": "Projeto, especificações, referências de custo pertinentes e normas dos serviços comparados.",
+      "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Confrontar itens selecionados com composições/referências contextualizadas.; SICRO — DNIT — Custos referenciais de infraestrutura de transportes: Confrontar serviços pertinentes de infraestrutura de transportes.; ABNT NBR 12721 — Custos de construção para incorporação e condomínios: Contextualizar CUB/quadros de incorporação presentes na proposta.",
       "cta": "Envie a proposta e a data da decisão de contratação.",
       "anchor": "produto-1",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 12721",
-        "SINAPI",
-        "SICRO"
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Conferir pontos relevantes de orçamento/proposta para preparar a negociação.",
+        "criterios_principais": "Escopo, quantidades, condições comerciais e seleção de itens contratada.",
+        "referencias": [
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Confrontar itens selecionados com composições/referências contextualizadas.",
+            "condicao": "Referência não é preço justo universal nem economia realizada.",
+            "entrega_vinculada": "Mapa de diferenças/omissões e questões para negociação.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "R_SICRO",
+            "codigo": "SICRO — DNIT",
+            "nome": "Custos referenciais de infraestrutura de transportes",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Confrontar serviços pertinentes de infraestrutura de transportes.",
+            "condicao": "Apenas quando houver equivalência de serviço/condições.",
+            "entrega_vinculada": "Memória dos itens selecionados.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N12721",
+            "codigo": "ABNT NBR 12721",
+            "nome": "Custos de construção para incorporação e condomínios",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Contextualizar CUB/quadros de incorporação presentes na proposta.",
+            "condicao": "Não é norma universal de auditoria nem orçamento executivo.",
+            "entrega_vinculada": "Limites e premissas da referência de custos.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção",
+        "SICRO — DNIT",
+        "Custos referenciais de infraestrutura de transportes",
+        "ABNT NBR 12721",
+        "Custos de construção para incorporação e condomínios",
+        "12721",
+        "NBR 12721"
       ]
     },
     {
@@ -580,15 +1698,51 @@
       "resultado_pratico": "Aplicar Observar, Confrontar, Integrar, Propor e Apoiar no alcance contratado; testar explicações e formular recomendação condicionada.",
       "entregas": "Diagnóstico com achados/fontes; causas fundamentadas e hipóteses; impedimentos; alternativas/prioridades e devolutiva.",
       "limites": "Não presume causa sempre conclusiva, prazo fixo universal, plano detalhado de recuperação, execução ou perícia integral.",
-      "referencia": "Referências técnicas e contratuais do objeto investigado; atividades especializadas têm método e responsabilidade próprios.",
+      "referencia": "ABNT NBR 13752 — Perícias de engenharia na construção civil: Aplicar procedimento pericial quando a finalidade contratada exigir perícia.; ABNT NBR 16747 — Inspeção predial: Incluir inspeção predial quando o diagnóstico exigir esse serviço.",
       "cta": "Descreva o que não está funcionando e a decisão que precisa tomar.",
       "anchor": "produto-2",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Organizar fatos, hipóteses e alternativas para uma decisão sobre o impasse.",
+        "criterios_principais": "Pergunta de decisão, cronologia, contratos e evidências do caso.",
+        "referencias": [
+          {
+            "id": "N13752",
+            "codigo": "ABNT NBR 13752",
+            "nome": "Perícias de engenharia na construção civil",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "servico_adicional",
+            "aplicacao": "Aplicar procedimento pericial quando a finalidade contratada exigir perícia.",
+            "condicao": "Diagnóstico consultivo não é perícia automaticamente; contratação/enquadramento próprios.",
+            "entrega_vinculada": "Peça pericial no alcance somente quando contratada.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N16747",
+            "codigo": "ABNT NBR 16747",
+            "nome": "Inspeção predial",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "modulo_de_inspecao",
+            "aplicacao": "Incluir inspeção predial quando o diagnóstico exigir esse serviço.",
+            "condicao": "Cobertura, método e responsabilidade precisam corresponder à atividade.",
+            "entrega_vinculada": "Relatório de inspeção no alcance incluído.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 13752",
+        "Perícias de engenharia na construção civil",
+        "13752",
         "NBR 13752",
-        "NBR 12721",
-        "SINAPI",
-        "SICRO"
+        "ABNT NBR 16747",
+        "Inspeção predial",
+        "16747",
+        "NBR 16747"
       ]
     },
     {
@@ -609,14 +1763,33 @@
       "resultado_pratico": "Fixar base e corte, confrontar avanço/medição, integrar restrições e compras, recomendar ações e verificar efeitos incluídos.",
       "entregas": "Base de planejamento incluída; instrumentos por ciclo; memória de medição no alcance; restrições e ações; decisões e efeitos verificados.",
       "limites": "Não presume presença contínua, comando diário, disponibilidade ilimitada, garantia de prazo ou resultado financeiro.",
-      "referencia": "Projetos, contrato, critérios de medição e normas dos serviços incluídos; boas práticas de gestão apoiam a organização.",
+      "referencia": "SINAPI — CAIXA — Referências técnicas e custos da construção: Contextualizar itens de custo quando essa análise integrar o planejamento.",
       "cta": "Apresente as frentes, a rotina atual e os próximos marcos.",
       "anchor": "produto-3",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
-      "normas": [
-        "NBR 12721",
-        "SINAPI",
-        "SICRO"
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Conectar planejamento, avanço, restrições e medição por ciclo.",
+        "criterios_principais": "Contrato, baseline, cronograma, unidades/critério de medição e evidências de execução.",
+        "referencias": [
+          {
+            "id": "R_SINAPI",
+            "codigo": "SINAPI — CAIXA",
+            "nome": "Referências técnicas e custos da construção",
+            "tipo": "referencia_tecnica_ou_regulamentar",
+            "papel_no_servico": "referencia_de_custo",
+            "aplicacao": "Contextualizar itens de custo quando essa análise integrar o planejamento.",
+            "condicao": "Cronograma/medição não decorrem de uma norma universal do SINAPI.",
+            "entrega_vinculada": "Memória de referências dos itens incluídos.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "SINAPI — CAIXA",
+        "Referências técnicas e custos da construção"
       ]
     },
     {
@@ -637,14 +1810,52 @@
       "resultado_pratico": "Organizar as fontes e a mensagem, preparar roteiro/quadros, validar o conteúdo técnico, produzir e revisar os formatos contratados.",
       "entregas": "Roteiro e quadros de validação; imagens, vídeo ou apresentação; formatos e revisões incluídos na proposta.",
       "limites": "Não substitui projeto executivo, cálculo ou simulação validada; arquivos nativos/BIM só se efetivamente produzidos e contratados.",
-      "referencia": "Projeto, especificações e normas dos sistemas representados, com fidelidade e finalidade definidas para a comunicação.",
+      "referencia": "ABNT NBR 6492 — Documentação e representação de projetos arquitetônicos e urbanísticos: Referenciar peças de arquitetura/urbanismo efetivamente representadas.; ABNT NBR 16636 (série) — Serviços técnicos de projetos arquitetônicos e urbanísticos: Relacionar a representação às etapas/documentos do projeto de origem.",
       "cta": "Apresente o conteúdo técnico e o objetivo da apresentação.",
       "anchor": "servico-21",
       "disponibilidade": "Consulte o escopo e a disponibilidade para o seu caso.",
       "estado_publico": "Em estruturação",
-      "normas": [
-        "NBR 16636",
-        "NBR 6492"
+      "normas_e_referencias": {
+        "titulo": "Normas e aplicação no serviço",
+        "objetivo": "Explicar solução, escopo e etapas com representação técnica coerente.",
+        "criterios_principais": "Projeto e revisão de origem, finalidade, fidelidade, direitos de uso e formatos.",
+        "referencias": [
+          {
+            "id": "N6492",
+            "codigo": "ABNT NBR 6492",
+            "nome": "Documentação e representação de projetos arquitetônicos e urbanísticos",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "representacao_documental",
+            "aplicacao": "Referenciar peças de arquitetura/urbanismo efetivamente representadas.",
+            "condicao": "Vídeo ilustrativo ou apresentação comercial não se torna projeto executivo.",
+            "entrega_vinculada": "Quadros/representações revisados conforme finalidade.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          },
+          {
+            "id": "N16636",
+            "codigo": "ABNT NBR 16636 (série)",
+            "nome": "Serviços técnicos de projetos arquitetônicos e urbanísticos",
+            "tipo": "norma_ABNT_ou_serie",
+            "papel_no_servico": "complementar_condicional",
+            "aplicacao": "Relacionar a representação às etapas/documentos do projeto de origem.",
+            "condicao": "Não presume elaboração de projeto ou modelagem completa.",
+            "entrega_vinculada": "Registro de fontes, revisões e validação do conteúdo.",
+            "partes_para_selecao": [],
+            "partes_detalhadas": []
+          }
+        ],
+        "alcance": "As referências e os requisitos aplicáveis são definidos no escopo. As entregas documentais, verificações, ensaios e projetos incluídos são identificados na proposta."
+      },
+      "palavras_chave_normativas": [
+        "ABNT NBR 6492",
+        "Documentação e representação de projetos arquitetônicos e urbanísticos",
+        "6492",
+        "NBR 6492",
+        "ABNT NBR 16636 (série)",
+        "Serviços técnicos de projetos arquitetônicos e urbanísticos",
+        "16636",
+        "NBR 16636"
       ]
     }
   ]

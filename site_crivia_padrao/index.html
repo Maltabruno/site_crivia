@@ -10,7 +10,7 @@
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/PlusJakartaSans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=20261123c">
+  <link rel="stylesheet" href="styles.css?v=20261123d">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -102,6 +102,7 @@
           <h2>Raio-X de<br><em>Propostas e Orçamentos.</em></h2>
           <p>Os itens definidos no escopo — com prioridade para a Curva A e para as informações disponíveis — são comparados a referências técnicas como o SINAPI. A análise evidencia diferenças estimadas, preços abaixo da referência e possíveis omissões que merecem avaliação antes da contratação.</p>
           <p class="product-limit" data-limite></p>
+          <div class="normas-bloco" data-normas></div>
         </header>
         <div class="lab interactive-panel" data-lab-root></div>
         <div class="product-footer"><span>VOCÊ RECEBE</span><b data-entregas></b><a href="#contato" data-abrir-contato data-assunto="18 — Raio-X de Propostas e Orçamentos">APRESENTAR MEU CENÁRIO ↗</a></div>
@@ -117,6 +118,7 @@
           <h2>Diagnóstico<br><em>Sentinela.</em></h2>
           <p>O pleito de aditivo é confrontado, dia a dia, com o diário de obra e a chuva medida pelo INMET. Cada período recebe uma análise técnica fundamentada nas evidências disponíveis e nos critérios definidos para o trabalho.</p>
           <p class="product-limit" data-limite></p>
+          <div class="normas-bloco" data-normas></div>
         </header>
         <div class="lab interactive-panel" data-lab-root></div>
         <div class="product-footer"><span>VOCÊ RECEBE</span><b data-entregas></b><a href="#contato" data-abrir-contato data-assunto="19 — Diagnóstico Sentinela">APRESENTAR MEU CENÁRIO ↗</a></div>
@@ -132,6 +134,7 @@
           <h2>Planejamento<br><em>e Medição.</em></h2>
           <p>Todo mês, o que a construtora cobra é comparado com o que foi feito em campo. A CRIVIA compara o que foi cobrado com as evidências disponíveis em campo, organiza as restrições e apresenta uma recomendação técnica com as pendências, além dos riscos que podem afetar os próximos 30 dias. A decisão permanece com o cliente.</p>
           <p class="product-limit" data-limite></p>
+          <div class="normas-bloco" data-normas></div>
         </header>
         <div class="lab interactive-panel" data-lab-root></div>
         <div class="product-footer"><span>VOCÊ RECEBE</span><b data-entregas></b><a href="#contato" data-abrir-contato data-assunto="20 — Planejamento e Medição">APRESENTAR MEU CENÁRIO ↗</a></div>
@@ -146,8 +149,16 @@
           <h2>Produtos para<br><em>cada decisão.</em></h2>
           <p>Dezoito produtos em quatro frentes, além dos três trabalhos de entrada (18, 19 e 20) acima. Cada proposta define a pergunta, as entradas, as entregas, o aceite e os limites do trabalho. Eles podem ser contratados individualmente, combinados ou em ciclos. Consulte o escopo e a disponibilidade para o seu caso.</p>
         </header>
+        <section class="busca-norma" id="busca-norma" aria-labelledby="busca-titulo">
+          <h3 id="busca-titulo">Encontre o serviço pela norma</h3>
+          <p>Digite o número de uma norma (por exemplo <em>15575</em>, <em>NBR 5674</em> ou <em>ISO 14040</em>) ou um assunto, como acessibilidade. A busca mostra os serviços relacionados e o alcance de cada um.</p>
+          <label class="busca-label" for="busca-q">Norma ou assunto</label>
+          <input id="busca-q" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Ex.: NBR 15575, 14037, manutenção…">
+          <div class="busca-sug" id="busca-sug"></div>
+          <div class="busca-res" id="busca-res" aria-live="polite"></div>
+        </section>
         <div class="catalog-tabs" role="tablist" aria-label="Grupos de produtos" id="catalog-tabs"></div>
-        <p class="catalog-nota">As normas citadas em cada produto são referências relacionadas ao objeto. A edição, as partes e os itens aplicáveis são definidos em cada proposta, e a citação não é declaração de conformidade nem certificação.</p>
+        <p class="catalog-nota">As normas citadas em cada produto são referências relacionadas ao objeto. A edição, as partes e os itens aplicáveis são definidos em cada proposta, e a citação não é declaração de conformidade nem certificação. Contorno tracejado indica referência condicional ou atividade adicional.</p>
         <div class="catalog-grid" id="catalog-grid" role="tabpanel"></div>
         <aside class="frente" id="frente-entrega-cliente" aria-labelledby="frente-titulo">
           <p class="section-code">FRENTE 04 · REQUISITOS, DOCUMENTAÇÃO E ENTREGA AO CLIENTE</p>
@@ -349,7 +360,7 @@
   <footer>
     <a class="brand" href="#inicio" aria-label="Voltar ao início"><img src="assets/logo-icon.png" alt="" width="38" height="38"><span><b>CRIVIA</b><small>ENGENHARIA CONSULTIVA</small></span></a>
     <p>Engenharia para decisão.<br>Serra, Espírito Santo, Brasil</p>
-    <div class="footer-links"><a href="#produto-1">Trabalhos</a><a href="#catalogo">Catálogo</a><a href="#frente-entrega-cliente">Entrega ao cliente</a><a href="#metodo">Método</a><a href="#experiencia">Experiência</a><a href="aviso-privacidade.html">Aviso de Privacidade</a></div>
+    <div class="footer-links"><a href="#produto-1">Trabalhos</a><a href="#catalogo">Catálogo</a><a href="#frente-entrega-cliente">Entrega ao cliente</a><a href="#busca-norma">Busca por norma</a><a href="#metodo">Método</a><a href="#experiencia">Experiência</a><a href="aviso-privacidade.html">Aviso de Privacidade</a></div>
     <img class="footer-seal" src="assets/bni-160.png" srcset="assets/bni-80.png 1x, assets/bni-160.png 2x, assets/bni-240.png 3x" alt="Selo Proud BNI Member" width="80" height="46" decoding="async">
     <small>© 2026 CRIVIA Engenharia Consultiva Ltda. · Site criado pela CRIVIA</small>
   </footer>

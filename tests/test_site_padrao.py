@@ -161,21 +161,84 @@ class Catalogo21(unittest.TestCase):
         self.assertIn("CONVERSAR SOBRE O INTERESSE", js)
         self.assertIn("(em estruturação)", js)
 
-    def test_toda_oferta_cita_normas_e_referencias(self):
-        """Normas/famílias do Catálogo R07 (seção 3 de cada ficha); citação como referência, não como selo."""
+    # ---- Normas por produto (R03) e busca por norma ----
+    @staticmethod
+    def norm(s):
+        import unicodedata
+        s = unicodedata.normalize("NFD", str(s))
+        s = "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+        return re.sub(r"[^a-z0-9]+", "", s)
+
+    def refs(self, n):
+        return next(o for o in self.ofertas if o["numero"] == n)["normas_e_referencias"]["referencias"]
+
+    def produtos_da_busca(self, consulta):
+        """Reproduz a busca do app.js: por norma, todos os tokens (ou o texto compacto) precisam estar no código, nome, partes ou aplicação."""
+        achou = set()
         for o in self.ofertas:
-            self.assertTrue(o.get("normas"), f"{o['numero']} sem normas/referências")
-            self.assertTrue(all(isinstance(n, str) and n for n in o["normas"]), o["numero"])
-        por = {o["numero"]: o["normas"] for o in self.ofertas}
-        self.assertIn("NBR 15575", por["13"])
-        self.assertIn("NBR 14037", por["14"])
-        self.assertIn("NBR 5674", por["15"])
-        self.assertIn("NBR 16280", por["16"])
-        self.assertIn("NBR 9050", por["17"])
-        self.assertIn("ISO 14040", por["12"])
+            for r in o["normas_e_referencias"]["referencias"]:
+                hay = self.norm(" ".join([r["codigo"], r["nome"], r["aplicacao"]] + [f"{x['codigo']} {x['assunto']}" for x in r["partes_detalhadas"]]))
+                tokens = [self.norm(x) for x in consulta.split() if self.norm(x)]
+                if tokens and (all(tk in hay for tk in tokens) or self.norm(consulta) in hay):
+                    achou.add(o["numero"])
+        return achou
+
+    def test_21_produtos_tem_bloco_normativo_ou_criterio_contratual(self):
+        for o in self.ofertas:
+            nr = o["normas_e_referencias"]
+            self.assertEqual(nr["titulo"], "Normas e aplicação no serviço", o["numero"])
+            self.assertTrue(nr["objetivo"] and nr["criterios_principais"] and nr["alcance"], o["numero"])
+            for r in nr["referencias"]:
+                for campo in ("codigo", "nome", "aplicacao", "entrega_vinculada", "condicao"):
+                    self.assertTrue(r.get(campo), f"{o['numero']} {r.get('codigo')} sem {campo}")
+        for n in ("04", "09"):
+            self.assertEqual(self.refs(n), [], f"{n} não deve ganhar NBR genérica")
+
+    def test_busca_por_norma_leva_aos_produtos_certos(self):
+        casos = {
+            "15575": {"13", "14", "16"}, "NBR15.575": {"13", "14", "16"}, "nbr 15575": {"13", "14", "16"}, "15575-3": {"13", "14", "16"},
+            "14037": {"14", "15", "16"}, "5674": {"06", "11", "14", "15"}, "16280": {"16", "17"}, "9050": {"17"}, "9077": {"17"},
+        }
+        for consulta, esperado in casos.items():
+            self.assertEqual(self.produtos_da_busca(consulta), esperado, consulta)
+        self.assertEqual(self.produtos_da_busca("ABNT NBR 15575"), {"13", "14", "16"})
+        self.assertIn("17", self.produtos_da_busca("acessibilidade"))
+
+    def test_partes_da_15575_identificadas_sem_edicao_unica(self):
+        ref = next(r for r in self.refs("13") if r["codigo"] == "ABNT NBR 15575")
+        self.assertEqual([p["codigo"] for p in ref["partes_detalhadas"]], [f"ABNT NBR 15575-{i}" for i in range(1, 7)])
         js = (SITE / "app.js").read_text(encoding="utf-8")
-        self.assertIn("Normas e referências relacionadas", js)
-        self.assertIn("a citação não é declaração de conformidade nem certificação", self.html)
+        self.assertIn("sem impor uma edição única à série", js)
+        self.assertNotRegex(json.dumps(ref, ensure_ascii=False), r"15575[-:]?\d?:?(19|20)\d\d")
+
+    def test_sinapi_sicro_e_nts_nao_levam_rotulo_de_nbr(self):
+        for o in self.ofertas:
+            for r in o["normas_e_referencias"]["referencias"]:
+                if r["tipo"] == "referencia_tecnica_ou_regulamentar":
+                    self.assertNotIn("NBR", r["codigo"], r["codigo"])
+                else:
+                    self.assertTrue(r["codigo"].startswith(("ABNT", "ISO")), r["codigo"])
+        for n in ("10", "20"):
+            self.assertTrue(all(r["tipo"] == "referencia_tecnica_ou_regulamentar" for r in self.refs(n)), f"{n} não recebe norma universal")
+
+    def test_texto_normativo_nao_afirma_conformidade_nem_certificacao(self):
+        texto = json.dumps([o["normas_e_referencias"] for o in self.ofertas], ensure_ascii=False).lower()
+        for proibido in ("100% conforme", "edificação certificada", "atendimento integral garantido", "laudo garante"):
+            self.assertNotIn(proibido, texto, proibido)
+        r17025 = next(r for r in self.refs("13") if "17025" in r["codigo"])
+        self.assertNotIn("crivia é acreditada", json.dumps(r17025, ensure_ascii=False).lower())
+
+    def test_app_renderiza_bloco_e_busca(self):
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        for trecho in ("normasHtml", "busca-q", "ehCondicional", "data-normas"):
+            self.assertIn(trecho, js, trecho)
+        self.assertIn('id="busca-norma"', self.html)
+        self.assertIn("Encontre o serviço pela norma", self.html)
+        self.assertEqual(self.html.count("data-normas></div>"), 3)
+
+    def test_gerador_preserva_campos_normativos(self):
+        for campo in ("normas_e_referencias", "palavras_chave_normativas"):
+            self.assertTrue(all(campo in o for o in bloco_js("PRODUTOS") + bloco_js("ENTRADAS")), campo)
 
     def test_imagens_de_rascunho_fora_do_site(self):
         for n in ("14", "15", "16", "17", "21"):
@@ -190,8 +253,10 @@ class Catalogo21(unittest.TestCase):
             elif isinstance(x, list):
                 for v in x:
                     yield from chaves(v)
-        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "normas", "grupo", "tipo", "dor", "para_quem",
-                      "decisor", "prestadora", "beneficios", "resultado_pratico", "entregas", "limites", "referencia", "cta", "anchor", "disponibilidade"}
+        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "grupo", "tipo", "dor", "para_quem",
+                      "decisor", "prestadora", "beneficios", "resultado_pratico", "entregas", "limites", "referencia", "cta", "anchor", "disponibilidade",
+                      "normas_e_referencias", "palavras_chave_normativas", "titulo", "objetivo", "criterios_principais", "referencias", "alcance",
+                      "codigo", "papel_no_servico", "aplicacao", "condicao", "entrega_vinculada", "partes_para_selecao", "partes_detalhadas", "assunto"}
         self.assertEqual(set(chaves(self.dados)) - permitidas, set())
         texto = json.dumps(self.dados, ensure_ascii=False)
         self.assertNotIn("R$", texto)
