@@ -161,6 +161,22 @@ class Catalogo21(unittest.TestCase):
         self.assertIn("CONVERSAR SOBRE O INTERESSE", js)
         self.assertIn("(em estruturação)", js)
 
+    def test_toda_oferta_cita_normas_e_referencias(self):
+        """Normas/famílias do Catálogo R07 (seção 3 de cada ficha); citação como referência, não como selo."""
+        for o in self.ofertas:
+            self.assertTrue(o.get("normas"), f"{o['numero']} sem normas/referências")
+            self.assertTrue(all(isinstance(n, str) and n for n in o["normas"]), o["numero"])
+        por = {o["numero"]: o["normas"] for o in self.ofertas}
+        self.assertIn("NBR 15575", por["13"])
+        self.assertIn("NBR 14037", por["14"])
+        self.assertIn("NBR 5674", por["15"])
+        self.assertIn("NBR 16280", por["16"])
+        self.assertIn("NBR 9050", por["17"])
+        self.assertIn("ISO 14040", por["12"])
+        js = (SITE / "app.js").read_text(encoding="utf-8")
+        self.assertIn("Normas e referências relacionadas", js)
+        self.assertIn("a citação não é declaração de conformidade nem certificação", self.html)
+
     def test_imagens_de_rascunho_fora_do_site(self):
         for n in ("14", "15", "16", "17", "21"):
             self.assertFalse((SITE / "assets" / "produtos-s" / f"{n}.jpg").exists(), n)
@@ -174,7 +190,7 @@ class Catalogo21(unittest.TestCase):
             elif isinstance(x, list):
                 for v in x:
                     yield from chaves(v)
-        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "grupo", "tipo", "dor", "para_quem",
+        permitidas = {"versao", "estado", "grupos", "ofertas", "id", "nome", "ns", "numero", "estado_publico", "normas", "grupo", "tipo", "dor", "para_quem",
                       "decisor", "prestadora", "beneficios", "resultado_pratico", "entregas", "limites", "referencia", "cta", "anchor", "disponibilidade"}
         self.assertEqual(set(chaves(self.dados)) - permitidas, set())
         texto = json.dumps(self.dados, ensure_ascii=False)
